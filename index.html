@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JARVIS - Just A Rather Very Intelligent System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --blue: #00d4ff; --blue2: #0088cc; --dark: #000a1a; --darker: #000510;
+    --glow: 0 0 10px #00d4ff, 0 0 20px #00d4ff44; --glow2: 0 0 5px #00d4ff88;
+  }
+  body {
+    background: var(--darker); color: var(--blue);
+    font-family: 'Share Tech Mono', monospace;
+    overflow: hidden; height: 100vh; width: 100vw; position: relative; user-select: none;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(0,212,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.05) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: ''; position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px);
+    pointer-events: none; z-index: 999;
+  }
+  .container {
+    position: relative; z-index: 1; width: 100vw; height: 100vh;
+    display: grid; grid-template-columns: 220px 1fr 220px; grid-template-rows: 60px 1fr 120px;
+    gap: 8px; padding: 8px;
+  }
+  .topbar {
+    grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--blue2); padding: 0 16px;
+    background: linear-gradient(90deg, transparent, rgba(0,136,204,0.1), transparent);
+  }
+  .topbar-title {
+    font-family: 'Orbitron', monospace; font-size: 22px; font-weight: 900;
+    letter-spacing: 8px; color: var(--blue); text-shadow: var(--glow);
+    animation: flicker 4s infinite;
+  }
+  @keyframes flicker { 0%,96%,100%{opacity:1} 97%{opacity:.7} 98%{opacity:1} 99%{opacity:.8} }
+  .topbar-info { display: flex; gap: 24px; font-size: 11px; color: var(--blue2); }
+  .topbar-info span { text-transform: uppercase; letter-spacing: 2px; }
+  .topbar-info .val { color: var(--blue); font-weight: bold; }
+  .left-panel { display: flex; flex-direction: column; gap: 8px; }
+  .panel {
+    border: 1px solid rgba(0,212,255,0.3); background: rgba(0,15,35,0.8);
+    padding: 10px; position: relative;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+  .panel::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(0,212,255,0.05) 0%, transparent 60%); pointer-events: none;
+  }
+  .panel-title {
+    font-family: 'Orbitron', monospace; font-size: 9px; letter-spacing: 3px;
+    color: var(--blue2); text-transform: uppercase;
+    border-bottom: 1px solid rgba(0,212,255,0.2); padding-bottom: 6px; margin-bottom: 8px;
+  }
+  .stat-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 10px; }
+  .stat-bar { width: 80px; height: 4px; background: rgba(0,212,255,0.15); border-radius: 2px; overflow: hidden; }
+  .stat-fill { height: 100%; background: var(--blue); box-shadow: 0 0 6px var(--blue); transition: width 1s ease; animation: statpulse 2s ease-in-out infinite alternate; }
+  @keyframes statpulse { from{opacity:.7} to{opacity:1} }
+  .weather-temp { font-family: 'Orbitron', monospace; font-size: 32px; font-weight: 700; color: var(--blue); text-shadow: var(--glow); text-align: center; margin: 8px 0; }
+  .weather-info { font-size: 10px; color: var(--blue2); text-align: center; }
+  .center-panel { display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 8px; }
+  .hud-wrapper { position: relative; width: 300px; height: 300px; flex-shrink: 0; }
+  .hud-canvas { position: absolute; inset: 0; }
+  .hud-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+  .hud-clock { font-family: 'Orbitron', monospace; font-size: 28px; font-weight: 700; color: var(--blue); text-shadow: var(--glow); letter-spacing: 4px; }
+  .hud-date { font-size: 10px; color: var(--blue2); letter-spacing: 3px; text-transform: uppercase; }
+  .hud-status { font-size: 9px; color: var(--blue); letter-spacing: 2px; animation: blink 1.5s step-end infinite; }
+  @keyframes blink { 50%{opacity:0} }
+  .mic-btn {
+    width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--blue);
+    background: rgba(0,212,255,0.1); color: var(--blue); font-size: 26px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all .3s;
+    box-shadow: var(--glow); position: relative; z-index: 10;
+  }
+  .mic-btn:hover { background: rgba(0,212,255,0.25); transform: scale(1.08); }
+  .mic-btn.listening { background: rgba(0,212,255,0.3); animation: micpulse 1s ease-in-out infinite; border-color: #fff; }
+  @keyframes micpulse { 0%,100%{box-shadow:0 0 10px #00d4ff,0 0 30px #00d4ff,0 0 60px #00d4ff44} 50%{box-shadow:0 0 20px #00d4ff,0 0 50px #00d4ff,0 0 100px #00d4ff66} }
+  .conv-panel { width: 100%; flex: 1; min-height: 0; }
+  .conv-log { height: 130px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding: 4px; scrollbar-width: thin; scrollbar-color: var(--blue2) transparent; }
+  .msg { padding: 8px 10px; border-left: 2px solid; font-size: 11px; line-height: 1.5; animation: msgIn .3s ease; }
+  @keyframes msgIn { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:none} }
+  .msg.user { border-color: var(--blue); background: rgba(0,212,255,0.07); color: var(--blue); }
+  .msg.jarvis { border-color: #00ff88; background: rgba(0,255,136,0.05); color: #00ff88; }
+  .msg .sender { font-family: 'Orbitron', monospace; font-size: 8px; letter-spacing: 2px; opacity: .7; margin-bottom: 3px; }
+  .input-row { display: flex; gap: 8px; width: 100%; margin-top: 4px; }
+  .text-input {
+    flex: 1; background: rgba(0,15,35,0.9); border: 1px solid rgba(0,212,255,0.4);
+    color: var(--blue); font-family: 'Share Tech Mono', monospace; font-size: 12px;
+    padding: 8px 12px; outline: none;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  }
+  .text-input::placeholder { color: rgba(0,212,255,0.3); }
+  .text-input:focus { border-color: var(--blue); box-shadow: var(--glow2); }
+  .send-btn {
+    background: rgba(0,212,255,0.15); border: 1px solid var(--blue); color: var(--blue);
+    font-family: 'Orbitron', monospace; font-size: 9px; letter-spacing: 2px;
+    padding: 8px 14px; cursor: pointer;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    transition: all .2s;
+  }
+  .send-btn:hover { background: rgba(0,212,255,0.3); box-shadow: var(--glow); }
+  .right-panel { display: flex; flex-direction: column; gap: 8px; }
+  .log-item { font-size: 9px; color: var(--blue2); padding: 3px 0; border-bottom: 1px solid rgba(0,212,255,0.08); display: flex; gap: 6px; }
+  .log-item .log-time { color: var(--blue); opacity: .6; white-space: nowrap; }
+  .radar-wrap { display: flex; justify-content: center; align-items: center; padding: 8px 0; }
+  .bottom-bar { grid-column: 1 / -1; display: flex; gap: 8px; align-items: stretch; }
+  .bottom-metric {
+    flex: 1; border: 1px solid rgba(0,212,255,0.25); background: rgba(0,15,35,0.8);
+    padding: 8px 12px; display: flex; flex-direction: column; justify-content: center;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  }
+  .metric-label { font-size: 8px; letter-spacing: 2px; color: var(--blue2); text-transform: uppercase; margin-bottom: 4px; }
+  .metric-val { font-family: 'Orbitron', monospace; font-size: 18px; color: var(--blue); text-shadow: var(--glow); }
+  .metric-sub { font-size: 9px; color: rgba(0,212,255,0.5); margin-top: 2px; }
+  .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #00ff88; box-shadow: 0 0 6px #00ff88; margin-right: 6px; animation: blink 1.5s step-end infinite; }
+  .thinking { color: var(--blue2); font-style: italic; }
+  .corner { position: fixed; width: 40px; height: 40px; z-index: 2; pointer-events: none; }
+  .corner.tl { top:8px;left:8px;border-top:2px solid var(--blue);border-left:2px solid var(--blue); }
+  .corner.tr { top:8px;right:8px;border-top:2px solid var(--blue);border-right:2px solid var(--blue); }
+  .corner.bl { bottom:8px;left:8px;border-bottom:2px solid var(--blue);border-left:2px solid var(--blue); }
+  .corner.br { bottom:8px;right:8px;border-bottom:2px solid var(--blue);border-right:2px solid var(--blue); }
+  /* Config modal */
+  .modal-bg { position:fixed;inset:0;background:rgba(0,5,20,.92);z-index:1000;display:flex;align-items:center;justify-content:center; }
+  .modal { background:rgba(0,15,35,.98);border:1px solid var(--blue);padding:30px;width:420px;max-width:90vw;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px)); }
+  .modal h2 { font-family:'Orbitron',monospace;font-size:14px;letter-spacing:4px;color:var(--blue);margin-bottom:16px;text-shadow:var(--glow); }
+  .modal p { font-size:11px;color:var(--blue2);line-height:1.7;margin-bottom:12px; }
+  .modal input { width:100%;background:rgba(0,15,35,.9);border:1px solid rgba(0,212,255,.4);color:var(--blue);font-family:'Share Tech Mono',monospace;font-size:12px;padding:8px 12px;outline:none;margin-bottom:12px; }
+  .modal input:focus { border-color:var(--blue); }
+  .modal-btns { display:flex;gap:8px; }
+  .hidden { display:none!important; }
+</style>
+</head>
+<body>
+
+<!-- Config Modal -->
+<div class="modal-bg" id="config-modal">
+  <div class="modal">
+    <h2>// JARVIS CONFIGURATION</h2>
+    <p>To activate the AI brain, enter your <strong>OpenAI API key</strong>. This runs entirely in your browser — the key is never sent anywhere except OpenAI.</p>
+    <p style="color:#ffaa00;font-size:10px;">⚡ GET A FREE KEY → platform.openai.com → API Keys → Create new</p>
+    <input id="api-key-input" type="password" placeholder="sk-...your openai key...">
+    <p style="font-size:10px;color:rgba(0,212,255,0.4);">Optional — you can still use Jarvis without a key (limited responses)</p>
+    <div class="modal-btns">
+      <button class="send-btn" style="flex:1" id="save-key-btn">ACTIVATE JARVIS</button>
+      <button class="send-btn" style="flex:1;border-color:rgba(0,212,255,.3);color:rgba(0,212,255,.5)" id="skip-key-btn">SKIP FOR NOW</button>
+    </div>
+  </div>
+</div>
+
+<div class="corner tl"></div><div class="corner tr"></div>
+<div class="corner bl"></div><div class="corner br"></div>
+
+<div class="container">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div style="font-size:10px;color:var(--blue2);letter-spacing:2px;">STARK INDUSTRIES // JARVIS v7.0</div>
+    <div class="topbar-title">J.A.R.V.I.S</div>
+    <div class="topbar-info">
+      <span>STATUS: <span class="val" id="sys-status">ONLINE</span></span>
+      <span>USER: <span class="val">STARK</span></span>
+      <span id="top-time" class="val">--:--:--</span>
+    </div>
+  </div>
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <div class="panel" style="flex:1">
+      <div class="panel-title">// System Monitor</div>
+      <div class="stat-row"><span style="font-size:9px;">CPU</span><div class="stat-bar"><div class="stat-fill" id="cpu-bar" style="width:72%"></div></div><span style="font-size:9px;" id="cpu-val">72%</span></div>
+      <div class="stat-row"><span style="font-size:9px;">RAM</span><div class="stat-bar"><div class="stat-fill" id="ram-bar" style="width:58%"></div></div><span style="font-size:9px;" id="ram-val">58%</span></div>
+      <div class="stat-row"><span style="font-size:9px;">NET</span><div class="stat-bar"><div class="stat-fill" id="net-bar" style="width:88%"></div></div><span style="font-size:9px;" id="net-val">88%</span></div>
+      <div class="stat-row"><span style="font-size:9px;">AI</span><div class="stat-bar"><div class="stat-fill" id="ai-bar" style="width:95%"></div></div><span style="font-size:9px;">95%</span></div>
+      <div style="margin-top:10px;font-size:9px;color:var(--blue2);line-height:1.8;">
+        <div>CORE TEMP: <span style="color:var(--blue)" id="temp">38.2°C</span></div>
+        <div>UPTIME: <span style="color:var(--blue)" id="uptime">00:00:00</span></div>
+        <div>PROCESSES: <span style="color:var(--blue)">247</span></div>
+        <div>SECURITY: <span style="color:#00ff88">NOMINAL</span></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">// Environment</div>
+      <div class="weather-temp" id="w-temp">--°</div>
+      <div class="weather-info" id="w-desc">LOADING...</div>
+      <div style="margin-top:8px;font-size:9px;color:var(--blue2);line-height:1.8;">
+        <div>LOCATION: <span style="color:var(--blue)" id="w-loc">DETECTING...</span></div>
+        <div>HUMIDITY: <span style="color:var(--blue)" id="w-hum">--%</span></div>
+        <div>WIND: <span style="color:var(--blue)" id="w-wind">-- km/h</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER PANEL -->
+  <div class="center-panel">
+    <div class="hud-wrapper">
+      <canvas id="hud-canvas" class="hud-canvas" width="300" height="300"></canvas>
+      <div class="hud-center">
+        <div class="hud-clock" id="hud-clock">00:00</div>
+        <div class="hud-date" id="hud-date">--- -- ----</div>
+        <div class="hud-status" id="hud-status">● SYSTEM READY</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;width:100%">
+      <button class="mic-btn" id="mic-btn" title="Click to speak">🎤</button>
+      <div style="font-size:9px;letter-spacing:2px;color:var(--blue2)" id="mic-label">CLICK MIC TO SPEAK</div>
+    </div>
+
+    <div class="panel conv-panel" style="width:100%">
+      <div class="panel-title">// Jarvis Interface <span class="status-dot"></span><span style="font-size:8px;color:#00ff88">ACTIVE</span></div>
+      <div class="conv-log" id="conv-log">
+        <div class="msg jarvis"><div class="sender">JARVIS //</div>Good evening. All systems operational. I am ready to assist you, sir. Speak or type your command.</div>
+      </div>
+    </div>
+
+    <div class="input-row">
+      <input class="text-input" id="text-input" placeholder="Type your command..." autocomplete="off">
+      <button class="send-btn" id="send-btn">SEND</button>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="panel" style="flex:1">
+      <div class="panel-title">// Activity Log</div>
+      <div id="activity-log" style="max-height:220px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--blue2) transparent;">
+        <div class="log-item"><span class="log-time">INIT</span><span>System boot complete</span></div>
+        <div class="log-item"><span class="log-time">INIT</span><span>AI core online</span></div>
+        <div class="log-item"><span class="log-time">INIT</span><span>Voice module ready</span></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">// Radar</div>
+      <div class="radar-wrap"><canvas id="radar-canvas" width="160" height="160"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">// Quick Commands</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;">
+        <button class="send-btn" style="flex:1;font-size:8px;padding:5px;" onclick="quickCmd('What time is it?')">TIME</button>
+        <button class="send-btn" style="flex:1;font-size:8px;padding:5px;" onclick="quickCmd('Tell me a joke')">JOKE</button>
+        <button class="send-btn" style="flex:1;font-size:8px;padding:5px;" onclick="quickCmd('System status report')">STATUS</button>
+        <button class="send-btn" style="flex:1;font-size:8px;padding:5px;" onclick="quickCmd('What can you do?')">HELP</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar">
+    <div class="bottom-metric"><div class="metric-label">Conversations</div><div class="metric-val" id="conv-count">0</div><div class="metric-sub">session total</div></div>
+    <div class="bottom-metric"><div class="metric-label">Response Time</div><div class="metric-val" id="resp-time">--ms</div><div class="metric-sub">last query</div></div>
+    <div class="bottom-metric"><div class="metric-label">Voice Mode</div><div class="metric-val" id="voice-mode" style="font-size:13px;">READY</div><div class="metric-sub" id="voice-sub">click mic to activate</div></div>
+    <div class="bottom-metric"><div class="metric-label">AI Engine</div><div class="metric-val" id="ai-engine" style="font-size:12px;color:#00ff88;">GPT-4</div><div class="metric-sub" id="ai-sub">openai powered</div></div>
+    <div class="bottom-metric"><div class="metric-label">Boot Time</div><div class="metric-val" id="boot-time">--:--</div><div class="metric-sub" id="boot-date">-- --- ----</div></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// API KEY MANAGEMENT
+// ============================================================
+let OPENAI_KEY = localStorage.getItem('jarvis_key') || '';
+
+document.getElementById('save-key-btn').onclick = () => {
+  const k = document.getElementById('api-key-input').value.trim();
+  if (k) { OPENAI_KEY = k; localStorage.setItem('jarvis_key', k); }
+  document.getElementById('config-modal').classList.add('hidden');
+  if (k) { document.getElementById('ai-engine').textContent = 'GPT-4o'; document.getElementById('ai-sub').textContent = 'full AI active'; }
+  addLog('System initialized');
+  speak('Good evening, sir. All systems are now operational and I am ready to assist you.');
+};
+document.getElementById('skip-key-btn').onclick = () => {
+  document.getElementById('config-modal').classList.add('hidden');
+  document.getElementById('ai-engine').textContent = 'LOCAL';
+  document.getElementById('ai-sub').textContent = 'no api key';
+  addLog('System initialized (no AI key)');
+  speak('Good evening. Running in limited mode. For full AI, please configure your API key.');
+};
+if (OPENAI_KEY) {
+  document.getElementById('config-modal').classList.add('hidden');
+  document.getElementById('ai-engine').textContent = 'GPT-4o';
+  document.getElementById('ai-sub').textContent = 'full AI active';
+  setTimeout(() => { addLog('System initialized'); }, 500);
+}
+
+// ============================================================
+// CLOCK
+// ============================================================
+function pad(n) { return String(n).padStart(2,'0'); }
+function updateClock() {
+  const n = new Date();
+  const h=pad(n.getHours()),m=pad(n.getMinutes()),s=pad(n.getSeconds());
+  document.getElementById('hud-clock').textContent = `${h}:${m}`;
+  document.getElementById('top-time').textContent = `${h}:${m}:${s}`;
+  const days=['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const months=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  document.getElementById('hud-date').textContent = `${days[n.getDay()]} ${pad(n.getDate())} ${months[n.getMonth()]} ${n.getFullYear()}`;
+  document.getElementById('boot-time').textContent = `${h}:${m}`;
+  document.getElementById('boot-date').textContent = `${pad(n.getDate())} ${months[n.getMonth()]} ${n.getFullYear()}`;
+}
+setInterval(updateClock, 1000); updateClock();
+
+// ============================================================
+// UPTIME
+// ============================================================
+let startTime = Date.now();
+setInterval(() => {
+  const e = Math.floor((Date.now()-startTime)/1000);
+  document.getElementById('uptime').textContent = `${pad(Math.floor(e/3600))}:${pad(Math.floor((e%3600)/60))}:${pad(e%60)}`;
+}, 1000);
+
+// ============================================================
+// FAKE STATS
+// ============================================================
+setInterval(() => {
+  const r=(a,b)=>Math.floor(Math.random()*(b-a)+a);
+  const cpu=r(55,95),ram=r(45,80),net=r(60,99);
+  document.getElementById('cpu-bar').style.width=cpu+'%'; document.getElementById('cpu-val').textContent=cpu+'%';
+  document.getElementById('ram-bar').style.width=ram+'%'; document.getElementById('ram-val').textContent=ram+'%';
+  document.getElementById('net-bar').style.width=net+'%'; document.getElementById('net-val').textContent=net+'%';
+  document.getElementById('temp').textContent=(35+Math.random()*8).toFixed(1)+'°C';
+}, 2500);
+
+// ============================================================
+// WEATHER
+// ============================================================
+async function loadWeather() {
+  try {
+    const g = await (await fetch('https://ipapi.co/json/')).json();
+    document.getElementById('w-loc').textContent = (g.city||'UNKNOWN').toUpperCase();
+    const w = await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${g.latitude}&longitude=${g.longitude}&current_weather=true&hourly=relativehumidity_2m,windspeed_10m`)).json();
+    const cw = w.current_weather;
+    document.getElementById('w-temp').textContent = Math.round(cw.temperature)+'°C';
+    document.getElementById('w-wind').textContent = Math.round(cw.windspeed)+' km/h';
+    document.getElementById('w-hum').textContent = (w.hourly.relativehumidity_2m?.[0]??'--')+'%';
+    const codes={0:'CLEAR SKY',1:'MAINLY CLEAR',2:'PARTLY CLOUDY',3:'OVERCAST',45:'FOGGY',51:'DRIZZLE',61:'RAIN',71:'SNOW',80:'SHOWERS',95:'THUNDERSTORM'};
+    document.getElementById('w-desc').textContent = codes[cw.weathercode]||'UNKNOWN';
+    addLog('Weather data loaded');
+  } catch(e) { document.getElementById('w-desc').textContent='DATA UNAVAILABLE'; }
+}
+loadWeather();
+
+// ============================================================
+// HUD CANVAS
+// ============================================================
+const hudCanvas = document.getElementById('hud-canvas');
+const hctx = hudCanvas.getContext('2d');
+let hudAngle=0, hudAngle2=0;
+function drawHUD() {
+  const cx=150,cy=150;
+  hctx.clearRect(0,0,300,300);
+  [[140,[4,8],1,.4],[125,[2,12],1,.3],[108,[8,4],1.5,.5],[90,[1,6],1,.3],[72,[],1,.6],[48,[4,4],1,.4],[30,[],1.5,.7]].forEach(([r,d,w,a]) => {
+    hctx.beginPath(); hctx.arc(cx,cy,r,0,Math.PI*2);
+    hctx.strokeStyle=`rgba(0,212,255,${a})`; hctx.lineWidth=w; hctx.setLineDash(d); hctx.stroke(); hctx.setLineDash([]);
+  });
+  hctx.beginPath(); hctx.arc(cx,cy,125,hudAngle,hudAngle+Math.PI*1.2);
+  hctx.strokeStyle='rgba(0,212,255,.8)'; hctx.lineWidth=2; hctx.stroke();
+  hctx.beginPath(); hctx.arc(cx,cy,108,-hudAngle2,-hudAngle2+Math.PI*.8);
+  hctx.strokeStyle='rgba(0,136,204,.6)'; hctx.lineWidth=1.5; hctx.stroke();
+  for(let i=0;i<60;i++) {
+    const a=(i/60)*Math.PI*2-Math.PI/2;
+    const inn=i%5===0?130:135, x1=cx+Math.cos(a)*inn,y1=cy+Math.sin(a)*inn,x2=cx+Math.cos(a)*140,y2=cy+Math.sin(a)*140;
+    hctx.beginPath(); hctx.moveTo(x1,y1); hctx.lineTo(x2,y2);
+    hctx.strokeStyle=i%5===0?'rgba(0,212,255,.8)':'rgba(0,212,255,.3)';
+    hctx.lineWidth=i%5===0?1.5:.5; hctx.stroke();
+  }
+  const grad=hctx.createRadialGradient(cx,cy,0,cx,cy,18);
+  grad.addColorStop(0,'rgba(0,212,255,.6)'); grad.addColorStop(1,'rgba(0,212,255,0)');
+  hctx.beginPath(); hctx.arc(cx,cy,18,0,Math.PI*2); hctx.fillStyle=grad; hctx.fill();
+  hctx.strokeStyle='rgba(0,212,255,.2)'; hctx.lineWidth=.5;
+  hctx.beginPath(); hctx.moveTo(cx-140,cy); hctx.lineTo(cx+140,cy); hctx.stroke();
+  hctx.beginPath(); hctx.moveTo(cx,cy-140); hctx.lineTo(cx,cy+140); hctx.stroke();
+  hudAngle+=.008; hudAngle2+=.012;
+  requestAnimationFrame(drawHUD);
+}
+drawHUD();
+
+// ============================================================
+// RADAR
+// ============================================================
+const rctx = document.getElementById('radar-canvas').getContext('2d');
+let radarAngle=0;
+const radarBlips=[];
+setInterval(()=>{ if(radarBlips.length<8) radarBlips.push({x:Math.random()*120-60,y:Math.random()*120-60,age:0,maxAge:120+Math.random()*60}); },2000);
+function drawRadar() {
+  const cx=80,cy=80,R=68;
+  rctx.clearRect(0,0,160,160);
+  [18,36,54,68].forEach(r=>{rctx.beginPath();rctx.arc(cx,cy,r,0,Math.PI*2);rctx.strokeStyle='rgba(0,212,255,.2)';rctx.lineWidth=.5;rctx.stroke();});
+  rctx.strokeStyle='rgba(0,212,255,.12)';rctx.lineWidth=.5;
+  rctx.beginPath();rctx.moveTo(cx-R,cy);rctx.lineTo(cx+R,cy);rctx.stroke();
+  rctx.beginPath();rctx.moveTo(cx,cy-R);rctx.lineTo(cx,cy+R);rctx.stroke();
+  rctx.beginPath();rctx.moveTo(cx,cy);rctx.arc(cx,cy,R,radarAngle-.8,radarAngle);rctx.closePath();
+  rctx.fillStyle='rgba(0,212,255,.12)';rctx.fill();
+  rctx.beginPath();rctx.moveTo(cx,cy);rctx.lineTo(cx+Math.cos(radarAngle)*R,cy+Math.sin(radarAngle)*R);
+  rctx.strokeStyle='rgba(0,212,255,.8)';rctx.lineWidth=1.5;rctx.stroke();
+  radarBlips.forEach(b=>{
+    if(Math.hypot(b.x,b.y)<=R){
+      const al=1-b.age/b.maxAge;
+      rctx.beginPath();rctx.arc(cx+b.x,cy+b.y,3,0,Math.PI*2);rctx.fillStyle=`rgba(0,255,136,${al*.9})`;rctx.fill();
+    }
+    b.age++;
+  });
+  for(let i=radarBlips.length-1;i>=0;i--) if(radarBlips[i].age>radarBlips[i].maxAge) radarBlips.splice(i,1);
+  radarAngle+=.03; requestAnimationFrame(drawRadar);
+}
+drawRadar();
+
+// ============================================================
+// ACTIVITY LOG
+// ============================================================
+function addLog(msg) {
+  const n=new Date(),t=`${pad(n.getHours())}:${pad(n.getMinutes())}`;
+  const log=document.getElementById('activity-log');
+  const d=document.createElement('div'); d.className='log-item';
+  d.innerHTML=`<span class="log-time">${t}</span><span>${msg}</span>`;
+  log.prepend(d); while(log.children.length>20) log.removeChild(log.lastChild);
+}
+
+// ============================================================
+// AI CHAT
+// ============================================================
+const conversationHistory = [];
+let convCount = 0;
+
+async function sendToJarvis(userMsg) {
+  const log = document.getElementById('conv-log');
+  const userDiv = document.createElement('div');
+  userDiv.className='msg user';
+  userDiv.innerHTML=`<div class="sender">YOU //</div>${userMsg}`;
+  log.appendChild(userDiv);
+
+  const thinkDiv = document.createElement('div');
+  thinkDiv.className='msg jarvis';
+  thinkDiv.innerHTML=`<div class="sender">JARVIS //</div><span class="thinking">Processing</span>`;
+  log.appendChild(thinkDiv);
+  log.scrollTop = log.scrollHeight;
+
+  document.getElementById('hud-status').textContent='● PROCESSING...';
+  const t0=Date.now();
+  convCount++; document.getElementById('conv-count').textContent=convCount;
+  addLog(`CMD: ${userMsg.slice(0,35)}`);
+
+  conversationHistory.push({ role:'user', content: userMsg });
+
+  let reply = '';
+
+  if (OPENAI_KEY) {
+    try {
+      const res = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'Authorization': `Bearer ${OPENAI_KEY}` },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            { role:'system', content: `You are J.A.R.V.I.S — Just A Rather Very Intelligent System — Tony Stark's AI. Speak in a calm, sophisticated, slightly formal British tone. Be helpful, witty, and always composed. Refer to the user as "sir" occasionally. Keep responses concise (2-4 sentences). Current time: ${new Date().toLocaleString()}` },
+            ...conversationHistory.slice(-10)
+          ],
+          max_tokens: 300
+        })
+      });
+      const data = await res.json();
+      if (data.error) {
+        reply = `I apologize, sir. API error: ${data.error.message}`;
+      } else {
+        reply = data.choices?.[0]?.message?.content || 'Command received, sir.';
+      }
+    } catch(e) {
+      reply = 'I apologize, sir. There seems to be a connectivity issue with the AI core.';
+    }
+  } else {
+    // Fallback local responses
+    const fallbacks = [
+      `I've registered your query, sir. "${userMsg}" — however, to provide full AI responses, please configure an OpenAI API key.`,
+      `Understood, sir. I'm operating in limited mode. For full intelligence, configure your API key via the setup screen.`,
+      `Command acknowledged: "${userMsg}". My AI core requires an API key for full functionality, sir.`,
+      `Interesting query, sir. I'm processing with limited capacity. Please provide an OpenAI key for complete responses.`,
+    ];
+    reply = fallbacks[Math.floor(Math.random()*fallbacks.length)];
+    // Handle simple local commands
+    const q = userMsg.toLowerCase();
+    if (q.includes('time')) reply = `The current time is ${new Date().toLocaleTimeString()}, sir.`;
+    else if (q.includes('date')) reply = `Today is ${new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'})}, sir.`;
+    else if (q.includes('joke')) reply = `Why do scientists never trust atoms, sir? Because they make up everything.`;
+    else if (q.includes('hello')||q.includes('hi')) reply = `Good day, sir. All systems are operational and I am at your service.`;
+    else if (q.includes('status')) reply = `All systems nominal, sir. AI core at 95% capacity, security protocols active, radar online.`;
+    else if (q.includes('help')) reply = `I can answer questions, tell jokes, provide system status, fetch weather, and much more — especially with an OpenAI key configured, sir.`;
+  }
+
+  conversationHistory.push({ role:'assistant', content: reply });
+
+  thinkDiv.innerHTML=`<div class="sender">JARVIS //</div>${reply}`;
+  log.scrollTop=log.scrollHeight;
+
+  const elapsed=Date.now()-t0;
+  document.getElementById('resp-time').textContent=elapsed+'ms';
+  document.getElementById('hud-status').textContent='● SYSTEM READY';
+  addLog(`Reply sent (${elapsed}ms)`);
+  speak(reply);
+}
+
+// ============================================================
+// TEXT TO SPEECH
+// ============================================================
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text.replace(/[*_`#]/g,''));
+  utt.rate=0.92; utt.pitch=0.85; utt.volume=1;
+  const voices=window.speechSynthesis.getVoices();
+  const v=voices.find(v=>v.name.includes('Daniel')||v.name.includes('Google UK')||v.name.includes('en-GB'))||voices.find(v=>v.lang.startsWith('en'));
+  if(v) utt.voice=v;
+  window.speechSynthesis.speak(utt);
+  document.getElementById('voice-mode').textContent='SPEAKING';
+  document.getElementById('voice-sub').textContent='jarvis is talking...';
+  utt.onend=()=>{ document.getElementById('voice-mode').textContent='READY'; document.getElementById('voice-sub').textContent='click mic to activate'; };
+}
+window.speechSynthesis && window.speechSynthesis.getVoices();
+if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
+
+// ============================================================
+// VOICE INPUT
+// ============================================================
+let recognition=null, isListening=false;
+function setupSR() {
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ document.getElementById('mic-label').textContent='USE CHROME FOR VOICE'; return null; }
+  const rec=new SR();
+  rec.continuous=false; rec.interimResults=true; rec.lang='en-US';
+  rec.onstart=()=>{
+    isListening=true;
+    document.getElementById('mic-btn').classList.add('listening');
+    document.getElementById('mic-btn').textContent='🔴';
+    document.getElementById('mic-label').textContent='LISTENING... SPEAK NOW';
+    document.getElementById('voice-mode').textContent='LISTENING';
+    document.getElementById('hud-status').textContent='● VOICE INPUT ACTIVE';
+    addLog('Voice input started');
+  };
+  rec.onresult=e=>{
+    const t=Array.from(e.results).map(r=>r[0].transcript).join('');
+    document.getElementById('text-input').value=t;
+    if(e.results[e.results.length-1].isFinal){ sendToJarvis(t); document.getElementById('text-input').value=''; }
+  };
+  rec.onend=()=>{
+    isListening=false;
+    document.getElementById('mic-btn').classList.remove('listening');
+    document.getElementById('mic-btn').textContent='🎤';
+    document.getElementById('mic-label').textContent='CLICK MIC TO SPEAK';
+    document.getElementById('voice-mode').textContent='READY';
+    document.getElementById('hud-status').textContent='● SYSTEM READY';
+  };
+  rec.onerror=e=>{ addLog(`Voice error: ${e.error}`); rec.onend(); };
+  return rec;
+}
+recognition=setupSR();
+
+document.getElementById('mic-btn').addEventListener('click',()=>{
+  if(!recognition){ alert('Use Chrome or Edge for voice support.'); return; }
+  isListening ? recognition.stop() : recognition.start();
+});
+
+// ============================================================
+// TEXT INPUT
+// ============================================================
+document.getElementById('send-btn').onclick=()=>{
+  const v=document.getElementById('text-input').value.trim();
+  if(v){ sendToJarvis(v); document.getElementById('text-input').value=''; }
+};
+document.getElementById('text-input').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){ const v=e.target.value.trim(); if(v){ sendToJarvis(v); e.target.value=''; } }
+});
+function quickCmd(cmd){ sendToJarvis(cmd); }
+
+// Init logs
+setTimeout(()=>addLog('HUD canvas initialized'),500);
+setTimeout(()=>addLog('Voice module ready'),1000);
+setTimeout(()=>addLog('Weather data fetching'),1500);
+setTimeout(()=>addLog('All systems nominal'),2000);
+</script>
+</body>
+</html>
