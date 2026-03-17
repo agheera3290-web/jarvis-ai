@@ -7,158 +7,194 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-:root{--blue:#00d4ff;--blue2:#0088cc;--darker:#000510;--green:#00ff88;--orange:#ff8800;--purple:#aa44ff;
-  --glow:0 0 10px #00d4ff,0 0 20px #00d4ff44;}
+:root{--blue:#00d4ff;--blue2:#0088cc;--dark:#000510;--green:#00ff88;--orange:#ff8800;--purple:#aa44ff;--red:#ff4466;
+  --glow:0 0 10px #00d4ff,0 0 20px #00d4ff44;--pglow:0 0 10px #aa44ff,0 0 20px #aa44ff44;}
 html,body{height:100%;width:100%;overflow:hidden;}
-body{background:var(--darker);color:var(--blue);font-family:'Share Tech Mono',monospace;position:relative;user-select:none;}
+body{background:var(--dark);color:var(--blue);font-family:'Share Tech Mono',monospace;position:relative;user-select:none;}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
-body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.10) 2px,rgba(0,0,0,0.10) 4px);pointer-events:none;z-index:998;}
 
-/* NAV TABS */
-.nav-tabs{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;height:44px;background:rgba(0,5,20,0.97);border-bottom:1px solid var(--blue2);}
-.nav-tab{flex:1;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;cursor:pointer;transition:all .2s;color:var(--blue2);border-right:1px solid rgba(0,212,255,0.15);}
-.nav-tab:last-child{border-right:none;}
-.nav-tab.active{color:var(--blue);background:rgba(0,212,255,0.1);border-bottom:2px solid var(--blue);text-shadow:var(--glow);}
-.nav-tab:hover{color:var(--blue);background:rgba(0,212,255,0.06);}
+/* ── NAV ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;height:42px;background:rgba(0,3,15,.97);border-bottom:1px solid rgba(0,212,255,0.2);}
+.ntab{flex:1;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;color:rgba(0,212,255,0.4);border-right:1px solid rgba(0,212,255,0.1);transition:all .2s;}
+.ntab:last-child{border-right:none;}
+.ntab.active{color:var(--blue);background:rgba(0,212,255,0.08);border-bottom:2px solid var(--blue);}
+.ntab:hover{color:var(--blue);background:rgba(0,212,255,0.05);}
 
-/* PAGES */
-.page{position:fixed;inset:44px 0 0 0;display:none;overflow:hidden;}
+/* ── PAGES ── */
+.page{position:fixed;inset:42px 0 0 0;display:none;overflow:hidden;}
 .page.active{display:flex;}
 
-/* ═══ JARVIS PAGE ═══ */
-#jarvis-page{flex-direction:column;}
-.jcontainer{position:relative;z-index:1;width:100%;height:100%;display:grid;grid-template-columns:200px 1fr 200px;grid-template-rows:1fr 100px;gap:6px;padding:6px;}
-.topbar2{display:flex;align-items:center;justify-content:space-between;padding:0 10px;height:40px;border-bottom:1px solid rgba(0,212,255,0.2);margin-bottom:4px;}
-.topbar-title{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;letter-spacing:6px;color:var(--blue);text-shadow:var(--glow);animation:flicker 4s infinite;}
-@keyframes flicker{0%,96%,100%{opacity:1}97%{opacity:.7}98%{opacity:1}99%{opacity:.8}}
-.topbar-info{display:flex;gap:12px;font-size:9px;color:var(--blue2);}
-.topbar-info .val{color:var(--blue);font-weight:bold;}
-.panel{border:1px solid rgba(0,212,255,0.25);background:rgba(0,15,35,0.88);padding:8px;position:relative;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));}
-.panel-title{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:3px;color:var(--blue2);text-transform:uppercase;border-bottom:1px solid rgba(0,212,255,0.15);padding-bottom:4px;margin-bottom:6px;}
-.left-panel{display:flex;flex-direction:column;gap:6px;}
-.stat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:9px;}
-.stat-bar{width:65px;height:3px;background:rgba(0,212,255,0.12);border-radius:2px;overflow:hidden;}
-.stat-fill{height:100%;background:var(--blue);transition:width 1.2s;}
-.weather-temp{font-family:'Orbitron',monospace;font-size:26px;font-weight:700;color:var(--blue);text-shadow:var(--glow);text-align:center;margin:4px 0;}
-.center-panel{display:flex;flex-direction:column;align-items:center;gap:4px;overflow:hidden;}
-.hud-wrapper{position:relative;width:220px;height:220px;flex-shrink:0;}
-.hud-canvas{position:absolute;inset:0;}
-.hud-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;}
-.hud-clock{font-family:'Orbitron',monospace;font-size:22px;font-weight:700;color:var(--blue);text-shadow:var(--glow);letter-spacing:3px;}
-.hud-date{font-size:8px;color:var(--blue2);letter-spacing:2px;text-transform:uppercase;}
-.hud-status{font-size:7px;color:var(--blue);letter-spacing:2px;animation:blink 2s ease-in-out infinite;}
+/* ════════════════════════════════
+   JARVIS PAGE
+════════════════════════════════ */
+#jp{flex-direction:column;}
+.jgrid{position:relative;z-index:1;width:100%;height:100%;display:grid;grid-template-columns:195px 1fr 195px;grid-template-rows:1fr 98px;gap:5px;padding:5px;}
+.panel{border:1px solid rgba(0,212,255,0.22);background:rgba(0,12,30,0.9);padding:8px;position:relative;clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px));}
+.ptitle{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:var(--blue2);text-transform:uppercase;border-bottom:1px solid rgba(0,212,255,0.12);padding-bottom:4px;margin-bottom:6px;}
+.lpanel{display:flex;flex-direction:column;gap:5px;}
+.srow{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:9px;}
+.sbar{width:62px;height:3px;background:rgba(0,212,255,0.1);border-radius:2px;overflow:hidden;}
+.sfill{height:100%;background:var(--blue);transition:width 1.2s;}
+.wtemp{font-family:'Orbitron',monospace;font-size:24px;font-weight:700;color:var(--blue);text-shadow:var(--glow);text-align:center;margin:4px 0;}
+.cpanel{display:flex;flex-direction:column;align-items:center;gap:3px;overflow:hidden;}
+.hudw{position:relative;width:210px;height:210px;flex-shrink:0;}
+.hudc{position:absolute;inset:0;}
+.hudhc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;}
+.hudclk{font-family:'Orbitron',monospace;font-size:21px;font-weight:700;color:var(--blue);text-shadow:var(--glow);letter-spacing:3px;}
+.huddt{font-size:8px;color:var(--blue2);letter-spacing:2px;text-transform:uppercase;}
+.hudst{font-size:7px;color:var(--blue);letter-spacing:2px;animation:blink 2s ease-in-out infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes flicker{0%,96%,100%{opacity:1}97%{opacity:.7}98%{opacity:1}99%{opacity:.8}}
 
 /* MIC */
-.mic-zone{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;flex-shrink:0;}
-.waveform{display:flex;gap:2px;align-items:center;height:18px;justify-content:center;}
-.wave-bar{width:3px;background:var(--blue);border-radius:2px;animation:wav .65s ease-in-out infinite;}
-.wave-bar:nth-child(1){height:4px;animation-delay:0s}.wave-bar:nth-child(2){height:10px;animation-delay:.07s}
-.wave-bar:nth-child(3){height:16px;animation-delay:.14s}.wave-bar:nth-child(4){height:11px;animation-delay:.21s}
-.wave-bar:nth-child(5){height:5px;animation-delay:.28s}.wave-bar:nth-child(6){height:14px;animation-delay:.35s}
-.wave-bar:nth-child(7){height:7px;animation-delay:.42s}.wave-bar:nth-child(8){height:12px;animation-delay:.49s}
-.wave-bar:nth-child(9){height:4px;animation-delay:.56s}
+.mzone{display:flex;flex-direction:column;align-items:center;gap:3px;width:100%;flex-shrink:0;}
+.wform{display:flex;gap:2px;align-items:center;height:16px;justify-content:center;}
+.wbar{width:3px;background:var(--blue);border-radius:2px;animation:wav .65s ease-in-out infinite;}
+.wbar:nth-child(1){height:3px;animation-delay:0s}.wbar:nth-child(2){height:9px;animation-delay:.07s}
+.wbar:nth-child(3){height:15px;animation-delay:.14s}.wbar:nth-child(4){height:10px;animation-delay:.21s}
+.wbar:nth-child(5){height:5px;animation-delay:.28s}.wbar:nth-child(6){height:13px;animation-delay:.35s}
+.wbar:nth-child(7){height:7px;animation-delay:.42s}.wbar:nth-child(8){height:11px;animation-delay:.49s}
+.wbar:nth-child(9){height:4px;animation-delay:.56s}
 @keyframes wav{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
-.waveform.hidden{display:none;}
-.mic-btn{width:60px;height:60px;border-radius:50%;border:2px solid var(--blue);background:rgba(0,212,255,0.08);font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;box-shadow:var(--glow);outline:none;touch-action:manipulation;}
-.mic-btn.listening{background:rgba(0,212,255,0.26);border-color:#fff;animation:micglow .7s ease-in-out infinite alternate;}
-@keyframes micglow{from{box-shadow:0 0 12px #00d4ff,0 0 30px #00d4ff44}to{box-shadow:0 0 28px #00d4ff,0 0 70px #00d4ff88}}
-.mic-btn.speaking{background:rgba(0,255,136,0.16);border-color:var(--green);animation:speakglow .45s ease-in-out infinite alternate;}
-@keyframes speakglow{from{transform:scale(1)}to{transform:scale(1.1)}}
-.mic-btn.processing{border-color:#ffaa00;animation:procglow .9s ease-in-out infinite alternate;}
-@keyframes procglow{from{box-shadow:0 0 8px #ffaa00}to{box-shadow:0 0 24px #ffaa00}}
-.mic-label{font-size:9px;letter-spacing:1px;color:var(--blue2);text-align:center;flex-shrink:0;}
-.transcript-box{width:100%;min-height:22px;padding:4px 10px;background:rgba(0,212,255,0.03);border:1px solid rgba(0,212,255,0.14);font-size:10px;color:rgba(0,212,255,0.4);text-align:center;font-style:italic;clip-path:polygon(0 0,calc(100% - 5px) 0,100% 5px,100% 100%,5px 100%,0 calc(100% - 5px));transition:all .2s;}
-.transcript-box.active{color:var(--blue);border-color:var(--blue);background:rgba(0,212,255,0.07);font-style:normal;}
-.conv-log{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:4px;padding:3px;scrollbar-width:thin;scrollbar-color:var(--blue2) transparent;width:100%;}
-.msg{padding:5px 8px;border-left:2px solid;font-size:10px;line-height:1.5;animation:msgIn .3s ease;}
-@keyframes msgIn{from{opacity:0;transform:translateX(-7px)}to{opacity:1;transform:none}}
-.msg.user{border-color:var(--blue);background:rgba(0,212,255,0.04);color:var(--blue);}
-.msg.jarvis{border-color:var(--green);background:rgba(0,255,136,0.04);color:var(--green);}
-.msg .sender{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:2px;opacity:.6;margin-bottom:2px;}
-.input-row{display:flex;gap:5px;width:100%;flex-shrink:0;}
-.text-input{flex:1;background:rgba(0,15,35,0.9);border:1px solid rgba(0,212,255,0.3);color:var(--blue);font-family:'Share Tech Mono',monospace;font-size:11px;padding:6px 10px;outline:none;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));}
-.text-input::placeholder{color:rgba(0,212,255,0.22);}
-.send-btn{background:rgba(0,212,255,0.1);border:1px solid var(--blue);color:var(--blue);font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1px;padding:6px 10px;cursor:pointer;touch-action:manipulation;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));transition:all .2s;}
-.send-btn:hover,.send-btn:active{background:rgba(0,212,255,0.24);}
-.right-panel{display:flex;flex-direction:column;gap:6px;}
-.log-item{font-size:8px;color:var(--blue2);padding:2px 0;border-bottom:1px solid rgba(0,212,255,0.07);display:flex;gap:5px;}
-.log-item .log-time{color:var(--blue);opacity:.5;white-space:nowrap;}
-.bottom-bar{grid-column:1/-1;display:flex;gap:5px;}
-.bm{flex:1;border:1px solid rgba(0,212,255,0.18);background:rgba(0,15,35,0.8);padding:6px 8px;display:flex;flex-direction:column;justify-content:center;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));}
-.bm-label{font-size:7px;letter-spacing:2px;color:var(--blue2);text-transform:uppercase;margin-bottom:2px;}
-.bm-val{font-family:'Orbitron',monospace;font-size:14px;color:var(--blue);text-shadow:var(--glow);}
-.corner{position:fixed;width:24px;height:24px;z-index:2;pointer-events:none;}
-.corner.tl{top:48px;left:4px;border-top:2px solid var(--blue);border-left:2px solid var(--blue);}
-.corner.tr{top:48px;right:4px;border-top:2px solid var(--blue);border-right:2px solid var(--blue);}
-.corner.bl{bottom:4px;left:4px;border-bottom:2px solid var(--blue);border-left:2px solid var(--blue);}
-.corner.br{bottom:4px;right:4px;border-bottom:2px solid var(--blue);border-right:2px solid var(--blue);}
+.wform.h{display:none;}
+.mbtn{width:56px;height:56px;border-radius:50%;border:2px solid var(--blue);background:rgba(0,212,255,0.07);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;box-shadow:var(--glow);outline:none;touch-action:manipulation;}
+.mbtn.L{background:rgba(0,212,255,0.24);border-color:#fff;animation:mg .7s ease-in-out infinite alternate;}
+@keyframes mg{from{box-shadow:0 0 10px #00d4ff,0 0 25px #00d4ff33}to{box-shadow:0 0 24px #00d4ff,0 0 60px #00d4ff77}}
+.mbtn.S{background:rgba(0,255,136,0.15);border-color:var(--green);animation:sg .45s ease-in-out infinite alternate;}
+@keyframes sg{from{transform:scale(1)}to{transform:scale(1.1)}}
+.mbtn.P{border-color:#ffaa00;animation:pg .9s ease-in-out infinite alternate;}
+@keyframes pg{from{box-shadow:0 0 7px #ffaa00}to{box-shadow:0 0 22px #ffaa00}}
+.mlbl{font-size:8px;letter-spacing:1px;color:var(--blue2);text-align:center;flex-shrink:0;}
+.tbox{width:100%;min-height:20px;padding:3px 9px;background:rgba(0,212,255,0.02);border:1px solid rgba(0,212,255,0.12);font-size:9px;color:rgba(0,212,255,0.4);text-align:center;font-style:italic;transition:all .2s;}
+.tbox.on{color:var(--blue);border-color:var(--blue);background:rgba(0,212,255,0.06);font-style:normal;}
+.clog{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:3px;padding:3px;scrollbar-width:thin;scrollbar-color:var(--blue2) transparent;width:100%;}
+.msg{padding:5px 7px;border-left:2px solid;font-size:10px;line-height:1.5;animation:mi .3s ease;}
+@keyframes mi{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+.msg.u{border-color:var(--blue);background:rgba(0,212,255,0.04);color:var(--blue);}
+.msg.j{border-color:var(--green);background:rgba(0,255,136,0.03);color:var(--green);}
+.msg .snd{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:2px;opacity:.55;margin-bottom:2px;}
+.irow{display:flex;gap:5px;width:100%;flex-shrink:0;}
+.tinput{flex:1;background:rgba(0,12,30,0.9);border:1px solid rgba(0,212,255,0.28);color:var(--blue);font-family:'Share Tech Mono',monospace;font-size:11px;padding:6px 9px;outline:none;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));}
+.tinput::placeholder{color:rgba(0,212,255,0.2);}
+.sbtn{background:rgba(0,212,255,0.09);border:1px solid var(--blue);color:var(--blue);font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1px;padding:6px 9px;cursor:pointer;touch-action:manipulation;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));transition:all .2s;}
+.sbtn:hover,.sbtn:active{background:rgba(0,212,255,0.22);}
+.rpanel{display:flex;flex-direction:column;gap:5px;}
+.litem{font-size:8px;color:var(--blue2);padding:2px 0;border-bottom:1px solid rgba(0,212,255,0.06);display:flex;gap:4px;}
+.ltime{color:var(--blue);opacity:.5;white-space:nowrap;}
+.bbar{grid-column:1/-1;display:flex;gap:5px;}
+.bm{flex:1;border:1px solid rgba(0,212,255,0.16);background:rgba(0,12,30,0.8);padding:6px 8px;display:flex;flex-direction:column;justify-content:center;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));}
+.bml{font-size:7px;letter-spacing:2px;color:var(--blue2);text-transform:uppercase;margin-bottom:2px;}
+.bmv{font-family:'Orbitron',monospace;font-size:13px;color:var(--blue);text-shadow:var(--glow);}
+.corner{position:fixed;width:22px;height:22px;z-index:2;pointer-events:none;}
+.corner.tl{top:46px;left:3px;border-top:2px solid var(--blue);border-left:2px solid var(--blue);}
+.corner.tr{top:46px;right:3px;border-top:2px solid var(--blue);border-right:2px solid var(--blue);}
+.corner.bl{bottom:3px;left:3px;border-bottom:2px solid var(--blue);border-left:2px solid var(--blue);}
+.corner.br{bottom:3px;right:3px;border-bottom:2px solid var(--blue);border-right:2px solid var(--blue);}
 
-/* ═══ RUDRA PAGE ═══ */
-#rudra-page{flex-direction:column;background:rgba(0,2,10,0.98);}
-.rudra-header{padding:12px 16px;border-bottom:1px solid var(--purple);display:flex;align-items:center;gap:12px;flex-shrink:0;}
-.rudra-title{font-family:'Orbitron',monospace;font-size:20px;font-weight:900;letter-spacing:6px;color:var(--purple);text-shadow:0 0 10px #aa44ff,0 0 20px #aa44ff44;}
-.rudra-sub{font-size:10px;color:rgba(170,68,255,0.6);letter-spacing:2px;}
-.rudra-tabs{display:flex;gap:0;padding:0 10px;flex-shrink:0;border-bottom:1px solid rgba(170,68,255,0.2);}
-.rtab{padding:8px 16px;font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:rgba(170,68,255,0.5);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;}
+/* ════════════════════════════════
+   RUDRA PAGE
+════════════════════════════════ */
+#rp{flex-direction:column;background:rgba(2,0,12,.98);}
+.rhdr{padding:8px 14px;border-bottom:1px solid rgba(170,68,255,0.25);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.rtitle{font-family:'Orbitron',monospace;font-size:17px;font-weight:900;letter-spacing:5px;color:var(--purple);text-shadow:var(--pglow);}
+.rsub{font-size:9px;color:rgba(170,68,255,0.5);letter-spacing:2px;}
+.rtabs{display:flex;padding:0 8px;flex-shrink:0;border-bottom:1px solid rgba(170,68,255,0.15);overflow-x:auto;}
+.rtab{padding:7px 14px;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1px;color:rgba(170,68,255,0.4);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
 .rtab.active{color:var(--purple);border-bottom-color:var(--purple);}
 .rtab:hover{color:var(--purple);}
-.rudra-body{flex:1;overflow:hidden;display:flex;flex-direction:column;}
-.rtab-content{display:none;flex:1;overflow-y:auto;padding:12px;flex-direction:column;gap:10px;}
-.rtab-content.active{display:flex;}
+.rbody{flex:1;overflow:hidden;position:relative;}
+.rpage{display:none;position:absolute;inset:0;overflow-y:auto;padding:10px;flex-direction:column;gap:8px;}
+.rpage.active{display:flex;}
 
-/* RUDRA CARDS */
-.rcard{border:1px solid rgba(170,68,255,0.25);background:rgba(10,0,30,0.9);padding:12px;border-radius:2px;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));animation:cardIn .3s ease;}
-@keyframes cardIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.rcard-title{font-family:'Orbitron',monospace;font-size:11px;color:var(--purple);margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;}
-.rcard-meta{font-size:9px;color:rgba(170,68,255,0.5);margin-bottom:6px;}
-.rcard-body{font-size:10px;color:rgba(200,200,255,0.8);line-height:1.6;}
-.rcard-actions{display:flex;gap:6px;margin-top:8px;}
-.raction{background:rgba(170,68,255,0.1);border:1px solid rgba(170,68,255,0.3);color:var(--purple);font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1px;padding:4px 8px;cursor:pointer;transition:all .2s;}
-.raction:hover{background:rgba(170,68,255,0.25);}
-.raction.danger{border-color:rgba(255,60,60,0.4);color:#ff6060;}
-.raction.danger:hover{background:rgba(255,60,60,0.15);}
-.raction.success{border-color:rgba(0,255,136,0.4);color:var(--green);}
+/* Cards */
+.rcard{border:1px solid rgba(170,68,255,0.2);background:rgba(8,0,25,0.92);padding:11px;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));animation:ci .3s ease;}
+@keyframes ci{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.rct{font-family:'Orbitron',monospace;font-size:11px;color:var(--purple);margin-bottom:3px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
+.rcm{font-size:9px;color:rgba(170,68,255,0.45);margin-bottom:5px;}
+.rcb{font-size:10px;color:rgba(210,190,255,0.8);line-height:1.6;}
+.rca{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;}
+.ra{background:rgba(170,68,255,0.08);border:1px solid rgba(170,68,255,0.28);color:var(--purple);font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1px;padding:3px 7px;cursor:pointer;transition:all .2s;}
+.ra:hover{background:rgba(170,68,255,0.22);}
+.ra.del{border-color:rgba(255,60,60,0.35);color:#ff6060;}
+.ra.del:hover{background:rgba(255,60,60,0.12);}
+.ra.ok{border-color:rgba(0,255,136,0.35);color:var(--green);}
+.ra.ok:hover{background:rgba(0,255,136,0.1);}
+.ra.ai{border-color:rgba(0,212,255,0.4);color:var(--blue);}
+.ra.ai:hover{background:rgba(0,212,255,0.12);}
 
-/* ADD FORM */
-.radd-form{border:1px solid rgba(170,68,255,0.2);background:rgba(5,0,20,0.95);padding:12px;display:flex;flex-direction:column;gap:8px;flex-shrink:0;}
-.radd-form input,.radd-form textarea,.radd-form select{background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:rgba(200,180,255,0.9);font-family:'Share Tech Mono',monospace;font-size:11px;padding:7px 10px;outline:none;width:100%;resize:vertical;}
-.radd-form input::placeholder,.radd-form textarea::placeholder{color:rgba(170,68,255,0.3);}
-.radd-form textarea{min-height:60px;}
-.form-row{display:flex;gap:8px;}
-.form-row>*{flex:1;}
-.radd-btn{background:rgba(170,68,255,0.15);border:1px solid var(--purple);color:var(--purple);font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;padding:8px;cursor:pointer;transition:all .2s;align-self:flex-end;}
-.radd-btn:hover{background:rgba(170,68,255,0.3);}
-.section-title{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:rgba(170,68,255,0.7);padding:4px 0;border-bottom:1px solid rgba(170,68,255,0.15);margin-bottom:4px;}
-.empty-state{text-align:center;padding:30px;color:rgba(170,68,255,0.4);font-size:11px;letter-spacing:1px;}
-.progress-bar{height:4px;background:rgba(170,68,255,0.15);border-radius:2px;overflow:hidden;margin-top:6px;}
-.progress-fill{height:100%;background:var(--purple);transition:width .5s;}
-.tag{display:inline-block;padding:2px 6px;border:1px solid;font-size:8px;letter-spacing:1px;margin-right:4px;border-radius:1px;}
-.tag.work{border-color:#00aaff;color:#00aaff;}
-.tag.study{border-color:#ffaa00;color:#ffaa00;}
-.tag.personal{border-color:#00ff88;color:#00ff88;}
-.tag.health{border-color:#ff6688;color:#ff6688;}
-.tag.other{border-color:#aaaaaa;color:#aaaaaa;}
-.completed-item .rcard-title{text-decoration:line-through;opacity:.5;}
-.jarvis-generate{background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.3);padding:10px;display:flex;gap:8px;align-items:center;flex-shrink:0;}
-.jarvis-generate input{flex:1;background:transparent;border:none;color:var(--blue);font-family:'Share Tech Mono',monospace;font-size:11px;outline:none;}
-.jarvis-generate input::placeholder{color:rgba(0,212,255,0.3);}
-.jarvis-generate button{background:rgba(0,212,255,0.15);border:1px solid var(--blue);color:var(--blue);font-family:'Orbitron',monospace;font-size:8px;padding:6px 10px;cursor:pointer;white-space:nowrap;}
-.ai-badge{font-size:8px;color:var(--blue);background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);padding:2px 6px;margin-left:8px;}
+/* Forms */
+.rform{border:1px solid rgba(170,68,255,0.15);background:rgba(5,0,18,0.95);padding:11px;display:flex;flex-direction:column;gap:7px;flex-shrink:0;}
+.rform input,.rform textarea,.rform select{background:rgba(170,68,255,0.05);border:1px solid rgba(170,68,255,0.22);color:rgba(200,175,255,0.9);font-family:'Share Tech Mono',monospace;font-size:11px;padding:6px 9px;outline:none;width:100%;resize:vertical;}
+.rform input:focus,.rform textarea:focus{border-color:var(--purple);}
+.rform input::placeholder,.rform textarea::placeholder{color:rgba(170,68,255,0.28);}
+.rform textarea{min-height:56px;}
+.frow{display:flex;gap:7px;}
+.frow>*{flex:1;}
+.stitle{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:rgba(170,68,255,0.6);padding:3px 0;border-bottom:1px solid rgba(170,68,255,0.12);margin-bottom:3px;}
+.abtn{background:rgba(170,68,255,0.12);border:1px solid var(--purple);color:var(--purple);font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1px;padding:7px;cursor:pointer;transition:all .2s;}
+.abtn:hover{background:rgba(170,68,255,0.28);}
+.abtn:disabled{opacity:.4;cursor:not-allowed;}
+.empty{text-align:center;padding:24px;color:rgba(170,68,255,0.35);font-size:11px;letter-spacing:1px;}
+
+/* AI bar */
+.aibar{background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.22);padding:8px 10px;display:flex;gap:7px;align-items:center;flex-shrink:0;}
+.aibar input{flex:1;background:transparent;border:none;color:var(--blue);font-family:'Share Tech Mono',monospace;font-size:11px;outline:none;}
+.aibar input::placeholder{color:rgba(0,212,255,0.28);}
+.aibar button{background:rgba(0,212,255,0.12);border:1px solid var(--blue);color:var(--blue);font-family:'Orbitron',monospace;font-size:8px;padding:6px 10px;cursor:pointer;white-space:nowrap;transition:all .2s;}
+.aibar button:hover{background:rgba(0,212,255,0.25);}
+.aibar button:disabled{opacity:.4;cursor:not-allowed;}
+
+/* Tags */
+.tag{display:inline-block;padding:1px 5px;border:1px solid;font-size:7px;letter-spacing:1px;margin-right:3px;}
+.tag.work{border-color:#00aaff;color:#00aaff;}.tag.study{border-color:#ffaa00;color:#ffaa00;}
+.tag.personal{border-color:#00ff88;color:#00ff88;}.tag.health{border-color:#ff6688;color:#ff6688;}
+.tag.other{border-color:#888;color:#888;}
+
+/* Progress bar */
+.pbar{height:3px;background:rgba(170,68,255,0.12);border-radius:2px;overflow:hidden;margin-top:5px;}
+.pfill{height:100%;background:var(--purple);transition:width .5s;}
+
+/* Schedule TABLE */
+.sched-table{width:100%;border-collapse:collapse;font-size:10px;}
+.sched-table th{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1px;color:var(--purple);padding:6px 8px;border-bottom:1px solid rgba(170,68,255,0.25);text-align:left;background:rgba(170,68,255,0.06);}
+.sched-table td{padding:7px 8px;border-bottom:1px solid rgba(170,68,255,0.1);color:rgba(210,190,255,0.85);vertical-align:middle;}
+.sched-table tr:hover td{background:rgba(170,68,255,0.05);}
+.sched-table tr.done td{opacity:.45;text-decoration:line-through;}
+.tact{display:flex;gap:4px;}
+.tact button{background:none;border:1px solid rgba(170,68,255,0.25);color:var(--purple);font-family:'Orbitron',monospace;font-size:7px;padding:2px 5px;cursor:pointer;}
+.tact button.d{border-color:rgba(255,60,60,0.3);color:#ff6060;}
+.tact button:hover{background:rgba(170,68,255,0.15);}
+.tact button.d:hover{background:rgba(255,60,60,0.1);}
+
+/* Progress chart */
+.prog-chart{display:flex;flex-direction:column;gap:6px;padding:4px 0;}
+.prog-row{display:flex;align-items:center;gap:8px;font-size:10px;}
+.prog-label{width:110px;color:rgba(210,190,255,0.7);flex-shrink:0;font-size:9px;}
+.prog-track{flex:1;height:8px;background:rgba(170,68,255,0.1);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:4px;transition:width .6s;}
+.prog-pct{width:35px;text-align:right;color:var(--purple);font-size:9px;flex-shrink:0;}
+
+/* Agheera section */
+.agheera-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+/* EDIT MODAL */
+#emod{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:9999;align-items:center;justify-content:center;}
+.ebox{background:rgba(4,0,18,0.99);border:1px solid var(--purple);padding:18px;width:92%;max-width:480px;max-height:82vh;overflow-y:auto;}
+.etitle{font-family:'Orbitron',monospace;font-size:11px;color:var(--purple);margin-bottom:10px;letter-spacing:2px;}
+.ebox input,.ebox textarea,.ebox select{background:rgba(170,68,255,0.05);border:1px solid rgba(170,68,255,0.22);color:rgba(200,175,255,0.9);font-family:'Share Tech Mono',monospace;font-size:11px;padding:6px 9px;outline:none;width:100%;margin-bottom:7px;resize:vertical;}
+.ebox textarea{min-height:70px;}
 
 /* MOBILE */
 @media(max-width:700px){
-  .jcontainer{grid-template-columns:1fr;grid-template-rows:1fr auto;padding:4px;gap:4px;}
-  .left-panel,.right-panel{display:none;}
-  .center-panel{justify-content:flex-start;padding:4px 2px;}
-  .hud-wrapper{width:160px;height:160px;}
-  .hud-clock{font-size:16px;}
-  .bottom-bar{flex-wrap:wrap;}
+  .jgrid{grid-template-columns:1fr;grid-template-rows:1fr auto;padding:4px;gap:4px;}
+  .lpanel,.rpanel{display:none;}
+  .cpanel{padding:2px;}
+  .hudw{width:150px;height:150px;}
+  .hudclk{font-size:14px;}
+  .bbar{flex-wrap:wrap;}
   .bm{min-width:calc(50% - 3px);}
-  .nav-tab{font-size:9px;letter-spacing:1px;}
-  .rudra-tabs{overflow-x:auto;}
-  .rtab{white-space:nowrap;font-size:8px;padding:7px 12px;}
-  .form-row{flex-direction:column;}
+  .ntab{font-size:8px;letter-spacing:0px;}
+  .agheera-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -166,285 +202,335 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 <div class="corner tl"></div><div class="corner tr"></div>
 <div class="corner bl"></div><div class="corner br"></div>
 
-<!-- NAV TABS -->
-<div class="nav-tabs">
-  <div class="nav-tab active" onclick="switchPage('jarvis')">⚡ JARVIS</div>
-  <div class="nav-tab" onclick="switchPage('rudra')" id="rudra-tab">🔮 RUDRA</div>
+<!-- NAV -->
+<div class="nav">
+  <div class="ntab active" onclick="goPage('jp')">⚡ JARVIS</div>
+  <div class="ntab" onclick="goPage('rp')">🔮 RUDRA</div>
 </div>
 
-<!-- ══════════════════════════════════════ -->
-<!-- JARVIS PAGE -->
-<!-- ══════════════════════════════════════ -->
-<div class="page active" id="jarvis-page">
-<div class="jcontainer">
+<!-- ══════════════════════════════════
+     JARVIS PAGE
+══════════════════════════════════ -->
+<div class="page active" id="jp">
+<div class="jgrid">
   <!-- LEFT -->
-  <div class="left-panel">
+  <div class="lpanel">
     <div class="panel" style="flex:1">
-      <div class="panel-title">// System</div>
-      <div class="stat-row"><span>CPU</span><div class="stat-bar"><div class="stat-fill" id="cpu-bar" style="width:72%"></div></div><span id="cpu-val">72%</span></div>
-      <div class="stat-row"><span>RAM</span><div class="stat-bar"><div class="stat-fill" id="ram-bar" style="width:58%"></div></div><span id="ram-val">58%</span></div>
-      <div class="stat-row"><span>NET</span><div class="stat-bar"><div class="stat-fill" id="net-bar" style="width:88%"></div></div><span id="net-val">88%</span></div>
-      <div style="margin-top:8px;font-size:8px;color:var(--blue2);line-height:2.2">
-        <div>TEMP: <span style="color:var(--blue)" id="temp">38°C</span></div>
-        <div>UPTIME: <span style="color:var(--blue)" id="uptime">00:00:00</span></div>
-        <div>BATTERY: <span style="color:var(--blue)" id="battery-left">--%</span></div>
-        <div>CHARGING: <span style="color:var(--green)" id="charging-status">--</span></div>
+      <div class="ptitle">// System</div>
+      <div class="srow"><span>CPU</span><div class="sbar"><div class="sfill" id="cpu-bar" style="width:72%"></div></div><span id="cpu-val">72%</span></div>
+      <div class="srow"><span>RAM</span><div class="sbar"><div class="sfill" id="ram-bar" style="width:58%"></div></div><span id="ram-val">58%</span></div>
+      <div class="srow"><span>NET</span><div class="sbar"><div class="sfill" id="net-bar" style="width:88%"></div></div><span id="net-val">88%</span></div>
+      <div style="margin-top:7px;font-size:8px;color:var(--blue2);line-height:2.2">
+        <div>TEMP:<span style="color:var(--blue);margin-left:5px" id="temp">38°C</span></div>
+        <div>UPTIME:<span style="color:var(--blue);margin-left:5px" id="uptime">00:00:00</span></div>
+        <div>BATT:<span style="color:var(--blue);margin-left:5px" id="battery-left">--%</span></div>
+        <div>PWR:<span style="color:var(--green);margin-left:5px" id="charging-status">--</span></div>
       </div>
     </div>
     <div class="panel">
-      <div class="panel-title">// Weather</div>
-      <div class="weather-temp" id="w-temp">--°</div>
+      <div class="ptitle">// Weather</div>
+      <div class="wtemp" id="w-temp">--°</div>
       <div style="font-size:9px;color:var(--blue2);text-align:center" id="w-desc">LOADING...</div>
       <div style="margin-top:6px;font-size:8px;color:var(--blue2);line-height:2">
-        <div>LOC: <span style="color:var(--blue)" id="w-loc">...</span></div>
-        <div>HUM: <span style="color:var(--blue)" id="w-hum">--%</span></div>
-        <div>WIND: <span style="color:var(--blue)" id="w-wind">--</span></div>
+        <div>LOC:<span style="color:var(--blue);margin-left:4px" id="w-loc">...</span></div>
+        <div>HUM:<span style="color:var(--blue);margin-left:4px" id="w-hum">--%</span></div>
+        <div>WIND:<span style="color:var(--blue);margin-left:4px" id="w-wind">--</span></div>
       </div>
     </div>
   </div>
 
   <!-- CENTER -->
-  <div class="center-panel">
-    <div style="width:100%;flex-shrink:0">
-      <div class="topbar2">
-        <div style="font-size:8px;color:var(--blue2);letter-spacing:1px;">STARK INDUSTRIES</div>
-        <div class="topbar-title">J.A.R.V.I.S</div>
-        <div class="topbar-info">
-          <span>🔋<span class="val" id="battery-pct">--%</span></span>
-          <span id="top-time" class="val">--:--:--</span>
-        </div>
+  <div class="cpanel">
+    <div style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:2px 4px;flex-shrink:0">
+      <div style="font-family:'Orbitron',monospace;font-size:15px;font-weight:900;letter-spacing:5px;color:var(--blue);text-shadow:var(--glow);animation:flicker 4s infinite">J.A.R.V.I.S</div>
+      <div style="display:flex;gap:10px;font-size:9px;color:var(--blue2)">
+        <span>🔋<span style="color:var(--blue);font-weight:bold" id="battery-pct">--%</span></span>
+        <span style="color:var(--blue);font-weight:bold" id="top-time">--:--:--</span>
       </div>
     </div>
-    <div class="hud-wrapper">
-      <canvas id="hud-canvas" class="hud-canvas" width="220" height="220"></canvas>
-      <div class="hud-center">
-        <div class="hud-clock" id="hud-clock">00:00</div>
-        <div class="hud-date" id="hud-date">--- -- ----</div>
-        <div class="hud-status" id="hud-status">● SYSTEM READY</div>
+    <div class="hudw">
+      <canvas id="hud-canvas" class="hudc" width="210" height="210"></canvas>
+      <div class="hudhc">
+        <div class="hudclk" id="hud-clock">00:00</div>
+        <div class="huddt" id="hud-date">--- -- ----</div>
+        <div class="hudst" id="hud-status">● SYSTEM READY</div>
       </div>
     </div>
-    <div class="mic-zone">
-      <div class="waveform hidden" id="waveform">
-        <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
-        <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
-        <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+    <div class="mzone">
+      <div class="wform h" id="wform">
+        <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+        <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+        <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
       </div>
-      <button class="mic-btn" id="mic-btn">🎤</button>
-      <div class="mic-label" id="mic-label">TAP MIC TO SPEAK</div>
-      <div class="transcript-box" id="transcript-box">Tap mic and speak...</div>
+      <button class="mbtn" id="mic-btn">🎤</button>
+      <div class="mlbl" id="mic-label">TAP MIC TO SPEAK</div>
+      <div class="tbox" id="tbox">Tap mic and speak...</div>
     </div>
     <div class="panel" style="width:100%;flex:1;min-height:0;display:flex;flex-direction:column;">
-      <div class="panel-title">// Interface <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);margin:0 4px 1px;"></span><span style="font-size:7px;color:var(--green)">ACTIVE</span></div>
-      <div class="conv-log" id="conv-log">
-        <div class="msg jarvis"><div class="sender">JARVIS //</div>Good evening, sir. All systems operational. Tap mic to speak — I'll stop when you start talking.</div>
+      <div class="ptitle">// Interface <span style="display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);margin:0 4px 1px"></span><span style="font-size:7px;color:var(--green)">ACTIVE</span></div>
+      <div class="clog" id="clog">
+        <div class="msg j"><div class="snd">JARVIS //</div>Good evening, sir. Jarvis and Rudra are online. I stop talking the moment you speak.</div>
       </div>
     </div>
-    <div class="input-row">
-      <input class="text-input" id="text-input" placeholder="Type command..." autocomplete="off">
-      <button class="send-btn" id="send-btn">SEND</button>
+    <div class="irow">
+      <input class="tinput" id="tinput" placeholder="Type command, sir..." autocomplete="off">
+      <button class="sbtn" id="sendbtn">SEND</button>
     </div>
-    <div style="display:flex;flex-wrap:wrap;gap:4px;width:100%;flex-shrink:0;">
-      <button class="send-btn" style="flex:1;font-size:7px;padding:4px" onclick="quickCmd('What time is it?')">TIME</button>
-      <button class="send-btn" style="flex:1;font-size:7px;padding:4px" onclick="quickCmd('What is my battery?')">BATT</button>
-      <button class="send-btn" style="flex:1;font-size:7px;padding:4px" onclick="switchPage('rudra')">RUDRA</button>
-      <button class="send-btn" style="flex:1;font-size:7px;padding:4px" onclick="quickCmd('Tell me a joke')">JOKE</button>
+    <div style="display:flex;gap:4px;width:100%;flex-shrink:0">
+      <button class="sbtn" style="flex:1;font-size:7px;padding:4px" onclick="qcmd('What time is it?')">TIME</button>
+      <button class="sbtn" style="flex:1;font-size:7px;padding:4px" onclick="qcmd('What is my battery?')">BATT</button>
+      <button class="sbtn" style="flex:1;font-size:7px;padding:4px" onclick="goPage('rp')">RUDRA</button>
+      <button class="sbtn" style="flex:1;font-size:7px;padding:4px" onclick="qcmd('Tell me a joke')">JOKE</button>
     </div>
   </div>
 
   <!-- RIGHT -->
-  <div class="right-panel">
+  <div class="rpanel">
     <div class="panel" style="flex:1">
-      <div class="panel-title">// Activity Log</div>
-      <div id="activity-log" style="max-height:220px;overflow-y:auto;scrollbar-width:thin;">
-        <div class="log-item"><span class="log-time">INIT</span><span>Boot complete</span></div>
-        <div class="log-item"><span class="log-time">INIT</span><span>AI: LLaMA 70B online</span></div>
-        <div class="log-item"><span class="log-time">INIT</span><span>Voice engine ready</span></div>
+      <div class="ptitle">// Activity Log</div>
+      <div id="alog" style="max-height:220px;overflow-y:auto;scrollbar-width:thin">
+        <div class="litem"><span class="ltime">INIT</span><span>Boot complete</span></div>
+        <div class="litem"><span class="ltime">INIT</span><span>AI: LLaMA 70B online</span></div>
       </div>
     </div>
-    <div class="panel"><div class="panel-title">// Radar</div><div style="display:flex;justify-content:center;padding:3px"><canvas id="radar-canvas" width="155" height="155"></canvas></div></div>
-    <div class="panel"><div class="panel-title">// Quick</div>
+    <div class="panel"><div class="ptitle">// Radar</div><div style="display:flex;justify-content:center;padding:3px"><canvas id="radar-canvas" width="152" height="152"></canvas></div></div>
+    <div class="panel"><div class="ptitle">// Quick</div>
       <div style="display:flex;flex-wrap:wrap;gap:4px">
-        <button class="send-btn" style="flex:1;font-size:7px;padding:4px" onclick="quickCmd('What time is it?')">TIME</button>
-        <button class="send-btn" style="flex:1;font-size:7px;padding:4px" onclick="quickCmd('Tell me a joke')">JOKE</button>
-        <button class="send-btn" style="flex:1;font-size:7px;padding:4px" onclick="switchPage('rudra')">RUDRA</button>
-        <button class="send-btn" style="flex:1;font-size:7px;padding:4px" onclick="quickCmd('Open YouTube')">YT</button>
+        <button class="sbtn" style="flex:1;font-size:7px;padding:4px" onclick="qcmd('What time is it?')">TIME</button>
+        <button class="sbtn" style="flex:1;font-size:7px;padding:4px" onclick="qcmd('Tell me a joke')">JOKE</button>
+        <button class="sbtn" style="flex:1;font-size:7px;padding:4px" onclick="goPage('rp')">RUDRA</button>
+        <button class="sbtn" style="flex:1;font-size:7px;padding:4px" onclick="qcmd('Open YouTube')">YT</button>
       </div>
     </div>
   </div>
 
   <!-- BOTTOM -->
-  <div class="bottom-bar">
-    <div class="bm"><div class="bm-label">Chats</div><div class="bm-val" id="conv-count">0</div></div>
-    <div class="bm"><div class="bm-label">Response</div><div class="bm-val" id="resp-time" style="font-size:11px">--ms</div></div>
-    <div class="bm"><div class="bm-label">Battery</div><div class="bm-val" id="batt-metric" style="font-size:13px">--%</div></div>
-    <div class="bm"><div class="bm-label">Voice</div><div class="bm-val" id="voice-mode" style="font-size:11px">READY</div></div>
-    <div class="bm"><div class="bm-label">AI</div><div class="bm-val" style="font-size:9px;color:var(--green)">LLAMA 70B</div></div>
+  <div class="bbar">
+    <div class="bm"><div class="bml">Chats</div><div class="bmv" id="conv-count">0</div></div>
+    <div class="bm"><div class="bml">Response</div><div class="bmv" id="resp-time" style="font-size:10px">--ms</div></div>
+    <div class="bm"><div class="bml">Battery</div><div class="bmv" id="batt-metric" style="font-size:11px">--%</div></div>
+    <div class="bm"><div class="bml">Voice</div><div class="bmv" id="vmode" style="font-size:10px">READY</div></div>
+    <div class="bm"><div class="bml">AI</div><div class="bmv" style="font-size:8px;color:var(--green)">LLAMA 70B</div></div>
   </div>
 </div>
 </div>
 
-<!-- ══════════════════════════════════════ -->
-<!-- RUDRA PAGE -->
-<!-- ══════════════════════════════════════ -->
-<div class="page" id="rudra-page">
-  <div class="rudra-header">
-    <div>
-      <div class="rudra-title">RUDRA</div>
-      <div class="rudra-sub">PERSONAL COMMAND CENTER</div>
+<!-- ══════════════════════════════════
+     RUDRA PAGE
+══════════════════════════════════ -->
+<div class="page" id="rp">
+  <div style="display:flex;flex-direction:column;width:100%;height:100%">
+    <div class="rhdr">
+      <div>
+        <div class="rtitle">RUDRA</div>
+        <div class="rsub">PERSONAL COMMAND CENTER</div>
+      </div>
+      <div style="margin-left:auto;font-size:8px;color:rgba(170,68,255,0.4)">Say "open rudra" anytime</div>
     </div>
-    <div style="margin-left:auto;font-size:9px;color:rgba(170,68,255,0.5)">Say "open Rudra" anytime</div>
-  </div>
-
-  <div class="rudra-tabs">
-    <div class="rtab active" onclick="switchRudra('schedule')">📅 SCHEDULE</div>
-    <div class="rtab" onclick="switchRudra('goals')">🎯 GOALS</div>
-    <div class="rtab" onclick="switchRudra('study')">📚 STUDY</div>
-  </div>
-
-  <!-- ── SCHEDULE TAB ── -->
-  <div class="rudra-body">
-    <div class="rtab-content active" id="rudra-schedule">
-      <!-- AI Generate -->
-      <div class="jarvis-generate">
-        <span style="font-size:10px;color:var(--blue);white-space:nowrap;">🤖 AI:</span>
-        <input id="sched-ai-input" placeholder='e.g. "Make me a weekly study schedule" or "Plan my Monday"'>
-        <button onclick="aiGenerateSchedule()">GENERATE</button>
-      </div>
-      <!-- Add Form -->
-      <div class="radd-form">
-        <div class="section-title">+ ADD EVENT</div>
-        <input id="s-title" placeholder="Event title *">
-        <div class="form-row">
-          <input id="s-date" type="date">
-          <input id="s-start" type="time" placeholder="Start">
-          <input id="s-end" type="time" placeholder="End">
-        </div>
-        <div class="form-row">
-          <select id="s-cat">
-            <option value="work">Work</option>
-            <option value="study">Study</option>
-            <option value="personal">Personal</option>
-            <option value="health">Health</option>
-            <option value="other">Other</option>
-          </select>
-          <input id="s-notes" placeholder="Notes (optional)">
-        </div>
-        <button class="radd-btn" onclick="addSchedule()">ADD EVENT</button>
-      </div>
-      <div class="section-title">TODAY & UPCOMING</div>
-      <div id="schedule-list"><div class="empty-state">No events yet. Add one above or ask Jarvis to generate.</div></div>
+    <div class="rtabs">
+      <div class="rtab active" onclick="goRudra('schedule',0)">📅 SCHEDULE</div>
+      <div class="rtab" onclick="goRudra('goals',1)">🎯 GOALS</div>
+      <div class="rtab" onclick="goRudra('study',2)">📚 STUDY</div>
+      <div class="rtab" onclick="goRudra('agheera',3)">👤 AGHEERA</div>
+      <div class="rtab" onclick="goRudra('progress',4)">📊 PROGRESS</div>
     </div>
+    <div class="rbody">
 
-    <!-- ── GOALS TAB ── -->
-    <div class="rtab-content" id="rudra-goals">
-      <div class="jarvis-generate">
-        <span style="font-size:10px;color:var(--blue);white-space:nowrap;">🤖 AI:</span>
-        <input id="goal-ai-input" placeholder='e.g. "I want to become a web developer in 6 months"'>
-        <button onclick="aiGenerateGoals()">GENERATE</button>
-      </div>
-      <div class="radd-form">
-        <div class="section-title">+ ADD GOAL</div>
-        <input id="g-title" placeholder="Goal title *">
-        <input id="g-desc" placeholder="Description">
-        <div class="form-row">
-          <input id="g-deadline" type="date" placeholder="Deadline">
-          <input id="g-cat" placeholder="Category (fitness, career...)">
+      <!-- ── SCHEDULE ── -->
+      <div class="rpage active" id="r-schedule">
+        <div class="aibar">
+          <span style="font-size:9px;color:var(--blue);white-space:nowrap">🤖 Jarvis AI:</span>
+          <input id="sai" placeholder='e.g. "Plan my Monday" or "Make a weekly study schedule"'>
+          <button id="sai-btn" onclick="aiSched()">GENERATE</button>
         </div>
-        <button class="radd-btn" onclick="addGoal()">ADD GOAL</button>
+        <div class="rform">
+          <div class="stitle">+ ADD EVENT</div>
+          <input id="s-title" placeholder="Event title *">
+          <div class="frow">
+            <input id="s-date" type="date">
+            <input id="s-start" type="time">
+            <input id="s-end" type="time">
+          </div>
+          <div class="frow">
+            <select id="s-cat"><option value="work">Work</option><option value="study">Study</option><option value="personal">Personal</option><option value="health">Health</option><option value="other">Other</option></select>
+            <input id="s-notes" placeholder="Notes">
+          </div>
+          <button class="abtn" onclick="addSched()">ADD EVENT</button>
+        </div>
+        <div id="sched-wrap"></div>
       </div>
-      <div class="section-title">YOUR GOALS</div>
-      <div id="goals-list"><div class="empty-state">No goals yet. Add one or let Jarvis help you plan.</div></div>
-    </div>
 
-    <!-- ── STUDY TAB ── -->
-    <div class="rtab-content" id="rudra-study">
-      <div class="jarvis-generate">
-        <span style="font-size:10px;color:var(--blue);white-space:nowrap;">🤖 AI:</span>
-        <input id="study-ai-input" placeholder='e.g. "I want to learn Python from scratch" or "Make a timetable for React"'>
-        <button onclick="aiGenerateStudy()">GENERATE PLAN</button>
-      </div>
-      <div class="radd-form">
-        <div class="section-title">+ ADD TOPIC</div>
-        <div class="form-row">
-          <input id="st-subject" placeholder="Subject (e.g. Python)">
-          <input id="st-topic" placeholder="Topic (e.g. Functions)">
+      <!-- ── GOALS ── -->
+      <div class="rpage" id="r-goals">
+        <div class="aibar">
+          <span style="font-size:9px;color:var(--blue);white-space:nowrap">🤖 Jarvis AI:</span>
+          <input id="gai" placeholder='e.g. "I want to become a web developer in 6 months"'>
+          <button id="gai-btn" onclick="aiGoals()">GENERATE</button>
         </div>
-        <div class="form-row">
-          <select id="st-level"><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select>
-          <select id="st-status"><option value="not started">Not Started</option><option value="in progress">In Progress</option><option value="completed">Completed</option></select>
+        <div class="rform">
+          <div class="stitle">+ ADD GOAL</div>
+          <input id="g-title" placeholder="Goal title *">
+          <input id="g-desc" placeholder="Description">
+          <div class="frow">
+            <input id="g-deadline" type="date">
+            <input id="g-cat" placeholder="Category">
+          </div>
+          <button class="abtn" onclick="addGoal()">ADD GOAL</button>
         </div>
-        <textarea id="st-notes" placeholder="Notes..."></textarea>
-        <button class="radd-btn" onclick="addStudyTopic()">ADD TOPIC</button>
+        <div id="goals-wrap"></div>
       </div>
-      <div class="section-title">STUDY PLAN</div>
-      <div id="study-list"><div class="empty-state">No topics yet. Add one or ask Jarvis to build your study plan.</div></div>
-    </div>
+
+      <!-- ── STUDY ── -->
+      <div class="rpage" id="r-study">
+        <div class="aibar">
+          <span style="font-size:9px;color:var(--blue);white-space:nowrap">🤖 Jarvis AI:</span>
+          <input id="stai" placeholder='e.g. "I want to learn Python from scratch"'>
+          <button id="stai-btn" onclick="aiStudy()">GENERATE PLAN</button>
+        </div>
+        <div class="rform">
+          <div class="stitle">+ ADD TOPIC</div>
+          <div class="frow">
+            <input id="st-subject" placeholder="Subject *">
+            <input id="st-topic" placeholder="Topic *">
+          </div>
+          <div class="frow">
+            <select id="st-level"><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select>
+            <select id="st-status"><option value="not started">Not Started</option><option value="in progress">In Progress</option><option value="completed">Completed</option></select>
+          </div>
+          <textarea id="st-notes" placeholder="Notes..."></textarea>
+          <button class="abtn" onclick="addStudy()">ADD TOPIC</button>
+        </div>
+        <div id="study-wrap"></div>
+      </div>
+
+      <!-- ── AGHEERA ── -->
+      <div class="rpage" id="r-agheera">
+        <div style="font-size:10px;color:rgba(170,68,255,0.6);padding:4px 0 8px;line-height:1.8">
+          Fill in your daily routine and learning goals below. Jarvis reads this to auto-generate your schedule.
+        </div>
+        <div class="agheera-grid">
+          <div class="rform" style="flex-direction:column">
+            <div class="stitle">📋 MY DAILY ROUTINE</div>
+            <textarea id="ag-routine" placeholder="e.g.&#10;9AM-5PM: College&#10;6-7PM: Pooja / prayer&#10;8-9PM: Online class&#10;After 9PM: Free time&#10;&#10;Write your typical day..." style="min-height:200px"></textarea>
+            <button class="abtn" onclick="saveAgheera()">SAVE PROFILE</button>
+          </div>
+          <div class="rform" style="flex-direction:column">
+            <div class="stitle">🎯 WHAT I WANT TO LEARN</div>
+            <textarea id="ag-goals" placeholder="e.g.&#10;Web Development in 3 months&#10;Python Programming in 4 months&#10;Cyber Security in 6 months&#10;&#10;List everything you want to learn..." style="min-height:200px"></textarea>
+            <div style="margin-top:4px">
+              <div class="stitle" style="margin-bottom:6px">⚙️ AI PREFERENCES</div>
+              <input id="ag-pref" placeholder="e.g. prefer evenings, no study on Sunday...">
+            </div>
+          </div>
+        </div>
+        <div class="aibar" style="margin-top:4px">
+          <span style="font-size:9px;color:var(--blue);white-space:nowrap">🤖 Generate from my profile:</span>
+          <input id="ag-ai" placeholder='e.g. "Plan my full week" or "Make today\'s schedule"'>
+          <button id="ag-btn" onclick="aiFromAgheera()">GENERATE</button>
+        </div>
+        <div id="ag-status" style="font-size:10px;color:var(--green);padding:4px;display:none"></div>
+      </div>
+
+      <!-- ── PROGRESS ── -->
+      <div class="rpage" id="r-progress">
+        <div class="aibar">
+          <span style="font-size:9px;color:var(--blue);white-space:nowrap">🤖 Jarvis AI:</span>
+          <input id="pai" placeholder='e.g. "Analyze my progress and suggest improvements"'>
+          <button id="pai-btn" onclick="aiProgress()">ANALYZE</button>
+        </div>
+        <div class="rform">
+          <div class="stitle">+ LOG PROGRESS</div>
+          <div class="frow">
+            <input id="pr-subject" placeholder="Subject *">
+            <input id="pr-topic" placeholder="Topic">
+          </div>
+          <div class="frow">
+            <select id="pr-type"><option value="test">Test</option><option value="assignment">Assignment</option><option value="quiz">Quiz</option><option value="project">Project</option><option value="self-assessment">Self Assessment</option></select>
+            <input id="pr-date" type="date">
+          </div>
+          <div class="frow">
+            <input id="pr-score" type="number" placeholder="Score (e.g. 85)">
+            <input id="pr-max" type="number" placeholder="Max score (e.g. 100)">
+          </div>
+          <textarea id="pr-notes" placeholder="Notes / what I learned..."></textarea>
+          <button class="abtn" onclick="addProgress()">LOG ENTRY</button>
+        </div>
+        <div id="prog-chart-wrap"></div>
+        <div id="progress-wrap"></div>
+      </div>
+
+    </div><!-- end rbody -->
   </div>
 </div>
 
 <!-- EDIT MODAL -->
-<div id="edit-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;">
-  <div style="background:rgba(5,0,20,0.98);border:1px solid var(--purple);padding:20px;width:90%;max-width:480px;max-height:80vh;overflow-y:auto;">
-    <div style="font-family:'Orbitron',monospace;font-size:12px;color:var(--purple);margin-bottom:12px;letter-spacing:2px;">EDIT ITEM</div>
-    <div id="edit-form-body"></div>
-    <div style="display:flex;gap:8px;margin-top:12px;">
-      <button class="radd-btn" onclick="saveEdit()" style="flex:1;">SAVE</button>
-      <button class="radd-btn" onclick="closeEdit()" style="flex:1;border-color:rgba(170,68,255,0.3);color:rgba(170,68,255,0.5);">CANCEL</button>
+<div id="emod">
+  <div class="ebox">
+    <div class="etitle" id="etitle">EDIT</div>
+    <div id="eform"></div>
+    <div style="display:flex;gap:7px;margin-top:10px">
+      <button class="abtn" style="flex:1" onclick="doSave()">SAVE CHANGES</button>
+      <button class="abtn" style="flex:1;border-color:rgba(170,68,255,0.25);color:rgba(170,68,255,0.4)" onclick="closeEdit()">CANCEL</button>
     </div>
   </div>
 </div>
 
 <script>
 'use strict';
-// ════════════════════════════════════════════
-// APIS
-// ════════════════════════════════════════════
-const JARVIS_API  = 'https://rudra-72e3e6a9.base44.app/functions/jarvisChat';
-const RUDRA_API   = 'https://rudra-72e3e6a9.base44.app/functions/rudraData';
+const JAPI  = 'https://rudra-72e3e6a9.base44.app/functions/jarvisChat';
+const DAPI  = 'https://rudra-72e3e6a9.base44.app/functions/rudraData';
 
-async function rudraReq(action, entity, data, id){
-  const r = await fetch(RUDRA_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,entity,data,id})});
-  return r.json();
+// ════════════════════════════════════════
+// DB
+// ════════════════════════════════════════
+async function db(action,entity,data,id){
+  try{
+    const r=await fetch(DAPI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,entity,data,id})});
+    return r.json();
+  }catch(e){return{ok:false,error:e.message};}
 }
 
-// ════════════════════════════════════════════
-// PAGE SWITCHING
-// ════════════════════════════════════════════
-function switchPage(page){
+// ════════════════════════════════════════
+// PAGE NAV
+// ════════════════════════════════════════
+function goPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById(page+'-page').classList.add('active');
-  document.querySelectorAll('.nav-tab').forEach(t=>{ if(t.textContent.toLowerCase().includes(page)) t.classList.add('active'); });
-  if(page==='rudra') loadAllRudra();
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx={'jp':0,'rp':1};
+  document.querySelectorAll('.ntab')[idx[id]]?.classList.add('active');
+  if(id==='rp') loadAllRudra();
 }
-function switchRudra(tab){
+function goRudra(name,idx){
   document.querySelectorAll('.rtab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.rtab-content').forEach(t=>t.classList.remove('active'));
-  document.getElementById('rudra-'+tab).classList.add('active');
-  event.target.classList.add('active');
+  document.querySelectorAll('.rpage').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.rtab')[idx].classList.add('active');
+  document.getElementById('r-'+name).classList.add('active');
+  if(name==='agheera') loadAgheera();
+  if(name==='progress'){loadProgress();}
 }
 
-// ════════════════════════════════════════════
+// ════════════════════════════════════════
 // BATTERY
-// ════════════════════════════════════════════
-let batteryLevel=null,batteryCharging=false;
-async function initBattery(){
+// ════════════════════════════════════════
+let battLvl=null,battChg=false;
+async function initBatt(){
   try{
     const b=await navigator.getBattery();
     function upd(){
-      batteryLevel=Math.round(b.level*100);batteryCharging=b.charging;
-      const pct=batteryLevel+'%',cs=batteryCharging?'CHARGING ⚡':'ON BATTERY';
-      ['battery-pct','battery-left'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=pct;});
+      battLvl=Math.round(b.level*100);battChg=b.charging;
+      const p=battLvl+'%',cs=battChg?'CHARGING ⚡':'ON BATTERY';
+      ['battery-pct','battery-left'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=p;});
       const ci=document.getElementById('charging-status');if(ci)ci.textContent=cs;
-      const bm=document.getElementById('batt-metric');if(bm)bm.textContent=pct;
+      const bm=document.getElementById('batt-metric');if(bm)bm.textContent=p;
     }
     upd();b.addEventListener('levelchange',upd);b.addEventListener('chargingchange',upd);
   }catch(e){}
 }
 
-// ════════════════════════════════════════════
+// ════════════════════════════════════════
 // CLOCK
-// ════════════════════════════════════════════
+// ════════════════════════════════════════
 function pad(n){return String(n).padStart(2,'0');}
 const MON=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
 const DAY=['SUN','MON','TUE','WED','THU','FRI','SAT'];
@@ -455,12 +541,8 @@ function tick(){
   document.getElementById('hud-date').textContent=`${DAY[n.getDay()]} ${pad(n.getDate())} ${MON[n.getMonth()]} ${n.getFullYear()}`;
 }
 setInterval(tick,1000);tick();
-let st=Date.now();
-setInterval(()=>{
-  const e=Math.floor((Date.now()-st)/1000);
-  const el=document.getElementById('uptime');
-  if(el)el.textContent=`${pad(Math.floor(e/3600))}:${pad(Math.floor(e%3600/60))}:${pad(e%60)}`;
-},1000);
+let st0=Date.now();
+setInterval(()=>{const e=Math.floor((Date.now()-st0)/1000);const el=document.getElementById('uptime');if(el)el.textContent=`${pad(Math.floor(e/3600))}:${pad(Math.floor(e%3600/60))}:${pad(e%60)}`;},1000);
 setInterval(()=>{
   const r=(a,b)=>Math.floor(Math.random()*(b-a)+a),cpu=r(45,88),ram=r(38,72),net=r(55,96);
   const cb=document.getElementById('cpu-bar');if(cb){cb.style.width=cpu+'%';document.getElementById('cpu-val').textContent=cpu+'%';}
@@ -470,580 +552,547 @@ setInterval(()=>{
 },2500);
 
 // WEATHER
-(async()=>{
-  try{
-    const g=await(await fetch('https://ipapi.co/json/')).json();
-    const loc=document.getElementById('w-loc');if(loc)loc.textContent=(g.city||'UNKNOWN').toUpperCase();
-    const w=await(await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${g.latitude}&longitude=${g.longitude}&current_weather=true&hourly=relativehumidity_2m`)).json();
-    const cw=w.current_weather;
-    const wt=document.getElementById('w-temp');if(wt)wt.textContent=Math.round(cw.temperature)+'°C';
-    const ww=document.getElementById('w-wind');if(ww)ww.textContent=Math.round(cw.windspeed)+' km/h';
-    const wh=document.getElementById('w-hum');if(wh)wh.textContent=(w.hourly?.relativehumidity_2m?.[0]??'--')+'%';
-    const codes={0:'CLEAR',1:'MAINLY CLEAR',2:'PARTLY CLOUDY',3:'OVERCAST',45:'FOGGY',51:'DRIZZLE',61:'RAIN',71:'SNOW',80:'SHOWERS',95:'THUNDERSTORM'};
-    const wd=document.getElementById('w-desc');if(wd)wd.textContent=codes[cw.weathercode]||'CLEAR';
-  }catch(e){}
-})();
+(async()=>{try{const g=await(await fetch('https://ipapi.co/json/')).json();const loc=document.getElementById('w-loc');if(loc)loc.textContent=(g.city||'?').toUpperCase();const w=await(await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${g.latitude}&longitude=${g.longitude}&current_weather=true&hourly=relativehumidity_2m`)).json();const cw=w.current_weather;const wt=document.getElementById('w-temp');if(wt)wt.textContent=Math.round(cw.temperature)+'°C';const ww=document.getElementById('w-wind');if(ww)ww.textContent=Math.round(cw.windspeed)+' km/h';const wh=document.getElementById('w-hum');if(wh)wh.textContent=(w.hourly?.relativehumidity_2m?.[0]??'--')+'%';const codes={0:'CLEAR',1:'MAINLY CLEAR',2:'PARTLY CLOUDY',3:'OVERCAST',45:'FOGGY',51:'DRIZZLE',61:'RAIN',71:'SNOW',80:'SHOWERS',95:'THUNDERSTORM'};const wd=document.getElementById('w-desc');if(wd)wd.textContent=codes[cw.weathercode]||'CLEAR';}catch(e){}})();
 
 // HUD
-const hc=document.getElementById('hud-canvas');
-if(hc){
-  const hctx=hc.getContext('2d');let hA=0,hA2=0;
-  (function dh(){
-    const cx=110,cy=110;hctx.clearRect(0,0,220,220);
-    [[106,[4,8],1,.4],[95,[2,12],1,.3],[82,[8,4],1.3,.5],[68,[],1,.3],[54,[],1,.5],[38,[4,4],1,.4],[23,[],1.3,.65]].forEach(([r,d,w,a])=>{
-      hctx.beginPath();hctx.arc(cx,cy,r,0,Math.PI*2);hctx.strokeStyle=`rgba(0,212,255,${a})`;hctx.lineWidth=w;hctx.setLineDash(d);hctx.stroke();hctx.setLineDash([]);
-    });
-    hctx.beginPath();hctx.arc(cx,cy,95,hA,hA+Math.PI*1.3);hctx.strokeStyle='rgba(0,212,255,.9)';hctx.lineWidth=2;hctx.stroke();
-    hctx.beginPath();hctx.arc(cx,cy,82,-hA2,-hA2+Math.PI*.9);hctx.strokeStyle='rgba(0,136,204,.7)';hctx.lineWidth=1.2;hctx.stroke();
-    for(let i=0;i<60;i++){const a=(i/60)*Math.PI*2-Math.PI/2,inn=i%5===0?99:103;hctx.beginPath();hctx.moveTo(cx+Math.cos(a)*inn,cy+Math.sin(a)*inn);hctx.lineTo(cx+Math.cos(a)*106,cy+Math.sin(a)*106);hctx.strokeStyle=i%5===0?'rgba(0,212,255,.9)':'rgba(0,212,255,.18)';hctx.lineWidth=i%5===0?1.4:.4;hctx.stroke();}
-    const grad=hctx.createRadialGradient(cx,cy,0,cx,cy,14);grad.addColorStop(0,'rgba(0,212,255,.7)');grad.addColorStop(1,'rgba(0,212,255,0)');
-    hctx.beginPath();hctx.arc(cx,cy,14,0,Math.PI*2);hctx.fillStyle=grad;hctx.fill();
-    hA+=.009;hA2+=.013;requestAnimationFrame(dh);
-  })();
-}
-const rc=document.getElementById('radar-canvas');
-if(rc){
-  const rctx=rc.getContext('2d');let rA=0;const blips=[];
-  setInterval(()=>{if(blips.length<8)blips.push({x:Math.random()*110-55,y:Math.random()*110-55,age:0,max:100+Math.random()*80});},2200);
-  (function dr(){
-    const cx=77,cy=77,R=65;rctx.clearRect(0,0,155,155);
-    [17,34,51,65].forEach(r=>{rctx.beginPath();rctx.arc(cx,cy,r,0,Math.PI*2);rctx.strokeStyle='rgba(0,212,255,.18)';rctx.lineWidth=.5;rctx.stroke();});
-    rctx.beginPath();rctx.moveTo(cx,cy);rctx.arc(cx,cy,R,rA-.9,rA);rctx.closePath();rctx.fillStyle='rgba(0,212,255,.07)';rctx.fill();
-    rctx.beginPath();rctx.moveTo(cx,cy);rctx.lineTo(cx+Math.cos(rA)*R,cy+Math.sin(rA)*R);rctx.strokeStyle='rgba(0,212,255,.8)';rctx.lineWidth=1.4;rctx.stroke();
-    blips.forEach(b=>{if(Math.hypot(b.x,b.y)<=R){const al=1-b.age/b.max;rctx.beginPath();rctx.arc(cx+b.x,cy+b.y,3,0,Math.PI*2);rctx.fillStyle=`rgba(0,255,136,${al})`;rctx.fill();}b.age++;});
-    for(let i=blips.length-1;i>=0;i--)if(blips[i].age>blips[i].max)blips.splice(i,1);
-    rA+=.03;requestAnimationFrame(dr);
-  })();
-}
+(function(){const hc=document.getElementById('hud-canvas');if(!hc)return;const ctx=hc.getContext('2d');let a=0,a2=0;function d(){const cx=105,cy=105;ctx.clearRect(0,0,210,210);[[100,[4,8],1,.4],[90,[2,12],1,.3],[78,[8,4],1.3,.5],[64,[],1,.3],[52,[],1,.5],[37,[4,4],1,.4],[23,[],1.3,.65]].forEach(([r,ds,w,al])=>{ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.strokeStyle=`rgba(0,212,255,${al})`;ctx.lineWidth=w;ctx.setLineDash(ds);ctx.stroke();ctx.setLineDash([]);});ctx.beginPath();ctx.arc(cx,cy,90,a,a+Math.PI*1.3);ctx.strokeStyle='rgba(0,212,255,.9)';ctx.lineWidth=1.8;ctx.stroke();ctx.beginPath();ctx.arc(cx,cy,78,-a2,-a2+Math.PI*.9);ctx.strokeStyle='rgba(0,136,204,.7)';ctx.lineWidth=1.2;ctx.stroke();for(let i=0;i<60;i++){const ang=(i/60)*Math.PI*2-Math.PI/2,inn=i%5===0?94:97;ctx.beginPath();ctx.moveTo(cx+Math.cos(ang)*inn,cy+Math.sin(ang)*inn);ctx.lineTo(cx+Math.cos(ang)*100,cy+Math.sin(ang)*100);ctx.strokeStyle=i%5===0?'rgba(0,212,255,.9)':'rgba(0,212,255,.16)';ctx.lineWidth=i%5===0?1.3:.4;ctx.stroke();}const g=ctx.createRadialGradient(cx,cy,0,cx,cy,13);g.addColorStop(0,'rgba(0,212,255,.7)');g.addColorStop(1,'rgba(0,212,255,0)');ctx.beginPath();ctx.arc(cx,cy,13,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();a+=.009;a2+=.013;requestAnimationFrame(d);}d();})();
+(function(){const rc=document.getElementById('radar-canvas');if(!rc)return;const ctx=rc.getContext('2d');let ra=0;const blips=[];setInterval(()=>{if(blips.length<7)blips.push({x:Math.random()*106-53,y:Math.random()*106-53,age:0,max:90+Math.random()*80});},2200);function d(){const cx=76,cy=76,R=63;ctx.clearRect(0,0,152,152);[16,32,48,63].forEach(r=>{ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.strokeStyle='rgba(0,212,255,.16)';ctx.lineWidth=.5;ctx.stroke();});ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,ra-.9,ra);ctx.closePath();ctx.fillStyle='rgba(0,212,255,.06)';ctx.fill();ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(ra)*R,cy+Math.sin(ra)*R);ctx.strokeStyle='rgba(0,212,255,.8)';ctx.lineWidth=1.3;ctx.stroke();blips.forEach(b=>{if(Math.hypot(b.x,b.y)<=R){const al=1-b.age/b.max;ctx.beginPath();ctx.arc(cx+b.x,cy+b.y,3,0,Math.PI*2);ctx.fillStyle=`rgba(0,255,136,${al})`;ctx.fill();}b.age++;});for(let i=blips.length-1;i>=0;i--)if(blips[i].age>blips[i].max)blips.splice(i,1);ra+=.03;requestAnimationFrame(d);}d();})();
 
-function addLog(msg){
-  const n=new Date(),t=`${pad(n.getHours())}:${pad(n.getMinutes())}`;
-  const log=document.getElementById('activity-log');if(!log)return;
-  const d=document.createElement('div');d.className='log-item';
-  d.innerHTML=`<span class="log-time">${t}</span><span>${String(msg).slice(0,42)}</span>`;
-  log.prepend(d);while(log.children.length>30)log.removeChild(log.lastChild);
-}
+function addLog(m){const n=new Date(),t=`${pad(n.getHours())}:${pad(n.getMinutes())}`;const l=document.getElementById('alog');if(!l)return;const d=document.createElement('div');d.className='litem';d.innerHTML=`<span class="ltime">${t}</span><span>${String(m).slice(0,42)}</span>`;l.prepend(d);while(l.children.length>30)l.removeChild(l.lastChild);}
 
-// ════════════════════════════════════════════
-// SMART COMMANDS — including "open rudra"
-// ════════════════════════════════════════════
-const chatHistory=[];let convCount=0;
-function handleSmartCommand(raw){
+// ════════════════════════════════════════
+// SMART COMMANDS
+// ════════════════════════════════════════
+function handleSmart(raw){
   const t=raw.toLowerCase().trim();
-  // RUDRA
-  if(t.includes('open rudra')||t==='rudra'){ switchPage('rudra'); return 'Opening your Rudra command center, sir.'; }
-  if(t.includes('open schedule')||t.includes('my schedule')){ switchPage('rudra');switchRudraByName('schedule'); return 'Opening your schedule, sir.'; }
-  if(t.includes('open goals')||t.includes('my goals')){ switchPage('rudra');switchRudraByName('goals'); return 'Opening your goals panel, sir.'; }
-  if(t.includes('open study')||t.includes('study plan')){ switchPage('rudra');switchRudraByName('study'); return 'Opening your study plan, sir.'; }
-  if(t.includes('open jarvis')||t.includes('back to jarvis')){ switchPage('jarvis'); return 'Back to Jarvis, sir.'; }
-  // BATTERY
-  if(t.includes('battery')){ return batteryLevel!==null?`You're at ${batteryLevel}% battery, sir — ${batteryCharging?'and it\'s charging':'not plugged in'}.`:'Battery info not available on this browser, sir.'; }
-  if(/^(what('?s| is) the time|what time is it|time)$/.test(t)){ const n=new Date(),h=n.getHours()>12?n.getHours()-12:n.getHours()||12,ap=n.getHours()>=12?'PM':'AM'; return `It's ${h}:${pad(n.getMinutes())} ${ap}, sir.`; }
-  if(/date|today/.test(t)&&!/\w+\s+date/.test(t)){ const n=new Date(); return `Today's ${DAY[n.getDay()]}, ${pad(n.getDate())} ${MON[n.getMonth()]} ${n.getFullYear()}, sir.`; }
-  const callM=t.match(/^call\s+(.+)/);if(callM){window.location.href=`tel:${encodeURIComponent(callM[1])}`;return `Calling ${callM[1]}, sir.`;}
+  // RUDRA navigation — "open rudra", "rudra", "rudra panel"
+  if(/\b(open rudra|rudra panel|rudra)\b/.test(t)){goPage('rp');return 'Opening your Rudra command center, sir.';}
+  if(/open schedule|my schedule/.test(t)){goPage('rp');goRudra('schedule',0);return 'Opening your schedule, sir.';}
+  if(/open goals|my goals/.test(t)){goPage('rp');goRudra('goals',1);return 'Opening goals, sir.';}
+  if(/open study|study plan/.test(t)){goPage('rp');goRudra('study',2);return 'Opening study plan, sir.';}
+  if(/open agheera|agheera/.test(t)&&!/^open agheera/.test(t)===false){goPage('rp');goRudra('agheera',3);return 'Opening your Agheera profile, sir.';}
+  if(/open progress|my progress/.test(t)){goPage('rp');goRudra('progress',4);return 'Opening progress tracker, sir.';}
+  if(/back to jarvis|open jarvis/.test(t)){goPage('jp');return 'Back to Jarvis, sir.';}
+  // Plan from Agheera
+  if(/plan (my |today|monday|tuesday|wednesday|thursday|friday|saturday|sunday|this week|a week|the week)/.test(t)){
+    goPage('rp');goRudra('schedule',0);
+    setTimeout(()=>{document.getElementById('sai').value=raw;aiSched();},400);
+    return 'Opening schedule and generating your plan, sir.';
+  }
+  // Battery
+  if(t.includes('battery'))return battLvl!==null?`You're at ${battLvl}% battery, sir${battChg?' — charging right now':' — not plugged in'}.`:'Battery info not available on this browser, sir.';
+  // Time
+  if(/^(what('?s| is) the time|time|what time)/.test(t)){const n=new Date(),h=n.getHours()>12?n.getHours()-12:n.getHours()||12,ap=n.getHours()>=12?'PM':'AM';return `It's ${h}:${pad(n.getMinutes())} ${ap}, sir.`;}
+  // Date
+  if(/\b(date|today)\b/.test(t)&&t.length<15){const n=new Date();return `Today is ${DAY[n.getDay()]}, ${pad(n.getDate())} ${MON[n.getMonth()]} ${n.getFullYear()}, sir.`;}
+  // Call
+  const cm=t.match(/^call\s+(.+)/);if(cm){window.location.href=`tel:${encodeURIComponent(cm[1])}`;return `Calling ${cm[1]}, sir.`;}
   if(t.includes('whatsapp')){window.open('https://web.whatsapp.com','_blank');return 'Opening WhatsApp, sir.';}
-  const ytPlay=t.match(/(?:play|song|music)\s+(.+?)(?:\s+on youtube)?$/);
-  if(ytPlay){const s=ytPlay[1].replace(/\b(on youtube|youtube|song|music|video)\b/gi,'').trim();window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(s)}&sp=EgIQAQ%3D%3D`,'_blank');return `Opening YouTube for "${s}", sir.`;}
+  // YouTube play
+  const yp=t.match(/(?:play|song|music)\s+(.+?)(?:\s+on youtube)?$/);if(yp){const s=yp[1].replace(/\b(youtube|song|music|video)\b/gi,'').trim();window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(s)}&sp=EgIQAQ%3D%3D`,'_blank');return `Opening YouTube for "${s}", sir.`;}
   if(t==='open youtube'||t==='youtube'){window.open('https://www.youtube.com','_blank');return 'YouTube is open, sir.';}
-  const ssM=t.match(/search\s+(\w+)\s+for\s+(.+)/);
-  if(ssM){const site=ssM[1],q=ssM[2];const m={youtube:`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`,amazon:`https://www.amazon.in/s?k=${encodeURIComponent(q)}`,google:`https://www.google.com/search?q=${encodeURIComponent(q)}`,reddit:`https://www.reddit.com/search/?q=${encodeURIComponent(q)}`,wikipedia:`https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(q)}`};window.open(m[site]||`https://www.google.com/search?q=${encodeURIComponent(q+' site:'+site+'.com')}`,'_blank');return `Searching ${site} for "${q}", sir.`;}
-  const gS=t.match(/^(?:search|google|look up|find|search for)\s+(.+)/);if(gS){const q=gS[1].replace(/^(for|about)\s+/,'');window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`,'_blank');return `Searching for "${q}", sir.`;}
-  const openM=t.match(/^open\s+(.+?)(?:\s+browser|\s+website|\s+site)?$/);
-  if(openM){const w=openM[1].trim().toLowerCase();const bm={chrome:'https://www.google.com',brave:'https://search.brave.com',firefox:'https://www.google.com',edge:'https://www.bing.com'};if(bm[w]){window.open(bm[w],'_blank');return `Opening a new tab for you, sir.`;}const sm={youtube:'https://www.youtube.com',instagram:'https://www.instagram.com',twitter:'https://www.twitter.com',gmail:'https://mail.google.com',netflix:'https://www.netflix.com',spotify:'https://open.spotify.com',amazon:'https://www.amazon.in',github:'https://www.github.com',maps:'https://maps.google.com'};if(sm[w]){window.open(sm[w],'_blank');return `Opening ${w}, sir.`;}const d=w.replace(/\s+/g,'');window.open(d.includes('.')?`https://${d}`:`https://www.${d}.com`,'_blank');return `Opening ${d}, sir.`;}
+  // Search specific site
+  const ss=t.match(/search\s+(\w+)\s+for\s+(.+)/);if(ss){const site=ss[1],q=ss[2];const m={youtube:`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`,amazon:`https://www.amazon.in/s?k=${encodeURIComponent(q)}`,google:`https://www.google.com/search?q=${encodeURIComponent(q)}`,reddit:`https://www.reddit.com/search/?q=${encodeURIComponent(q)}`,wikipedia:`https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(q)}`};window.open(m[site]||`https://www.google.com/search?q=${encodeURIComponent(q+' site:'+site+'.com')}`,'_blank');return `Searching ${site} for "${q}", sir.`;}
+  // General Google search
+  const gs=t.match(/^(?:search|google|look up|find|search for)\s+(.+)/);if(gs){const q=gs[1].replace(/^(for|about)\s+/,'');window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`,'_blank');return `Searching for "${q}", sir.`;}
+  // Open site
+  const om=t.match(/^open\s+(.+?)(?:\s+browser|\s+website|\s+site)?$/);
+  if(om){const w=om[1].trim().toLowerCase();const bm={chrome:'https://www.google.com',brave:'https://search.brave.com',firefox:'https://www.google.com',edge:'https://www.bing.com'};if(bm[w]){window.open(bm[w],'_blank');return `Opening a new tab for you, sir.`;}const sm={youtube:'https://www.youtube.com',instagram:'https://www.instagram.com',twitter:'https://www.twitter.com',gmail:'https://mail.google.com',netflix:'https://www.netflix.com',spotify:'https://open.spotify.com',amazon:'https://www.amazon.in',github:'https://www.github.com',maps:'https://maps.google.com'};if(sm[w]){window.open(sm[w],'_blank');return `Opening ${w}, sir.`;}const dm=w.replace(/\s+/g,'');window.open(dm.includes('.')?`https://${dm}`:`https://www.${dm}.com`,'_blank');return `Opening ${dm}, sir.`;}
+  // Maps
   const mm=t.match(/(?:directions to|navigate to|maps)\s+(.+)/);if(mm){window.open(`https://maps.google.com/?q=${encodeURIComponent(mm[1])}`,'_blank');return `Opening maps for ${mm[1]}, sir.`;}
+  // Weather
   if(t.includes('weather')){const loc=document.getElementById('w-loc')?.textContent||'your area';const temp=document.getElementById('w-temp')?.textContent||'--';const desc=document.getElementById('w-desc')?.textContent||'--';return `In ${loc} it's ${temp}, ${desc.toLowerCase()}, sir.`;}
   return null;
 }
-function switchRudraByName(name){
-  document.querySelectorAll('.rtab').forEach((t,i)=>{t.classList.remove('active');});
-  document.querySelectorAll('.rtab-content').forEach(t=>t.classList.remove('active'));
-  document.getElementById('rudra-'+name).classList.add('active');
-  document.querySelectorAll('.rtab')[{schedule:0,goals:1,study:2}[name]].classList.add('active');
+
+// ════════════════════════════════════════
+// VOICE ENGINE — deep male, emotion tones, stop on speech
+// ════════════════════════════════════════
+let ttsvs=[];
+function loadV(){ttsvs=window.speechSynthesis?window.speechSynthesis.getVoices():[];}
+if(window.speechSynthesis){loadV();window.speechSynthesis.onvoiceschanged=loadV;}
+function bestV(){
+  ttsvs=window.speechSynthesis.getVoices();
+  const want=['Google UK English Male','Daniel','Gordon','Arthur','Thomas','Microsoft David Desktop','Microsoft Mark Desktop','Alex','Google US English'];
+  for(const n of want){const v=ttsvs.find(x=>x.name===n);if(v)return v;}
+  const fem=['samantha','victoria','karen','moira','tessa','fiona','allison','ava','susan','zira'];
+  return ttsvs.find(v=>v.lang.startsWith('en')&&!fem.some(f=>v.name.toLowerCase().includes(f)))||ttsvs.find(v=>v.lang.startsWith('en'))||null;
 }
-
-// ════════════════════════════════════════════
-// VOICE — HUMAN-LIKE WITH EMOTION + STOP ON SPEECH
-// ════════════════════════════════════════════
-let ttsVoices=[];
-function loadVoices(){ttsVoices=window.speechSynthesis?window.speechSynthesis.getVoices():[];}
-if(window.speechSynthesis){loadVoices();window.speechSynthesis.onvoiceschanged=loadVoices;}
-
-function getBestVoice(){
-  ttsVoices=window.speechSynthesis.getVoices();
-  // Strictly male voices only
-  const malePref=['Google UK English Male','Daniel','Gordon','Arthur','Thomas',
-    'Microsoft David Desktop','Microsoft Mark Desktop','Alex','Google US English'];
-  for(const n of malePref){const v=ttsVoices.find(x=>x.name===n);if(v)return v;}
-  // Avoid female voices (Samantha, Victoria, Karen, Moira, etc.)
-  const female=['samantha','victoria','karen','moira','tessa','fiona','allison','ava','susan','zira','cortana'];
-  const safe=ttsVoices.find(v=>v.lang.startsWith('en')&&!female.some(f=>v.name.toLowerCase().includes(f)));
-  return safe||ttsVoices.find(v=>v.lang.startsWith('en'))||null;
+function vparams(s){
+  const l=s.toLowerCase();
+  if(/[!]/.test(s)||/\b(great|amazing|brilliant|fantastic|perfect|wonderful)\b/.test(l))return{rate:1.1,pitch:0.68};
+  if(/\?$/.test(s.trim()))return{rate:1.0,pitch:0.72};
+  if(/\b(careful|warning|critical|sorry|apolog|unfortunately|however)\b/.test(l))return{rate:0.78,pitch:0.42};
+  if(/\b(actually|honestly|well|quite|funny|interesting|by the way)\b/.test(l))return{rate:1.0,pitch:0.60};
+  return{rate:0.94,pitch:0.52};
 }
-
-// Emotion-based speech params — Copilot-style dynamic tone
-function getVoiceParams(sentence){
-  const s=sentence.toLowerCase();
-  if(/[!]/.test(sentence)||/\b(great|amazing|excellent|fantastic|brilliant|perfect|wonderful|love|absolutely|incredible)\b/.test(s))
-    return {rate:1.1,pitch:0.7};   // excited
-  if(/\?$/.test(sentence.trim()))
-    return {rate:1.0,pitch:0.72};  // question — slight rise
-  if(/\b(careful|warning|critical|danger|urgent|important|sorry|apolog|unfortunately|however)\b/.test(s))
-    return {rate:0.78,pitch:0.42}; // serious / grave
-  if(/\b(actually|honestly|well|quite|rather|funny|interesting|by the way|speaking of)\b/.test(s))
-    return {rate:1.0,pitch:0.60};  // conversational, warm
-  if(/\b(ha|haha|joke|laugh|amusing|ironic|wit)\b/.test(s))
-    return {rate:1.05,pitch:0.65}; // light/witty
-  // Natural default — confident British male
-  return {rate:0.95,pitch:0.52};
-}
-
-let isSpeaking=false,isListening=false;
-let speakQ=[],speakBusy=false;
-
-function unlockAudio(){try{const ac=new(window.AudioContext||window.webkitAudioContext)();const b=ac.createBuffer(1,1,22050);const s=ac.createBufferSource();s.buffer=b;s.connect(ac.destination);s.start(0);setTimeout(()=>ac.close(),100);}catch(e){}}
-let speechUnlocked=false;
-function unlockSpeech(){if(speechUnlocked||!window.speechSynthesis)return;unlockAudio();const u=new SpeechSynthesisUtterance(' ');u.volume=0.01;u.rate=2;window.speechSynthesis.speak(u);speechUnlocked=true;}
-document.addEventListener('touchstart',unlockSpeech,{once:true,passive:true});
-document.addEventListener('click',unlockSpeech,{once:true});
-
-function cleanText(t){
-  return t.replace(/J\.A\.R\.V\.I\.S/gi,'Jarvis')
-    .replace(/\*\*(.+?)\*\*/g,'$1').replace(/\*(.+?)\*/g,'$1')
-    .replace(/#{1,6}\s/g,'').replace(/`(.+?)`/g,'$1')
-    .replace(/[-•]\s/g,'').replace(/\n+/g,' ').trim();
-}
-
-function speakText(text,onDone){
-  speakQ.push({text,onDone});
-  if(!speakBusy)drainQ();
-}
-function stopSpeaking(){
-  window.speechSynthesis&&window.speechSynthesis.cancel();
-  speakQ=[];isSpeaking=false;speakBusy=false;
-  document.getElementById('waveform').classList.add('hidden');
-}
-function drainQ(){
-  if(!speakQ.length){speakBusy=false;return;}
-  speakBusy=true;
-  const{text,onDone}=speakQ.shift();
-  if(!window.speechSynthesis){onDone&&onDone();drainQ();return;}
+let isSpeaking=false,isListening=false,spkQ=[],spkBusy=false;
+function unlockA(){try{const ac=new(window.AudioContext||window.webkitAudioContext)();const b=ac.createBuffer(1,1,22050);const s=ac.createBufferSource();s.buffer=b;s.connect(ac.destination);s.start(0);setTimeout(()=>ac.close(),100);}catch(e){}}
+let spkUnlocked=false;
+function unlockS(){if(spkUnlocked||!window.speechSynthesis)return;unlockA();const u=new SpeechSynthesisUtterance(' ');u.volume=0.01;u.rate=2;window.speechSynthesis.speak(u);spkUnlocked=true;}
+document.addEventListener('touchstart',unlockS,{once:true,passive:true});
+document.addEventListener('click',unlockS,{once:true});
+function cleanTxt(t){return t.replace(/J\.A\.R\.V\.I\.S/gi,'Jarvis').replace(/\*\*(.+?)\*\*/g,'$1').replace(/\*(.+?)\*/g,'$1').replace(/#{1,6}\s/g,'').replace(/`(.+?)`/g,'$1').replace(/[-•]\s/g,'').replace(/\n+/g,' ').trim();}
+function speak(text,cb){spkQ.push({text,cb});if(!spkBusy)drainSpk();}
+function stopSpeak(){window.speechSynthesis&&window.speechSynthesis.cancel();spkQ=[];isSpeaking=false;spkBusy=false;document.getElementById('wform').classList.add('h');}
+function drainSpk(){
+  if(!spkQ.length){spkBusy=false;return;}spkBusy=true;
+  const{text,cb}=spkQ.shift();
+  if(!window.speechSynthesis){cb&&cb();drainSpk();return;}
   window.speechSynthesis.cancel();
-  const clean=cleanText(text);
-  if(!clean){onDone&&onDone();drainQ();return;}
-  const sentences=clean.match(/[^.!?]+[.!?]*/g)||[clean];
-  let idx=0;
-  isSpeaking=true;setUIState('speaking');
-  document.getElementById('waveform').classList.remove('hidden');
-  function next(){
-    if(idx>=sentences.length||!isSpeaking){
-      isSpeaking=false;document.getElementById('waveform').classList.add('hidden');
-      setUIState('idle');onDone&&onDone();drainQ();return;
-    }
-    const chunk=sentences[idx++].trim();if(!chunk){next();return;}
-    const p=getVoiceParams(chunk);
-    const utt=new SpeechSynthesisUtterance(chunk);
-    utt.rate=p.rate;utt.pitch=p.pitch;utt.volume=1.0;
-    const v=getBestVoice();if(v)utt.voice=v;
-    utt.onend=next;utt.onerror=()=>next();
-    try{window.speechSynthesis.cancel();window.speechSynthesis.speak(utt);}catch(e){next();}
-  }
-  next();
+  const clean=cleanTxt(text);if(!clean){cb&&cb();drainSpk();return;}
+  const sents=clean.match(/[^.!?]+[.!?]*/g)||[clean];let idx=0;
+  isSpeaking=true;setUI('S');document.getElementById('wform').classList.remove('h');
+  function nx(){
+    if(idx>=sents.length||!isSpeaking){isSpeaking=false;document.getElementById('wform').classList.add('h');setUI('idle');cb&&cb();drainSpk();return;}
+    const chunk=sents[idx++].trim();if(!chunk){nx();return;}
+    const p=vparams(chunk);const u=new SpeechSynthesisUtterance(chunk);
+    u.rate=p.rate;u.pitch=p.pitch;u.volume=1.0;const v=bestV();if(v)u.voice=v;
+    u.onend=nx;u.onerror=()=>nx();
+    try{window.speechSynthesis.cancel();window.speechSynthesis.speak(u);}catch(e){nx();}
+  }nx();
 }
 
-// ════════════════════════════════════════════
+// ════════════════════════════════════════
 // UI STATE
-// ════════════════════════════════════════════
-function setUIState(state){
+// ════════════════════════════════════════
+function setUI(st){
   const btn=document.getElementById('mic-btn');
-  btn.classList.remove('listening','speaking','processing');
-  const lbl=document.getElementById('mic-label'),vm=document.getElementById('voice-mode'),hs=document.getElementById('hud-status');
-  if(state==='listening'){
-    btn.classList.add('listening');btn.textContent='🔴';
-    if(lbl)lbl.textContent='LISTENING...';if(vm)vm.textContent='LISTENING';if(hs)hs.textContent='● VOICE INPUT';
-    document.getElementById('waveform').classList.remove('hidden');
-  }else if(state==='speaking'){
-    btn.classList.add('speaking');btn.textContent='🔊';
-    if(lbl)lbl.textContent='TAP TO STOP';if(vm)vm.textContent='SPEAKING';if(hs)hs.textContent='● SPEAKING';
-  }else if(state==='processing'){
-    btn.classList.add('processing');btn.textContent='⚙️';
-    if(lbl)lbl.textContent='THINKING...';if(vm)vm.textContent='THINKING';if(hs)hs.textContent='● PROCESSING';
-  }else{
-    btn.textContent='🎤';if(lbl)lbl.textContent='TAP MIC TO SPEAK';if(vm)vm.textContent='READY';if(hs)hs.textContent='● SYSTEM READY';
-    document.getElementById('waveform').classList.add('hidden');
-    const tb=document.getElementById('transcript-box');if(tb){tb.textContent='Tap mic and speak...';tb.classList.remove('active');}
-  }
+  btn.classList.remove('L','S','P');
+  const lbl=document.getElementById('mic-label'),vm=document.getElementById('vmode'),hs=document.getElementById('hud-status');
+  if(st==='L'){btn.classList.add('L');btn.textContent='🔴';if(lbl)lbl.textContent='LISTENING...';if(vm)vm.textContent='LISTEN';if(hs)hs.textContent='● VOICE INPUT';document.getElementById('wform').classList.remove('h');}
+  else if(st==='S'){btn.classList.add('S');btn.textContent='🔊';if(lbl)lbl.textContent='TAP TO STOP';if(vm)vm.textContent='SPEAKING';if(hs)hs.textContent='● SPEAKING';}
+  else if(st==='P'){btn.classList.add('P');btn.textContent='⚙️';if(lbl)lbl.textContent='THINKING...';if(vm)vm.textContent='THINKING';if(hs)hs.textContent='● PROCESSING';}
+  else{btn.textContent='🎤';if(lbl)lbl.textContent='TAP MIC TO SPEAK';if(vm)vm.textContent='READY';if(hs)hs.textContent='● SYSTEM READY';document.getElementById('wform').classList.add('h');const tb=document.getElementById('tbox');if(tb){tb.textContent='Tap mic and speak...';tb.classList.remove('on');}}
 }
 
-// ════════════════════════════════════════════
-// SPEECH RECOGNITION — stops Jarvis when you speak
-// ════════════════════════════════════════════
+// ════════════════════════════════════════
+// SPEECH RECOGNITION — stops Jarvis when user speaks
+// ════════════════════════════════════════
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-let recognizer=null,recRunning=false,pendingText='';
-
+let rec=null,recOn=false,pending='';
 function buildRec(){
   if(!SR)return null;
-  const rec=new SR();
-  rec.continuous=false;rec.interimResults=true;rec.lang='en-US';rec.maxAlternatives=1;
-
-  rec.onstart=()=>{
-    recRunning=true;pendingText='';
-    // *** STOP JARVIS IMMEDIATELY WHEN USER STARTS SPEAKING ***
-    if(isSpeaking) stopSpeaking();
-    setUIState('listening');
-    const tb=document.getElementById('transcript-box');if(tb){tb.textContent='Listening...';tb.classList.add('active');}
-    addLog('Mic: active');
-  };
-
-  rec.onspeechstart=()=>{
-    // User actually started talking — kill Jarvis voice immediately
-    if(isSpeaking) stopSpeaking();
-  };
-
-  rec.onresult=(e)=>{
-    // Stop speaking the moment we detect voice
-    if(isSpeaking) stopSpeaking();
+  const r=new SR();r.continuous=false;r.interimResults=true;r.lang='en-US';r.maxAlternatives=1;
+  r.onstart=()=>{recOn=true;pending='';if(isSpeaking)stopSpeak();setUI('L');const tb=document.getElementById('tbox');if(tb){tb.textContent='Listening...';tb.classList.add('on');}addLog('Mic: active');};
+  r.onspeechstart=()=>{if(isSpeaking)stopSpeak();};
+  r.onresult=(e)=>{
+    if(isSpeaking)stopSpeak();
     let interim='',final='';
-    for(let i=0;i<e.results.length;i++){
-      if(e.results[i].isFinal)final+=e.results[i][0].transcript+' ';
-      else interim+=e.results[i][0].transcript;
-    }
-    const live=(final+interim).trim();
-    const tb=document.getElementById('transcript-box');if(tb){tb.textContent=live||'Listening...';tb.classList.add('active');}
-    if(final.trim())pendingText=final.trim();
+    for(let i=0;i<e.results.length;i++){if(e.results[i].isFinal)final+=e.results[i][0].transcript+' ';else interim+=e.results[i][0].transcript;}
+    const live=(final+interim).trim();const tb=document.getElementById('tbox');if(tb){tb.textContent=live||'Listening...';tb.classList.add('on');}
+    if(final.trim())pending=final.trim();
   };
-
-  rec.onend=()=>{
-    recRunning=false;
-    if(pendingText){
-      const cmd=pendingText;pendingText='';
-      const ti=document.getElementById('text-input');if(ti)ti.value='';
-      sendToJarvis(cmd,'voice');
-    }else if(isListening&&!isSpeaking){
-      setTimeout(startRec,250);
-    }else{setUIState('idle');}
-  };
-
-  rec.onerror=(e)=>{
-    recRunning=false;
-    if(e.error==='not-allowed'){isListening=false;setUIState('idle');const tb=document.getElementById('transcript-box');if(tb)tb.textContent='Mic denied — allow in settings.';}
-    else if(e.error==='no-speech'){if(isListening&&!isSpeaking)setTimeout(startRec,300);}
-    else{addLog('Rec err:'+e.error);if(isListening&&!isSpeaking)setTimeout(startRec,600);}
-  };
-  return rec;
+  r.onend=()=>{recOn=false;if(pending){const cmd=pending;pending='';sendJ(cmd,'voice');}else if(isListening&&!isSpeaking)setTimeout(startRec,250);else setUI('idle');};
+  r.onerror=(e)=>{recOn=false;if(e.error==='not-allowed'){isListening=false;setUI('idle');const tb=document.getElementById('tbox');if(tb)tb.textContent='Mic denied.';}else if(e.error==='no-speech'){if(isListening&&!isSpeaking)setTimeout(startRec,300);}else{addLog('Rec:'+e.error);if(isListening&&!isSpeaking)setTimeout(startRec,600);}};
+  return r;
 }
-
-function startRec(){
-  if(recRunning||isSpeaking)return;
-  recognizer=buildRec();if(!recognizer)return;
-  try{recognizer.start();}catch(e){if(e.name==='InvalidStateError')setTimeout(startRec,400);}
-}
-function stopRec(){recRunning=false;try{recognizer&&recognizer.abort();}catch(e){}recognizer=null;}
+function startRec(){if(recOn||isSpeaking)return;rec=buildRec();if(!rec)return;try{rec.start();}catch(e){if(e.name==='InvalidStateError')setTimeout(startRec,400);}}
+function stopRec(){recOn=false;try{rec&&rec.abort();}catch(e){}rec=null;}
 
 document.getElementById('mic-btn').addEventListener('click',()=>{
-  unlockSpeech();
-  if(isSpeaking){stopSpeaking();if(isListening)setTimeout(startRec,300);else setUIState('idle');return;}
-  if(isListening){isListening=false;stopRec();setUIState('idle');}
-  else{isListening=true;startRec();}
+  unlockS();
+  if(isSpeaking){stopSpeak();if(isListening)setTimeout(startRec,300);else setUI('idle');return;}
+  if(isListening){isListening=false;stopRec();setUI('idle');}else{isListening=true;startRec();}
 });
 
-// ════════════════════════════════════════════
+// ════════════════════════════════════════
 // SEND TO JARVIS
-// ════════════════════════════════════════════
-async function sendToJarvis(userMsg,mode){
-  userMsg=userMsg.trim();if(!userMsg)return;
-  mode=mode||'text';
-  isListening=false;stopRec();
-  const log=document.getElementById('conv-log');
-  if(mode==='text'){
-    const uDiv=document.createElement('div');uDiv.className='msg user';
-    uDiv.innerHTML=`<div class="sender">YOU //</div>${userMsg}`;log.appendChild(uDiv);
-  }
-  const jDiv=document.createElement('div');jDiv.className='msg jarvis';
-  jDiv.innerHTML=`<div class="sender">JARVIS //</div><span style="color:var(--blue2);font-style:italic">Thinking...</span>`;
-  log.appendChild(jDiv);log.scrollTop=log.scrollHeight;
-  setUIState('processing');
-  convCount++;document.getElementById('conv-count').textContent=convCount;
-  addLog(`[${mode.toUpperCase()}] ${userMsg.slice(0,32)}`);
-
-  const tl=userMsg.toLowerCase();
-  if(/\b(tell me out loud|say it|read it out|speak)\b/.test(tl))mode='voice';
-  if(/\b(write it|show me|text only|don't speak)\b/.test(tl))mode='text';
-
-  const smart=handleSmartCommand(userMsg);
-  if(smart){
-    jDiv.innerHTML=`<div class="sender">JARVIS //</div>${smart}`;
-    log.scrollTop=log.scrollHeight;
-    if(mode==='voice')speakText(smart,()=>setUIState('idle'));
-    else setUIState('idle');
-    return;
-  }
-
-  chatHistory.push({role:'user',content:userMsg});
+// ════════════════════════════════════════
+const chatH=[];let convCnt=0;
+async function sendJ(msg,mode){
+  msg=msg.trim();if(!msg)return;
+  mode=mode||'text';isListening=false;stopRec();
+  const log=document.getElementById('clog');
+  if(mode==='text'){const d=document.createElement('div');d.className='msg u';d.innerHTML=`<div class="snd">YOU //</div>${msg}`;log.appendChild(d);}
+  const jd=document.createElement('div');jd.className='msg j';jd.innerHTML=`<div class="snd">JARVIS //</div><span style="color:var(--blue2);font-style:italic">Thinking...</span>`;
+  log.appendChild(jd);log.scrollTop=log.scrollHeight;setUI('P');
+  convCnt++;document.getElementById('conv-count').textContent=convCnt;addLog(`[${mode.toUpperCase()}] ${msg.slice(0,32)}`);
+  const tl=msg.toLowerCase();
+  if(/\b(say it|tell me out loud|speak)\b/.test(tl))mode='voice';
+  if(/\b(write it|show me|text only)\b/.test(tl))mode='text';
+  const smart=handleSmart(msg);
+  if(smart){jd.innerHTML=`<div class="snd">JARVIS //</div>${smart}`;log.scrollTop=log.scrollHeight;if(mode==='voice')speak(smart,()=>setUI('idle'));else setUI('idle');return;}
+  chatH.push({role:'user',content:msg});
   const t0=Date.now();
   try{
-    const res=await fetch(JARVIS_API,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({message:userMsg,history:chatHistory.slice(-14),mode})});
-    const data=await res.json();
-    const reply=data.reply||"I'm here, sir.";
-    chatHistory.push({role:'assistant',content:reply});
-    const ms=Date.now()-t0;
-    document.getElementById('resp-time').textContent=ms+'ms';
-    addLog(`Reply in ${ms}ms`);
-    if(mode==='text'){
-      jDiv.innerHTML=`<div class="sender">JARVIS //</div>${reply}`;
-      log.scrollTop=log.scrollHeight;setUIState('idle');
-    }else{
-      jDiv.innerHTML=`<div class="sender">JARVIS // 🔊</div><span style="color:var(--blue2);font-size:9px;font-style:italic">[voice reply]</span>`;
-      log.scrollTop=log.scrollHeight;
-      speakText(reply,()=>setUIState('idle'));
-    }
-  }catch(err){
-    const fb="Connection issue, sir.";
-    jDiv.innerHTML=`<div class="sender">JARVIS //</div>${fb}`;
-    if(mode==='voice')speakText(fb,()=>setUIState('idle'));else setUIState('idle');
+    const res=await fetch(JAPI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg,history:chatH.slice(-14),mode})});
+    const data=await res.json();const reply=data.reply||"I'm here, sir.";
+    chatH.push({role:'assistant',content:reply});
+    const ms=Date.now()-t0;document.getElementById('resp-time').textContent=ms+'ms';addLog(`Reply in ${ms}ms`);
+    if(mode==='text'){jd.innerHTML=`<div class="snd">JARVIS //</div>${reply}`;log.scrollTop=log.scrollHeight;setUI('idle');}
+    else{jd.innerHTML=`<div class="snd">JARVIS // 🔊</div><span style="color:var(--blue2);font-size:9px;font-style:italic">[voice reply]</span>`;log.scrollTop=log.scrollHeight;speak(reply,()=>setUI('idle'));}
+  }catch(e){const fb="Connection issue, sir.";jd.innerHTML=`<div class="snd">JARVIS //</div>${fb}`;if(mode==='voice')speak(fb,()=>setUI('idle'));else setUI('idle');}
+}
+document.getElementById('sendbtn').onclick=()=>{const v=document.getElementById('tinput').value.trim();if(v){document.getElementById('tinput').value='';sendJ(v,'text');}};
+document.getElementById('tinput').addEventListener('keydown',e=>{if(e.key==='Enter'){const v=e.target.value.trim();if(v){e.target.value='';sendJ(v,'text');}}});
+function qcmd(c){sendJ(c,'text');}
+
+// ════════════════════════════════════════
+// AI HELPER — robust JSON extractor
+// ════════════════════════════════════════
+async function aiAsk(prompt){
+  const r=await fetch(JAPI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:prompt,history:[],mode:'text'})});
+  const d=await r.json();return d.reply||'';
+}
+
+function extractJSON(text){
+  // Try to find JSON array or object in response
+  const arrM=text.match(/\[[\s\S]*\]/);if(arrM){try{return JSON.parse(arrM[0]);}catch(e){}}
+  // Try to extract from markdown code blocks
+  const cbM=text.match(/```(?:json)?\s*([\s\S]*?)```/);if(cbM){try{const t=cbM[1].trim();return JSON.parse(t.startsWith('[')?t:`[${t}]`);}catch(e){}}
+  // Try full text
+  try{return JSON.parse(text);}catch(e){}
+  return null;
+}
+
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function nextWeekday(day){// day=0=Sun,1=Mon,...
+  const n=new Date();const d=n.getDay();let diff=(day-d+7)%7;if(diff===0)diff=0;
+  const result=new Date(n);result.setDate(n.getDate()+diff);return result.toISOString().slice(0,10);
+}
+function getDayDate(text){
+  const days={monday:1,tuesday:2,wednesday:3,thursday:4,friday:5,saturday:6,sunday:0};
+  const t=text.toLowerCase();
+  if(t.includes('today'))return todayStr();
+  if(t.includes('tomorrow')){const n=new Date();n.setDate(n.getDate()+1);return n.toISOString().slice(0,10);}
+  for(const[name,num] of Object.entries(days)){if(t.includes(name))return nextWeekday(num);}
+  return todayStr();
+}
+
+// ════════════════════════════════════════
+// SCHEDULE
+// ════════════════════════════════════════
+async function loadSched(){
+  const res=await db('list','Schedule');
+  const items=(res.data||[]).sort((a,b)=>{const da=new Date(a.date+'T'+(a.start_time||'00:00'));const db2=new Date(b.date+'T'+(b.start_time||'00:00'));return da-db2;});
+  const wrap=document.getElementById('sched-wrap');if(!wrap)return;
+  if(!items.length){wrap.innerHTML='<div class="empty">No events yet. Add one above or ask Jarvis to generate.</div>';return;}
+  // Group by date
+  const byDate={};items.forEach(it=>{const k=it.date||'No Date';if(!byDate[k])byDate[k]=[];byDate[k].push(it);});
+  let html='';
+  for(const[date,evts] of Object.entries(byDate)){
+    const d=new Date(date+'T12:00:00');const label=isNaN(d)?date:`${DAY[d.getDay()]} ${pad(d.getDate())} ${MON[d.getMonth()]}`;
+    html+=`<div style="font-family:'Orbitron',monospace;font-size:9px;color:rgba(170,68,255,0.6);padding:6px 0 4px;letter-spacing:2px">${label}</div>`;
+    html+=`<table class="sched-table"><thead><tr><th>TIME</th><th>EVENT</th><th>CATEGORY</th><th>NOTES</th><th>ACTIONS</th></tr></thead><tbody>`;
+    evts.forEach(it=>{
+      html+=`<tr class="${it.completed?'done':''}" id="sr-${it.id}">
+        <td style="white-space:nowrap">${it.start_time||'--'}${it.end_time?' → '+it.end_time:''}</td>
+        <td><strong>${it.title}</strong></td>
+        <td><span class="tag ${it.category||'other'}">${(it.category||'?').toUpperCase()}</span></td>
+        <td style="max-width:140px;font-size:9px">${it.notes||''}</td>
+        <td><div class="tact">
+          <button onclick="toggleSched('${it.id}',${!it.completed})">${it.completed?'↩':'✓'}</button>
+          <button onclick="editSched('${it.id}')">✏</button>
+          <button class="d" onclick="delItem('Schedule','${it.id}','sr-${it.id}')">✕</button>
+        </div></td>
+      </tr>`;
+    });
+    html+=`</tbody></table>`;
   }
+  wrap.innerHTML=html;
 }
-
-document.getElementById('send-btn').onclick=()=>{const v=document.getElementById('text-input').value.trim();if(v){document.getElementById('text-input').value='';sendToJarvis(v,'text');}};
-document.getElementById('text-input').addEventListener('keydown',e=>{if(e.key==='Enter'){const v=e.target.value.trim();if(v){e.target.value='';sendToJarvis(v,'text');}}});
-function quickCmd(cmd){sendToJarvis(cmd,'text');}
-
-// ════════════════════════════════════════════
-// RUDRA DATA FUNCTIONS
-// ════════════════════════════════════════════
-async function loadAllRudra(){
-  loadSchedule();loadGoals();loadStudy();
-}
-
-// ── SCHEDULE ──
-async function loadSchedule(){
-  const res=await rudraReq('list','Schedule');
-  const items=res.data||[];
-  const el=document.getElementById('schedule-list');if(!el)return;
-  if(!items.length){el.innerHTML='<div class="empty-state">No events yet. Add one above or ask Jarvis to generate.</div>';return;}
-  // Sort by date
-  items.sort((a,b)=>new Date(a.date+' '+a.start_time)-new Date(b.date+' '+b.start_time));
-  el.innerHTML=items.map(it=>`
-    <div class="rcard ${it.completed?'completed-item':''}" id="sc-${it.id}">
-      <div class="rcard-title">
-        ${it.title}
-        <span class="tag ${it.category||'other'}">${(it.category||'other').toUpperCase()}</span>
-      </div>
-      <div class="rcard-meta">📅 ${it.date||'--'} &nbsp; ⏰ ${it.start_time||'--'} – ${it.end_time||'--'}</div>
-      ${it.notes?`<div class="rcard-body">${it.notes}</div>`:''}
-      <div class="rcard-actions">
-        <button class="raction success" onclick="toggleSchedule('${it.id}',${!it.completed})">${it.completed?'↩ UNDO':'✓ DONE'}</button>
-        <button class="raction" onclick="editSchedule('${it.id}')">✏ EDIT</button>
-        <button class="raction danger" onclick="deleteItem('Schedule','${it.id}','sc-${it.id}')">✕ DEL</button>
-      </div>
-    </div>`).join('');
-}
-async function addSchedule(){
+async function addSched(){
   const title=document.getElementById('s-title').value.trim();if(!title)return alert('Title required');
-  await rudraReq('create','Schedule',{title,date:document.getElementById('s-date').value,start_time:document.getElementById('s-start').value,end_time:document.getElementById('s-end').value,category:document.getElementById('s-cat').value,notes:document.getElementById('s-notes').value,completed:false});
-  ['s-title','s-date','s-start','s-end','s-notes'].forEach(id=>document.getElementById(id).value='');
-  loadSchedule();
+  await db('create','Schedule',{title,date:document.getElementById('s-date').value,start_time:document.getElementById('s-start').value,end_time:document.getElementById('s-end').value,category:document.getElementById('s-cat').value,notes:document.getElementById('s-notes').value,completed:false});
+  ['s-title','s-notes'].forEach(id=>document.getElementById(id).value='');loadSched();
 }
-async function toggleSchedule(id,val){await rudraReq('update','Schedule',{completed:val},id);loadSchedule();}
+async function toggleSched(id,val){await db('update','Schedule',{completed:val},id);loadSched();}
 
-// ── GOALS ──
+async function aiSched(){
+  const input=document.getElementById('sai').value.trim();
+  if(!input)return alert('Tell Jarvis what to schedule');
+  const btn=document.getElementById('sai-btn');btn.textContent='GENERATING...';btn.disabled=true;
+  try{
+    // Get agheera profile for context
+    const agRes=await db('list','AgheeraProfile');
+    const agProfile=agRes.data?.[0];
+    const context=agProfile?`\nUser's daily routine: ${agProfile.daily_routine||''}\nUser's learning goals: ${agProfile.learning_goals||''}\nUser's preferences: ${agProfile.preferences||''}`:'';
+    const targetDate=getDayDate(input);
+    const prompt=`Generate a daily schedule for the request: "${input}".${context}\nToday is ${todayStr()}. Use date ${targetDate} unless the request specifies a different day or week.\nReturn ONLY a valid JSON array. Each item must have: title (string), date (YYYY-MM-DD), start_time (HH:MM 24hr), end_time (HH:MM 24hr), category (one of: work, study, personal, health, other), notes (string).\nExample: [{"title":"Morning Exercise","date":"2026-03-17","start_time":"06:00","end_time":"06:45","category":"health","notes":"Cardio and stretching"}]\nReturn ONLY the JSON array, nothing else.`;
+    const reply=await aiAsk(prompt);
+    const items=extractJSON(reply);
+    if(!items||!Array.isArray(items))throw new Error('No valid JSON: '+reply.slice(0,100));
+    let created=0;
+    for(const item of items){if(item.title){await db('create','Schedule',{...item,completed:false});created++;}}
+    if(created===0)throw new Error('No items created');
+    await loadSched();btn.textContent='GENERATE';btn.disabled=false;
+    document.getElementById('sai').value='';
+    // Scroll to table
+    document.getElementById('sched-wrap').scrollIntoView({behavior:'smooth'});
+  }catch(e){btn.textContent='GENERATE';btn.disabled=false;console.error(e);alert('Error: '+e.message+'\nTry rephrasing your request.');}
+}
+
+// ════════════════════════════════════════
+// GOALS
+// ════════════════════════════════════════
 async function loadGoals(){
-  const res=await rudraReq('list','Goal');
-  const items=res.data||[];
-  const el=document.getElementById('goals-list');if(!el)return;
-  if(!items.length){el.innerHTML='<div class="empty-state">No goals yet. Add one or let Jarvis help you plan.</div>';return;}
-  el.innerHTML=items.map(it=>`
-    <div class="rcard" id="go-${it.id}">
-      <div class="rcard-title">${it.title}<span style="font-size:9px;color:rgba(170,68,255,0.5)">${it.status||'active'}</span></div>
-      <div class="rcard-meta">${it.category?`[${it.category}]`:''} ${it.deadline?'🗓 '+it.deadline:''}</div>
-      ${it.description?`<div class="rcard-body">${it.description}</div>`:''}
-      <div class="progress-bar"><div class="progress-fill" style="width:${it.progress||0}%"></div></div>
-      <div style="font-size:8px;color:rgba(170,68,255,0.5);margin-top:3px">${it.progress||0}% complete</div>
-      <div class="rcard-actions">
-        <button class="raction" onclick="updateProgress('${it.id}',${Math.min(100,(it.progress||0)+10)})">+10%</button>
-        <button class="raction success" onclick="rudraReq('update','Goal',{status:'completed'},'${it.id}').then(loadGoals)">DONE</button>
-        <button class="raction" onclick="editGoal('${it.id}')">✏ EDIT</button>
-        <button class="raction danger" onclick="deleteItem('Goal','${it.id}','go-${it.id}')">✕ DEL</button>
-      </div>
-    </div>`).join('');
+  const res=await db('list','Goal');const items=res.data||[];
+  const wrap=document.getElementById('goals-wrap');if(!wrap)return;
+  if(!items.length){wrap.innerHTML='<div class="empty">No goals yet.</div>';return;}
+  wrap.innerHTML=items.map(it=>`<div class="rcard" id="gr-${it.id}">
+    <div class="rct">${it.title}<span style="font-size:8px;color:rgba(170,68,255,0.5)">${(it.status||'active').toUpperCase()}</span></div>
+    <div class="rcm">${it.category?'['+it.category+'] ':''} ${it.deadline?'🗓 '+it.deadline:''}</div>
+    ${it.description?`<div class="rcb">${it.description}</div>`:''}
+    <div class="pbar"><div class="pfill" style="width:${it.progress||0}%"></div></div>
+    <div style="font-size:8px;color:rgba(170,68,255,0.45);margin-top:2px">${it.progress||0}% complete</div>
+    <div class="rca">
+      <button class="ra" onclick="db('update','Goal',{progress:Math.min(100,${(it.progress||0)+10})},'${it.id}').then(loadGoals)">+10%</button>
+      <button class="ra ok" onclick="db('update','Goal',{status:'completed',progress:100},'${it.id}').then(loadGoals)">DONE</button>
+      <button class="ra" onclick="editGoal('${it.id}')">✏ EDIT</button>
+      <button class="ra del" onclick="delItem('Goal','${it.id}','gr-${it.id}')">✕ DEL</button>
+    </div>
+  </div>`).join('');
 }
 async function addGoal(){
   const title=document.getElementById('g-title').value.trim();if(!title)return alert('Title required');
-  await rudraReq('create','Goal',{title,description:document.getElementById('g-desc').value,deadline:document.getElementById('g-deadline').value,category:document.getElementById('g-cat').value,progress:0,status:'active'});
-  ['g-title','g-desc','g-deadline','g-cat'].forEach(id=>document.getElementById(id).value='');
-  loadGoals();
+  await db('create','Goal',{title,description:document.getElementById('g-desc').value,deadline:document.getElementById('g-deadline').value,category:document.getElementById('g-cat').value,progress:0,status:'active'});
+  ['g-title','g-desc','g-deadline','g-cat'].forEach(id=>document.getElementById(id).value='');loadGoals();
 }
-async function updateProgress(id,val){await rudraReq('update','Goal',{progress:val},id);loadGoals();}
+async function aiGoals(){
+  const input=document.getElementById('gai').value.trim();if(!input)return alert('Tell Jarvis your goal');
+  const btn=document.getElementById('gai-btn');btn.textContent='GENERATING...';btn.disabled=true;
+  try{
+    const prompt=`User wants to achieve: "${input}". Today is ${todayStr()}. Break this into 3-5 actionable sub-goals. Return ONLY a JSON array. Each item: {title, description, deadline (YYYY-MM-DD), category, progress: 0, status: "active"}. Return ONLY the JSON array.`;
+    const reply=await aiAsk(prompt);
+    const items=extractJSON(reply);
+    if(!items||!Array.isArray(items))throw new Error('Parse failed');
+    for(const item of items)await db('create','Goal',item);
+    loadGoals();btn.textContent='GENERATE';btn.disabled=false;document.getElementById('gai').value='';
+  }catch(e){btn.textContent='GENERATE';btn.disabled=false;alert('Error generating goals. Try again.');}
+}
 
-// ── STUDY ──
+// ════════════════════════════════════════
+// STUDY
+// ════════════════════════════════════════
 async function loadStudy(){
-  const res=await rudraReq('list','StudyTopic');
-  const items=res.data||[];
-  const el=document.getElementById('study-list');if(!el)return;
-  if(!items.length){el.innerHTML='<div class="empty-state">No topics yet. Add one or ask Jarvis to build your study plan.</div>';return;}
-  const statusColor={'not started':'#aaa','in progress':'#ffaa00','completed':'#00ff88'};
-  el.innerHTML=items.map(it=>`
-    <div class="rcard" id="st-${it.id}">
-      <div class="rcard-title">${it.subject}: ${it.topic}<span style="font-size:8px;color:${statusColor[it.status||'not started']}">${(it.status||'not started').toUpperCase()}</span></div>
-      <div class="rcard-meta">Level: ${it.level||'beginner'}</div>
-      ${it.notes?`<div class="rcard-body" style="margin-bottom:4px">${it.notes}</div>`:''}
-      ${it.study_plan?`<div class="rcard-body" style="border-top:1px solid rgba(170,68,255,0.15);padding-top:6px;margin-top:4px;font-size:9px;white-space:pre-wrap">${it.study_plan}</div>`:''}
-      ${it.timetable?`<div class="rcard-body" style="border-top:1px solid rgba(170,68,255,0.15);padding-top:6px;margin-top:4px;font-size:9px;white-space:pre-wrap;color:#ffaa00">${it.timetable}</div>`:''}
-      <div class="rcard-actions">
-        <select onchange="rudraReq('update','StudyTopic',{status:this.value},'${it.id}').then(loadStudy)" style="background:rgba(170,68,255,0.1);border:1px solid rgba(170,68,255,0.3);color:var(--purple);font-family:'Share Tech Mono',monospace;font-size:8px;padding:3px">
-          <option ${it.status==='not started'?'selected':''}>not started</option>
-          <option ${it.status==='in progress'?'selected':''}>in progress</option>
-          <option ${it.status==='completed'?'selected':''}>completed</option>
-        </select>
-        <button class="raction" onclick="editStudy('${it.id}')">✏ EDIT</button>
-        <button class="raction danger" onclick="deleteItem('StudyTopic','${it.id}','st-${it.id}')">✕ DEL</button>
-      </div>
-    </div>`).join('');
+  const res=await db('list','StudyTopic');const items=res.data||[];
+  const wrap=document.getElementById('study-wrap');if(!wrap)return;
+  if(!items.length){wrap.innerHTML='<div class="empty">No topics yet.</div>';return;}
+  const sc={'not started':'#888','in progress':'#ffaa00','completed':'#00ff88'};
+  wrap.innerHTML=items.map(it=>`<div class="rcard" id="str-${it.id}">
+    <div class="rct">${it.subject}: ${it.topic}<span style="font-size:8px;color:${sc[it.status||'not started']}">${(it.status||'not started').toUpperCase()}</span></div>
+    <div class="rcm">Level: ${it.level||'beginner'}</div>
+    ${it.notes?`<div class="rcb">${it.notes}</div>`:''}
+    ${it.study_plan?`<div class="rcb" style="border-top:1px solid rgba(170,68,255,0.12);padding-top:6px;margin-top:4px;font-size:9px;white-space:pre-wrap">${it.study_plan}</div>`:''}
+    ${it.timetable?`<div class="rcb" style="border-top:1px solid rgba(170,68,255,0.12);padding-top:6px;margin-top:4px;font-size:9px;white-space:pre-wrap;color:#ffaa00">${it.timetable}</div>`:''}
+    <div class="rca">
+      <select onchange="db('update','StudyTopic',{status:this.value},'${it.id}').then(loadStudy)" style="background:rgba(170,68,255,0.08);border:1px solid rgba(170,68,255,0.25);color:var(--purple);font-family:'Share Tech Mono',monospace;font-size:8px;padding:3px">
+        <option ${it.status==='not started'?'selected':''}>not started</option>
+        <option ${it.status==='in progress'?'selected':''}>in progress</option>
+        <option ${it.status==='completed'?'selected':''}>completed</option>
+      </select>
+      <button class="ra" onclick="editStudy('${it.id}')">✏ EDIT</button>
+      <button class="ra del" onclick="delItem('StudyTopic','${it.id}','str-${it.id}')">✕ DEL</button>
+    </div>
+  </div>`).join('');
 }
-async function addStudyTopic(){
+async function addStudy(){
   const subject=document.getElementById('st-subject').value.trim(),topic=document.getElementById('st-topic').value.trim();
   if(!subject||!topic)return alert('Subject and topic required');
-  await rudraReq('create','StudyTopic',{subject,topic,level:document.getElementById('st-level').value,status:document.getElementById('st-status').value,notes:document.getElementById('st-notes').value});
-  ['st-subject','st-topic','st-notes'].forEach(id=>document.getElementById(id).value='');
-  loadStudy();
+  await db('create','StudyTopic',{subject,topic,level:document.getElementById('st-level').value,status:document.getElementById('st-status').value,notes:document.getElementById('st-notes').value});
+  ['st-subject','st-topic','st-notes'].forEach(id=>document.getElementById(id).value='');loadStudy();
+}
+async function aiStudy(){
+  const input=document.getElementById('stai').value.trim();if(!input)return alert('Tell Jarvis what to study');
+  const btn=document.getElementById('stai-btn');btn.textContent='GENERATING...';btn.disabled=true;
+  try{
+    const prompt=`Create a structured study roadmap for: "${input}". Return ONLY a JSON array of 4-8 topics ordered from basics to advanced. Each: {subject, topic, level (beginner/intermediate/advanced), status: "not started", notes: "brief 1-line description", study_plan: "3-5 step by step items to study", timetable: "suggested time e.g. Week 1: 3x per week, 1 hour"}. Return ONLY the JSON array.`;
+    const reply=await aiAsk(prompt);
+    const items=extractJSON(reply);
+    if(!items||!Array.isArray(items))throw new Error('Parse failed');
+    for(const item of items)await db('create','StudyTopic',item);
+    loadStudy();btn.textContent='GENERATE PLAN';btn.disabled=false;document.getElementById('stai').value='';
+  }catch(e){btn.textContent='GENERATE PLAN';btn.disabled=false;alert('Error generating study plan. Try again.');}
 }
 
-// ── DELETE ──
-async function deleteItem(entity,id,elId){
+// ════════════════════════════════════════
+// AGHEERA PROFILE
+// ════════════════════════════════════════
+async function loadAgheera(){
+  const res=await db('list','AgheeraProfile');
+  const item=res.data?.[0];
+  if(item){
+    document.getElementById('ag-routine').value=item.daily_routine||'';
+    document.getElementById('ag-goals').value=item.learning_goals||'';
+    document.getElementById('ag-pref').value=item.preferences||'';
+  }
+}
+async function saveAgheera(){
+  const routine=document.getElementById('ag-routine').value;
+  const goals=document.getElementById('ag-goals').value;
+  const pref=document.getElementById('ag-pref').value;
+  const res=await db('list','AgheeraProfile');
+  const existing=res.data?.[0];
+  if(existing){await db('update','AgheeraProfile',{daily_routine:routine,learning_goals:goals,preferences:pref,last_updated:new Date().toISOString()},existing.id);}
+  else{await db('create','AgheeraProfile',{daily_routine:routine,learning_goals:goals,preferences:pref,last_updated:new Date().toISOString()});}
+  const st=document.getElementById('ag-status');if(st){st.textContent='✅ Profile saved! Jarvis will use this for all schedule generation.';st.style.display='block';setTimeout(()=>st.style.display='none',3000);}
+}
+async function aiFromAgheera(){
+  const input=document.getElementById('ag-ai').value.trim();if(!input)return alert('Tell Jarvis what to plan');
+  const btn=document.getElementById('ag-btn');btn.textContent='GENERATING...';btn.disabled=true;
+  const routine=document.getElementById('ag-routine').value;
+  const goals=document.getElementById('ag-goals').value;
+  const pref=document.getElementById('ag-pref').value;
+  if(!routine&&!goals){btn.textContent='GENERATE';btn.disabled=false;return alert('Please fill your daily routine and learning goals first.');}
+  try{
+    const targetDate=getDayDate(input);
+    const prompt=`User request: "${input}". Today is ${todayStr()}.\n\nUser's DAILY ROUTINE:\n${routine}\n\nUser's LEARNING GOALS:\n${goals}\n\nUser's PREFERENCES:\n${pref||'none'}\n\nBased on this profile, generate a smart schedule. Use date ${targetDate} unless a week is requested (then use Mon-Sun starting from ${todayStr()}).\nReturn ONLY a valid JSON array. Each item: {title, date (YYYY-MM-DD), start_time (HH:MM 24hr), end_time (HH:MM 24hr), category (work/study/personal/health/other), notes}.\nFit study sessions into the FREE TIME slots in the daily routine. Respect college/class/prayer times. Return ONLY the JSON array.`;
+    const reply=await aiAsk(prompt);
+    const items=extractJSON(reply);
+    if(!items||!Array.isArray(items))throw new Error('Parse failed: '+reply.slice(0,100));
+    let created=0;
+    for(const item of items){if(item.title){await db('create','Schedule',{...item,completed:false});created++;}}
+    if(created===0)throw new Error('No valid items');
+    // Switch to schedule tab and show results
+    goRudra('schedule',0);
+    await loadSched();
+    btn.textContent='GENERATE';btn.disabled=false;document.getElementById('ag-ai').value='';
+    const st=document.getElementById('ag-status');if(st){st.textContent=`✅ Created ${created} schedule events! Switching to Schedule tab...`;st.style.display='block';setTimeout(()=>st.style.display='none',3000);}
+  }catch(e){btn.textContent='GENERATE';btn.disabled=false;alert('Error: '+e.message);}
+}
+
+// ════════════════════════════════════════
+// STUDENT PROGRESS
+// ════════════════════════════════════════
+async function loadProgress(){
+  const res=await db('list','StudentProgress');const items=(res.data||[]).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  // Build chart by subject
+  const bySubject={};
+  items.forEach(it=>{
+    if(!bySubject[it.subject])bySubject[it.subject]={total:0,max:0,count:0};
+    bySubject[it.subject].total+=(it.score||0);
+    bySubject[it.subject].max+=(it.max_score||100);
+    bySubject[it.subject].count++;
+  });
+  const chartWrap=document.getElementById('prog-chart-wrap');
+  if(Object.keys(bySubject).length>0){
+    const colors=['#aa44ff','#00d4ff','#00ff88','#ff8800','#ff4466'];
+    let chartHtml='<div class="rcard"><div class="rct">SUBJECT OVERVIEW</div><div class="prog-chart">';
+    Object.entries(bySubject).forEach(([subj,data],i)=>{
+      const pct=data.max>0?Math.round((data.total/data.max)*100):0;
+      const color=colors[i%colors.length];
+      chartHtml+=`<div class="prog-row">
+        <div class="prog-label">${subj.toUpperCase()}</div>
+        <div class="prog-track"><div class="prog-fill" style="width:${pct}%;background:${color}"></div></div>
+        <div class="prog-pct">${pct}%</div>
+      </div>`;
+    });
+    chartHtml+='</div></div>';
+    chartWrap.innerHTML=chartHtml;
+  }else{chartWrap.innerHTML='';}
+
+  const wrap=document.getElementById('progress-wrap');if(!wrap)return;
+  if(!items.length){wrap.innerHTML='<div class="empty">No progress logged yet. Add your first entry above.</div>';return;}
+  wrap.innerHTML=items.map(it=>{
+    const pct=it.max_score>0?Math.round((it.score/it.max_score)*100):it.score;
+    const color=pct>=80?'#00ff88':pct>=60?'#ffaa00':'#ff4466';
+    return `<div class="rcard" id="pr-${it.id}">
+      <div class="rct">${it.subject} — ${it.topic||'General'}<span style="font-size:8px;color:${color};font-weight:bold">${it.score}/${it.max_score||100} (${pct}%)</span></div>
+      <div class="rcm">${(it.type||'test').toUpperCase()} &nbsp; 📅 ${it.date||'--'}</div>
+      <div class="pbar"><div class="pfill" style="width:${pct}%;background:${color}"></div></div>
+      ${it.notes?`<div class="rcb" style="margin-top:5px">${it.notes}</div>`:''}
+      <div class="rca">
+        <button class="ra" onclick="editProg('${it.id}')">✏ EDIT</button>
+        <button class="ra del" onclick="delItem('StudentProgress','${it.id}','pr-${it.id}')">✕ DEL</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function addProgress(){
+  const subject=document.getElementById('pr-subject').value.trim();if(!subject)return alert('Subject required');
+  await db('create','StudentProgress',{subject,topic:document.getElementById('pr-topic').value,type:document.getElementById('pr-type').value,date:document.getElementById('pr-date').value||todayStr(),score:parseFloat(document.getElementById('pr-score').value)||0,max_score:parseFloat(document.getElementById('pr-max').value)||100,notes:document.getElementById('pr-notes').value});
+  ['pr-subject','pr-topic','pr-score','pr-max','pr-notes'].forEach(id=>document.getElementById(id).value='');
+  loadProgress();
+}
+async function aiProgress(){
+  const input=document.getElementById('pai').value.trim();if(!input)return alert('Ask Jarvis to analyze your progress');
+  const btn=document.getElementById('pai-btn');btn.textContent='ANALYZING...';btn.disabled=true;
+  try{
+    const res=await db('list','StudentProgress');const items=res.data||[];
+    if(!items.length){btn.textContent='ANALYZE';btn.disabled=false;return alert('No progress data to analyze yet.');}
+    const summary=items.map(i=>`${i.subject}/${i.topic||'general'}: ${i.score}/${i.max_score||100} (${i.type})`).join(', ');
+    const prompt=`Student progress data: ${summary}\nUser request: "${input}"\nAnalyze this and provide specific, encouraging, actionable advice. Be concise and human. Focus on strengths and clear improvement areas.`;
+    const reply=await aiAsk(prompt);
+    // Show in chat
+    goPage('jp');sendJ(reply,'voice');
+    btn.textContent='ANALYZE';btn.disabled=false;document.getElementById('pai').value='';
+  }catch(e){btn.textContent='ANALYZE';btn.disabled=false;alert('Error analyzing.');}
+}
+
+// ════════════════════════════════════════
+// DELETE
+// ════════════════════════════════════════
+async function delItem(entity,id,elId){
   if(!confirm('Delete this item?'))return;
-  await rudraReq('delete',entity,null,id);
+  await db('delete',entity,null,id);
   const el=document.getElementById(elId);if(el)el.remove();
 }
 
-// ── EDIT MODAL ──
-let editCtx={};
-function openEdit(html,onSave){
-  editCtx.onSave=onSave;
-  document.getElementById('edit-form-body').innerHTML=html;
-  document.getElementById('edit-modal').style.display='flex';
+// ════════════════════════════════════════
+// EDIT MODAL
+// ════════════════════════════════════════
+let editSaveFn=null;
+function openEdit(title,html,saveFn){
+  editSaveFn=saveFn;
+  document.getElementById('etitle').textContent=title;
+  document.getElementById('eform').innerHTML=html;
+  document.getElementById('emod').style.display='flex';
 }
-function saveEdit(){editCtx.onSave&&editCtx.onSave();closeEdit();}
-function closeEdit(){document.getElementById('edit-modal').style.display='none';editCtx={};}
+function doSave(){editSaveFn&&editSaveFn();closeEdit();}
+function closeEdit(){document.getElementById('emod').style.display='none';editSaveFn=null;}
 
-function editSchedule(id){
-  rudraReq('list','Schedule').then(res=>{
-    const it=res.data.find(x=>x.id===id);if(!it)return;
-    openEdit(`
-      <input id="e-title" value="${it.title||''}" placeholder="Title" style="width:100%;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px;margin-bottom:8px">
-      <div style="display:flex;gap:8px;margin-bottom:8px">
-        <input id="e-date" type="date" value="${it.date||''}" style="flex:1;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px">
-        <input id="e-start" type="time" value="${it.start_time||''}" style="flex:1;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px">
-        <input id="e-end" type="time" value="${it.end_time||''}" style="flex:1;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px">
-      </div>
-      <input id="e-notes" value="${it.notes||''}" placeholder="Notes" style="width:100%;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px">
-    `,()=>{
-      rudraReq('update','Schedule',{title:document.getElementById('e-title').value,date:document.getElementById('e-date').value,start_time:document.getElementById('e-start').value,end_time:document.getElementById('e-end').value,notes:document.getElementById('e-notes').value},id).then(loadSchedule);
-    });
-  });
+function finp(id,val,ph,type='text'){return `<input id="${id}" value="${(val||'').replace(/"/g,'&quot;')}" placeholder="${ph}" type="${type}" style="background:rgba(170,68,255,0.05);border:1px solid rgba(170,68,255,0.22);color:rgba(200,175,255,.9);font-family:'Share Tech Mono',monospace;font-size:11px;padding:6px 9px;width:100%;margin-bottom:7px">`;}
+function fsel(id,val,opts){return `<select id="${id}" style="background:rgba(170,68,255,0.05);border:1px solid rgba(170,68,255,0.22);color:rgba(200,175,255,.9);font-family:'Share Tech Mono',monospace;font-size:11px;padding:6px 9px;width:100%;margin-bottom:7px">${opts.map(o=>`<option value="${o}" ${val===o?'selected':''}>${o}</option>`).join('')}</select>`;}
+function ftxt(id,val,ph){return `<textarea id="${id}" placeholder="${ph}" style="background:rgba(170,68,255,0.05);border:1px solid rgba(170,68,255,0.22);color:rgba(200,175,255,.9);font-family:'Share Tech Mono',monospace;font-size:11px;padding:6px 9px;width:100%;margin-bottom:7px;min-height:70px;resize:vertical">${val||''}</textarea>`;}
+
+async function editSched(id){
+  const res=await db('list','Schedule');const it=res.data?.find(x=>x.id===id);if(!it)return;
+  openEdit('EDIT SCHEDULE EVENT',
+    finp('e-title',it.title,'Title')+
+    `<div style="display:flex;gap:7px">${finp('e-date',it.date,'Date','date')}${finp('e-start',it.start_time,'Start','time')}${finp('e-end',it.end_time,'End','time')}</div>`+
+    fsel('e-cat',it.category,['work','study','personal','health','other'])+
+    finp('e-notes',it.notes,'Notes'),
+    ()=>db('update','Schedule',{title:document.getElementById('e-title').value,date:document.getElementById('e-date').value,start_time:document.getElementById('e-start').value,end_time:document.getElementById('e-end').value,category:document.getElementById('e-cat').value,notes:document.getElementById('e-notes').value},id).then(loadSched));
 }
-
-function editGoal(id){
-  rudraReq('list','Goal').then(res=>{
-    const it=res.data.find(x=>x.id===id);if(!it)return;
-    openEdit(`
-      <input id="e-gtitle" value="${it.title||''}" placeholder="Goal" style="width:100%;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px;margin-bottom:8px">
-      <textarea id="e-gdesc" placeholder="Description" style="width:100%;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px;margin-bottom:8px;min-height:60px">${it.description||''}</textarea>
-      <div style="display:flex;gap:8px">
-        <input id="e-gdeadline" type="date" value="${it.deadline||''}" style="flex:1;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px">
-        <input id="e-gprog" type="number" min="0" max="100" value="${it.progress||0}" placeholder="%" style="flex:1;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px">
-      </div>
-    `,()=>{
-      rudraReq('update','Goal',{title:document.getElementById('e-gtitle').value,description:document.getElementById('e-gdesc').value,deadline:document.getElementById('e-gdeadline').value,progress:parseInt(document.getElementById('e-gprog').value)||0},id).then(loadGoals);
-    });
-  });
+async function editGoal(id){
+  const res=await db('list','Goal');const it=res.data?.find(x=>x.id===id);if(!it)return;
+  openEdit('EDIT GOAL',
+    finp('e-gtitle',it.title,'Goal')+
+    ftxt('e-gdesc',it.description,'Description')+
+    `<div style="display:flex;gap:7px">${finp('e-gdeadline',it.deadline,'Deadline','date')}${finp('e-gprog',it.progress,'Progress %','number')}${finp('e-gcat',it.category,'Category')}</div>`,
+    ()=>db('update','Goal',{title:document.getElementById('e-gtitle').value,description:document.getElementById('e-gdesc').value,deadline:document.getElementById('e-gdeadline').value,progress:parseInt(document.getElementById('e-gprog').value)||0,category:document.getElementById('e-gcat').value},id).then(loadGoals));
 }
-
-function editStudy(id){
-  rudraReq('list','StudyTopic').then(res=>{
-    const it=res.data.find(x=>x.id===id);if(!it)return;
-    openEdit(`
-      <div style="display:flex;gap:8px;margin-bottom:8px">
-        <input id="e-ssubj" value="${it.subject||''}" placeholder="Subject" style="flex:1;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px">
-        <input id="e-stopic" value="${it.topic||''}" placeholder="Topic" style="flex:1;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px">
-      </div>
-      <textarea id="e-snotes" placeholder="Notes" style="width:100%;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px;margin-bottom:8px;min-height:60px">${it.notes||''}</textarea>
-      <textarea id="e-splan" placeholder="Study Plan" style="width:100%;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px;margin-bottom:8px;min-height:80px">${it.study_plan||''}</textarea>
-      <textarea id="e-stt" placeholder="Timetable" style="width:100%;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px;min-height:80px">${it.timetable||''}</textarea>
-    `,()=>{
-      rudraReq('update','StudyTopic',{subject:document.getElementById('e-ssubj').value,topic:document.getElementById('e-stopic').value,notes:document.getElementById('e-snotes').value,study_plan:document.getElementById('e-splan').value,timetable:document.getElementById('e-stt').value},id).then(loadStudy);
-    });
-  });
+async function editStudy(id){
+  const res=await db('list','StudyTopic');const it=res.data?.find(x=>x.id===id);if(!it)return;
+  openEdit('EDIT STUDY TOPIC',
+    `<div style="display:flex;gap:7px">${finp('e-ssubj',it.subject,'Subject')}${finp('e-stopic',it.topic,'Topic')}</div>`+
+    ftxt('e-snotes',it.notes,'Notes')+
+    ftxt('e-splan',it.study_plan,'Study Plan')+
+    ftxt('e-stt',it.timetable,'Timetable'),
+    ()=>db('update','StudyTopic',{subject:document.getElementById('e-ssubj').value,topic:document.getElementById('e-stopic').value,notes:document.getElementById('e-snotes').value,study_plan:document.getElementById('e-splan').value,timetable:document.getElementById('e-stt').value},id).then(loadStudy));
+}
+async function editProg(id){
+  const res=await db('list','StudentProgress');const it=res.data?.find(x=>x.id===id);if(!it)return;
+  openEdit('EDIT PROGRESS ENTRY',
+    `<div style="display:flex;gap:7px">${finp('e-psubj',it.subject,'Subject')}${finp('e-ptopic',it.topic,'Topic')}</div>`+
+    `<div style="display:flex;gap:7px">${finp('e-pscore',it.score,'Score','number')}${finp('e-pmax',it.max_score,'Max Score','number')}${finp('e-pdate',it.date,'Date','date')}</div>`+
+    fsel('e-ptype',it.type,['test','assignment','quiz','project','self-assessment'])+
+    ftxt('e-pnotes',it.notes,'Notes'),
+    ()=>db('update','StudentProgress',{subject:document.getElementById('e-psubj').value,topic:document.getElementById('e-ptopic').value,score:parseFloat(document.getElementById('e-pscore').value)||0,max_score:parseFloat(document.getElementById('e-pmax').value)||100,date:document.getElementById('e-pdate').value,type:document.getElementById('e-ptype').value,notes:document.getElementById('e-pnotes').value},id).then(loadProgress));
 }
 
-// ════════════════════════════════════════════
-// AI GENERATORS FOR RUDRA
-// ════════════════════════════════════════════
-async function aiCall(prompt){
-  const res=await fetch(JARVIS_API,{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({message:prompt,history:[],mode:'text'})});
-  const d=await res.json();return d.reply||'';
-}
+// ════════════════════════════════════════
+// LOAD ALL
+// ════════════════════════════════════════
+function loadAllRudra(){loadSched();loadGoals();loadStudy();loadProgress();loadAgheera();}
 
-async function aiGenerateSchedule(){
-  const input=document.getElementById('sched-ai-input').value.trim();
-  if(!input)return alert('Tell Jarvis what schedule to create');
-  const btn=event.target;btn.textContent='GENERATING...';btn.disabled=true;
-  try{
-    const prompt=`The user wants: "${input}". Generate a schedule as a JSON array. Each item: {title, date (YYYY-MM-DD, use dates from today ${new Date().toISOString().slice(0,10)} onwards), start_time (HH:MM), end_time (HH:MM), category (work/study/personal/health/other), notes}. Return ONLY the JSON array, no explanation.`;
-    const reply=await aiCall(prompt);
-    const jsonMatch=reply.match(/\[[\s\S]*\]/);
-    if(!jsonMatch)throw new Error('No JSON');
-    const items=JSON.parse(jsonMatch[0]);
-    for(const item of items){await rudraReq('create','Schedule',{...item,completed:false});}
-    loadSchedule();btn.textContent='GENERATE';btn.disabled=false;
-    document.getElementById('sched-ai-input').value='';
-    alert(`✅ Created ${items.length} schedule events!`);
-  }catch(e){btn.textContent='GENERATE';btn.disabled=false;alert('Could not parse schedule. Try again.');}
-}
-
-async function aiGenerateGoals(){
-  const input=document.getElementById('goal-ai-input').value.trim();
-  if(!input)return alert('Tell Jarvis your goal');
-  const btn=event.target;btn.textContent='GENERATING...';btn.disabled=true;
-  try{
-    const prompt=`User wants to achieve: "${input}". Break this into 3-5 actionable goals as JSON array. Each: {title, description, deadline (YYYY-MM-DD), category, progress: 0, status: "active"}. Return ONLY JSON array.`;
-    const reply=await aiCall(prompt);
-    const jsonMatch=reply.match(/\[[\s\S]*\]/);
-    if(!jsonMatch)throw new Error('No JSON');
-    const items=JSON.parse(jsonMatch[0]);
-    for(const item of items){await rudraReq('create','Goal',item);}
-    loadGoals();btn.textContent='GENERATE';btn.disabled=false;
-    document.getElementById('goal-ai-input').value='';
-    alert(`✅ Created ${items.length} goals!`);
-  }catch(e){btn.textContent='GENERATE';btn.disabled=false;alert('Could not generate goals. Try again.');}
-}
-
-async function aiGenerateStudy(){
-  const input=document.getElementById('study-ai-input').value.trim();
-  if(!input)return alert('Tell Jarvis what to study');
-  const btn=event.target;btn.textContent='GENERATING...';btn.disabled=true;
-  try{
-    const prompt=`User wants to learn: "${input}". Create a structured study plan as JSON array of topics. Each: {subject, topic, level (beginner/intermediate/advanced), status: "not started", notes: "brief description", study_plan: "step by step what to study for this topic", timetable: "suggested time allocation e.g. Week 1: Mon/Wed/Fri 1hr"}. Return ONLY JSON array with 4-8 topics ordered from basics to advanced.`;
-    const reply=await aiCall(prompt);
-    const jsonMatch=reply.match(/\[[\s\S]*\]/);
-    if(!jsonMatch)throw new Error('No JSON');
-    const items=JSON.parse(jsonMatch[0]);
-    for(const item of items){await rudraReq('create','StudyTopic',item);}
-    loadStudy();btn.textContent='GENERATE PLAN';btn.disabled=false;
-    document.getElementById('study-ai-input').value='';
-    alert(`✅ Created ${items.length} study topics!`);
-  }catch(e){btn.textContent='GENERATE PLAN';btn.disabled=false;alert('Could not generate plan. Try again.');}
-}
-
-// ════════════════════════════════════════════
 // BOOT
-// ════════════════════════════════════════════
-setUIState('idle');
-initBattery();
-setTimeout(()=>addLog('All systems nominal'),600);
-setTimeout(()=>{
-  speakText("Good evening sir. Jarvis and Rudra are both online. I'll stop talking the moment you speak.",null);
-},900);
+setUI('idle');initBatt();
+// Set today's date as default
+const td=todayStr();['s-date','g-deadline','pr-date'].forEach(id=>{const el=document.getElementById(id);if(el&&!el.value)el.value=td;});
+setTimeout(()=>addLog('All systems nominal'),500);
+setTimeout(()=>{speak("Good evening sir. Jarvis and Rudra are fully online. I stop immediately when you speak.",null);},900);
 </script>
 </body>
 </html>
