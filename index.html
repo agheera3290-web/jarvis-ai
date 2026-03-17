@@ -311,42 +311,35 @@ let convCount = 0;
 let isSpeaking = false;
 let isListening = false;
 
-// ════════════════════════════════════════════
-// BATTERY API — real device battery
-// ════════════════════════════════════════════
-let batteryLevel = null;
-let batteryCharging = false;
+// INPUT MODE: 'voice' = user spoke (reply out loud only, no text shown)
+//             'text'  = user typed (reply in text only, no speaking)
+// Override: say "tell me out loud" or "say it" to force voice
+//           say "write it" or "show me" to force text
+let inputMode = 'text'; // default until mic used
 
+// ════════════════════════════════════════════
+// BATTERY
+// ════════════════════════════════════════════
+let batteryLevel=null, batteryCharging=false;
 async function initBattery(){
   try{
-    const batt = await navigator.getBattery();
-    function updateBatt(){
-      batteryLevel = Math.round(batt.level * 100);
-      batteryCharging = batt.charging;
-      const pct = batteryLevel + '%';
-      const chargeStr = batteryCharging ? 'CHARGING ⚡' : 'ON BATTERY';
-      // update UI
-      const bp = document.getElementById('battery-pct'); if(bp) bp.textContent = pct;
-      const bl = document.getElementById('battery-left'); if(bl) bl.textContent = pct;
-      const cs = document.getElementById('charging-status'); if(cs) cs.textContent = chargeStr;
-      const bm = document.getElementById('batt-metric'); if(bm) bm.textContent = pct;
-      const bs = document.getElementById('batt-sub'); if(bs) bs.textContent = chargeStr.toLowerCase();
+    const b=await navigator.getBattery();
+    function upd(){
+      batteryLevel=Math.round(b.level*100); batteryCharging=b.charging;
+      const pct=batteryLevel+'%', cs=batteryCharging?'CHARGING ⚡':'ON BATTERY';
+      ['battery-pct','battery-left'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=pct;});
+      const ci=document.getElementById('charging-status');if(ci)ci.textContent=cs;
+      const bm=document.getElementById('batt-metric');if(bm)bm.textContent=pct;
+      const bs=document.getElementById('batt-sub');if(bs)bs.textContent=cs.toLowerCase();
     }
-    updateBatt();
-    batt.addEventListener('levelchange', updateBatt);
-    batt.addEventListener('chargingchange', updateBatt);
-    addLog('Battery API: active');
-  }catch(e){
-    const bp = document.getElementById('battery-pct'); if(bp) bp.textContent = 'N/A';
-    const bm = document.getElementById('batt-metric'); if(bm) bm.textContent = 'N/A';
-    addLog('Battery: not supported on this browser');
-  }
+    upd(); b.addEventListener('levelchange',upd); b.addEventListener('chargingchange',upd);
+  }catch(e){ ['battery-pct','batt-metric'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='N/A';}); }
 }
 
 // ════════════════════════════════════════════
 // CLOCK & STATS
 // ════════════════════════════════════════════
-function pad(n){ return String(n).padStart(2,'0'); }
+function pad(n){return String(n).padStart(2,'0');}
 const MON=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
 const DAY=['SUN','MON','TUE','WED','THU','FRI','SAT'];
 function tick(){
@@ -355,21 +348,19 @@ function tick(){
   document.getElementById('top-time').textContent=`${h}:${m}:${s}`;
   document.getElementById('hud-date').textContent=`${DAY[n.getDay()]} ${pad(n.getDate())} ${MON[n.getMonth()]} ${n.getFullYear()}`;
 }
-setInterval(tick,1000); tick();
-
-let startTime = Date.now();
+setInterval(tick,1000);tick();
+let startTime=Date.now();
 setInterval(()=>{
   const e=Math.floor((Date.now()-startTime)/1000);
   const el=document.getElementById('uptime');
-  if(el) el.textContent=`${pad(Math.floor(e/3600))}:${pad(Math.floor(e%3600/60))}:${pad(e%60)}`;
+  if(el)el.textContent=`${pad(Math.floor(e/3600))}:${pad(Math.floor(e%3600/60))}:${pad(e%60)}`;
 },1000);
-
 setInterval(()=>{
   const r=(a,b)=>Math.floor(Math.random()*(b-a)+a),cpu=r(45,88),ram=r(38,72),net=r(55,96);
   const cb=document.getElementById('cpu-bar');if(cb){cb.style.width=cpu+'%';document.getElementById('cpu-val').textContent=cpu+'%';}
   const rb=document.getElementById('ram-bar');if(rb){rb.style.width=ram+'%';document.getElementById('ram-val').textContent=ram+'%';}
   const nb=document.getElementById('net-bar');if(nb){nb.style.width=net+'%';document.getElementById('net-val').textContent=net+'%';}
-  const t=document.getElementById('temp');if(t) t.textContent=(34+Math.random()*9).toFixed(1)+'°C';
+  const t=document.getElementById('temp');if(t)t.textContent=(34+Math.random()*9).toFixed(1)+'°C';
 },2500);
 
 // ════════════════════════════════════════════
@@ -394,7 +385,7 @@ setInterval(()=>{
 // ════════════════════════════════════════════
 const hc=document.getElementById('hud-canvas');
 if(hc){
-  const hctx=hc.getContext('2d'); let hA=0,hA2=0;
+  const hctx=hc.getContext('2d');let hA=0,hA2=0;
   (function drawHUD(){
     const cx=120,cy=120;hctx.clearRect(0,0,240,240);
     [[116,[4,8],1,.4],[104,[2,12],1,.3],[90,[8,4],1.4,.5],[76,[],1,.3],[60,[],1,.5],[42,[4,4],1,.4],[26,[],1.4,.65]].forEach(([r,d,w,a])=>{
@@ -414,11 +405,9 @@ if(hc){
     hA+=.009;hA2+=.013;requestAnimationFrame(drawHUD);
   })();
 }
-
-// RADAR
 const rc=document.getElementById('radar-canvas');
 if(rc){
-  const rctx=rc.getContext('2d'); let rA=0; const blips=[];
+  const rctx=rc.getContext('2d');let rA=0;const blips=[];
   setInterval(()=>{if(blips.length<8)blips.push({x:Math.random()*110-55,y:Math.random()*110-55,age:0,max:100+Math.random()*80});},2200);
   (function drawRadar(){
     const cx=77,cy=77,R=65;rctx.clearRect(0,0,155,155);
@@ -448,238 +437,138 @@ function addLog(msg){
 }
 
 // ════════════════════════════════════════════
-// SMART COMMAND HANDLER
+// SMART COMMANDS
 // ════════════════════════════════════════════
 function handleSmartCommand(raw){
-  const t = raw.toLowerCase().trim();
-
-  // BATTERY
+  const t=raw.toLowerCase().trim();
   if(t.includes('battery')){
-    if(batteryLevel !== null){
-      const ch = batteryCharging ? 'charging' : 'on battery power';
-      return `Your battery is at ${batteryLevel} percent, sir. The device is currently ${ch}.`;
+    if(batteryLevel!==null){
+      const ch=batteryCharging?'and it\'s charging right now':'not plugged in';
+      return `You're at ${batteryLevel}% battery, sir — ${ch}.`;
     }
-    return 'Battery information is not available on this browser, sir. Try Chrome on Android.';
+    return 'Battery info isn\'t available on this browser, sir.';
   }
-
-  // TIME
-  if(/^(what('?s| is) the time|what time is it)/.test(t)){
+  if(/^(what('?s| is) the time|what time is it|time)$/.test(t)){
     const n=new Date();
-    return `The current time is ${pad(n.getHours())} ${pad(n.getMinutes())}, sir.`;
+    const h=n.getHours()>12?n.getHours()-12:n.getHours()||12;
+    const ampm=n.getHours()>=12?'PM':'AM';
+    return `It's ${h}:${pad(n.getMinutes())} ${ampm}, sir.`;
   }
-
-  // DATE
-  if(t.includes('date') || t.includes('today')){
-    const n=new Date();
-    return `Today is ${DAY[n.getDay()]}, ${pad(n.getDate())} ${MON[n.getMonth()]} ${n.getFullYear()}, sir.`;
+  if(t.match(/^(what('?s| is) today|today'?s date|date)$/)){
+    const n=new Date();return `Today's ${DAY[n.getDay()]}, ${pad(n.getDate())} ${MON[n.getMonth()]} ${n.getFullYear()}, sir.`;
   }
-
-  // CALL
-  const callM = t.match(/^call\s+(.+)/);
-  if(callM){
-    const name = callM[1].trim();
-    window.location.href = `tel:${encodeURIComponent(name)}`;
-    return `Initiating a call to ${name}, sir.`;
-  }
-
-  // WHATSAPP
-  if(t.includes('whatsapp')){
-    window.open('https://web.whatsapp.com','_blank');
-    return 'Opening WhatsApp, sir.';
-  }
-
-  // YOUTUBE — auto-play first result using YouTube's embed trick
-  const ytPlay = t.match(/(?:play|song|music)\s+(.+?)(?:\s+on youtube|\s+song|\s+music)?$/);
+  const callM=t.match(/^call\s+(.+)/);
+  if(callM){window.location.href=`tel:${encodeURIComponent(callM[1].trim())}`;return `Calling ${callM[1].trim()} now, sir.`;}
+  if(t.includes('whatsapp')){window.open('https://web.whatsapp.com','_blank');return 'Opening WhatsApp, sir.';}
+  const ytPlay=t.match(/(?:play|song|music)\s+(.+?)(?:\s+on youtube|\s+song|\s+music)?$/);
   if(ytPlay){
-    const song = ytPlay[1].replace(/\b(on youtube|youtube|song|music|video)\b/gi,'').trim();
-    // Use YouTube search with autoplay on first result
-    const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(song)}`;
-    // Also try direct invidious embed that auto-plays
-    const autoplayUrl = `https://www.youtube.com/search?search_query=${encodeURIComponent(song)}`;
-    // Best approach: open YouTube with the search, and use their sp=EgIQAQ for videos only
+    const song=ytPlay[1].replace(/\b(on youtube|youtube|song|music|video)\b/gi,'').trim();
     window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(song)}&sp=EgIQAQ%3D%3D`,'_blank');
-    addLog(`YouTube: playing ${song}`);
-    return `Searching YouTube for "${song}" and opening the results, sir. The first video will appear at the top — tap it to play.`;
+    return `Opening YouTube for "${song}" — first result should be right at the top, sir.`;
   }
-
-  // OPEN YOUTUBE
-  if(t==='open youtube'||t==='youtube'){
-    window.open('https://www.youtube.com','_blank');
-    return 'Opening YouTube, sir.';
-  }
-
-  // SEARCH ON SPECIFIC SITE — "search youtube for", "search amazon for", "search reddit for"
-  const siteSearchM = t.match(/search\s+(\w+)\s+for\s+(.+)/);
+  if(t==='open youtube'||t==='youtube'){window.open('https://www.youtube.com','_blank');return 'YouTube is open, sir.';}
+  const siteSearchM=t.match(/search\s+(\w+)\s+for\s+(.+)/);
   if(siteSearchM){
-    const site = siteSearchM[1].trim();
-    const query = siteSearchM[2].trim();
-    const siteUrls = {
-      youtube:`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`,
-      amazon:`https://www.amazon.in/s?k=${encodeURIComponent(query)}`,
-      reddit:`https://www.reddit.com/search/?q=${encodeURIComponent(query)}`,
-      twitter:`https://twitter.com/search?q=${encodeURIComponent(query)}`,
-      x:`https://x.com/search?q=${encodeURIComponent(query)}`,
-      flipkart:`https://www.flipkart.com/search?q=${encodeURIComponent(query)}`,
-      instagram:`https://www.instagram.com/explore/tags/${encodeURIComponent(query.replace(/\s/g,''))}`,
-      wikipedia:`https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(query)}`,
-      github:`https://github.com/search?q=${encodeURIComponent(query)}`,
-      google:`https://www.google.com/search?q=${encodeURIComponent(query)}`,
-    };
-    const url = siteUrls[site] || `https://www.google.com/search?q=${encodeURIComponent(query+' site:'+site+'.com')}`;
-    window.open(url,'_blank');
-    addLog(`Search ${site}: ${query}`);
+    const site=siteSearchM[1].trim(),query=siteSearchM[2].trim();
+    const siteUrls={youtube:`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`,amazon:`https://www.amazon.in/s?k=${encodeURIComponent(query)}`,reddit:`https://www.reddit.com/search/?q=${encodeURIComponent(query)}`,twitter:`https://twitter.com/search?q=${encodeURIComponent(query)}`,flipkart:`https://www.flipkart.com/search?q=${encodeURIComponent(query)}`,wikipedia:`https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(query)}`,github:`https://github.com/search?q=${encodeURIComponent(query)}`,google:`https://www.google.com/search?q=${encodeURIComponent(query)}`};
+    window.open(siteUrls[site]||`https://www.google.com/search?q=${encodeURIComponent(query+' site:'+site+'.com')}`,'_blank');
     return `Searching ${site} for "${query}", sir.`;
   }
-
-  // GOOGLE SEARCH
-  const gSearch = t.match(/^(?:search|google|look up|find|search for|google for)\s+(.+)/);
-  if(gSearch){
-    const q = gSearch[1].replace(/^(for|about)\s+/,'').trim();
-    window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`,'_blank');
-    return `Searching Google for "${q}", sir.`;
-  }
-
-  // OPEN WEBSITE — smart: doesn't open chrome.com, opens Google in Chrome etc.
-  const openM = t.match(/^open\s+(.+?)(?:\s+browser|\s+website|\s+site|\s+app)?$/);
+  const gSearch=t.match(/^(?:search|google|look up|find|search for|google for)\s+(.+)/);
+  if(gSearch){const q=gSearch[1].replace(/^(for|about)\s+/,'').trim();window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`,'_blank');return `Searching for "${q}" on Google, sir.`;}
+  const openM=t.match(/^open\s+(.+?)(?:\s+browser|\s+website|\s+site|\s+app)?$/);
   if(openM){
-    const what = openM[1].trim().toLowerCase();
-    // Browsers — open Google in them (can't launch native apps from web)
-    const browserMap = {
-      chrome:'https://www.google.com',
-      'google chrome':'https://www.google.com',
-      firefox:'https://www.google.com',
-      safari:'https://www.google.com',
-      brave:'https://search.brave.com',
-      edge:'https://www.bing.com',
-      opera:'https://www.google.com',
-    };
-    if(browserMap[what]){
-      window.open(browserMap[what],'_blank');
-      return `Opening a new tab with ${what.charAt(0).toUpperCase()+what.slice(1)}'s default search, sir. Note: I can't switch your default browser from a webpage.`;
-    }
-    // Popular sites
-    const siteMap = {
-      youtube:'https://www.youtube.com',
-      instagram:'https://www.instagram.com',
-      twitter:'https://www.twitter.com',
-      x:'https://www.x.com',
-      facebook:'https://www.facebook.com',
-      whatsapp:'https://web.whatsapp.com',
-      gmail:'https://mail.google.com',
-      maps:'https://maps.google.com',
-      'google maps':'https://maps.google.com',
-      netflix:'https://www.netflix.com',
-      spotify:'https://open.spotify.com',
-      amazon:'https://www.amazon.in',
-      flipkart:'https://www.flipkart.com',
-      github:'https://www.github.com',
-      reddit:'https://www.reddit.com',
-      linkedin:'https://www.linkedin.com',
-      wikipedia:'https://www.wikipedia.org',
-      'stack overflow':'https://stackoverflow.com',
-    };
-    if(siteMap[what]){
-      window.open(siteMap[what],'_blank');
-      return `Opening ${what.charAt(0).toUpperCase()+what.slice(1)}, sir.`;
-    }
-    // Fallback — treat as domain
-    const domain = what.replace(/\s+/g,'');
-    const url = domain.includes('.')?`https://${domain}`:`https://www.${domain}.com`;
-    window.open(url,'_blank');
-    return `Opening ${domain}, sir.`;
+    const what=openM[1].trim().toLowerCase();
+    const browserMap={chrome:'https://www.google.com','google chrome':'https://www.google.com',firefox:'https://www.google.com',safari:'https://www.google.com',brave:'https://search.brave.com',edge:'https://www.bing.com',opera:'https://www.google.com'};
+    if(browserMap[what]){window.open(browserMap[what],'_blank');return `Opening a new tab for you, sir. I can't switch your system browser from here, but here's a fresh tab.`;}
+    const siteMap={youtube:'https://www.youtube.com',instagram:'https://www.instagram.com',twitter:'https://www.twitter.com',x:'https://www.x.com',facebook:'https://www.facebook.com',whatsapp:'https://web.whatsapp.com',gmail:'https://mail.google.com',maps:'https://maps.google.com','google maps':'https://maps.google.com',netflix:'https://www.netflix.com',spotify:'https://open.spotify.com',amazon:'https://www.amazon.in',flipkart:'https://www.flipkart.com',github:'https://www.github.com',reddit:'https://www.reddit.com',linkedin:'https://www.linkedin.com',wikipedia:'https://www.wikipedia.org'};
+    if(siteMap[what]){window.open(siteMap[what],'_blank');return `Opening ${what.charAt(0).toUpperCase()+what.slice(1)} for you, sir.`;}
+    const domain=what.replace(/\s+/g,'');
+    window.open(domain.includes('.')?`https://${domain}`:`https://www.${domain}.com`,'_blank');
+    return `Opening ${domain} now, sir.`;
   }
-
-  // MAPS / NAVIGATE
-  const mapsM = t.match(/(?:directions to|navigate to|take me to|map of|find)\s+(.+)/);
-  if(mapsM){
-    const dest = mapsM[1].trim();
-    window.open(`https://maps.google.com/?q=${encodeURIComponent(dest)}`,'_blank');
-    return `Opening Google Maps for ${dest}, sir.`;
-  }
-
-  // WEATHER
+  const mapsM=t.match(/(?:directions to|navigate to|take me to|map of)\s+(.+)/);
+  if(mapsM){const dest=mapsM[1].trim();window.open(`https://maps.google.com/?q=${encodeURIComponent(dest)}`,'_blank');return `Pulling up directions to ${dest}, sir.`;}
   if(t.includes('weather')){
-    const loc=document.getElementById('w-loc')?.textContent||'your location';
+    const loc=document.getElementById('w-loc')?.textContent||'your area';
     const temp=document.getElementById('w-temp')?.textContent||'--';
     const desc=document.getElementById('w-desc')?.textContent||'--';
-    const hum=document.getElementById('w-hum')?.textContent||'--';
-    const wind=document.getElementById('w-wind')?.textContent||'--';
-    return `Currently in ${loc}: ${temp}, ${desc}. Humidity ${hum}, wind ${wind}, sir.`;
+    return `Right now in ${loc} it's ${temp} — ${desc.toLowerCase()}. Not bad, sir.`;
   }
-
-  return null; // let AI handle
+  return null;
 }
 
 // ════════════════════════════════════════════
-// VOICE OUTPUT — DEEP MALE, FULL VOLUME, MOBILE FIXED
+// HUMAN-LIKE SPEECH ENGINE
+// Key insight: vary rate/pitch per sentence type
 // ════════════════════════════════════════════
-let ttsVoices = [];
-function loadVoices(){ ttsVoices = window.speechSynthesis ? window.speechSynthesis.getVoices() : []; }
-if(window.speechSynthesis){ loadVoices(); window.speechSynthesis.onvoiceschanged = loadVoices; }
+let ttsVoices=[];
+function loadVoices(){ttsVoices=window.speechSynthesis?window.speechSynthesis.getVoices():[];}
+if(window.speechSynthesis){loadVoices();window.speechSynthesis.onvoiceschanged=loadVoices;}
 
 function getBestVoice(){
-  // Reload voices every time — on mobile they may load late
-  ttsVoices = window.speechSynthesis.getVoices();
-  const want = ['Google UK English Male','Daniel','Arthur','Gordon','Thomas',
-    'Microsoft David Desktop','Microsoft Mark Desktop','Alex','Google US English'];
-  for(const n of want){ const v=ttsVoices.find(x=>x.name===n); if(v) return v; }
-  // fallback: any male-sounding en-GB, then en-US
-  const gb = ttsVoices.find(v=>v.lang==='en-GB');
-  const us = ttsVoices.find(v=>v.lang==='en-US');
-  return gb || us || ttsVoices.find(v=>v.lang.startsWith('en')) || null;
+  ttsVoices=window.speechSynthesis.getVoices();
+  const want=['Google UK English Male','Daniel','Arthur','Gordon','Thomas','Microsoft David Desktop','Microsoft Mark Desktop','Alex','Google US English'];
+  for(const n of want){const v=ttsVoices.find(x=>x.name===n);if(v)return v;}
+  return ttsVoices.find(v=>v.lang==='en-GB')||ttsVoices.find(v=>v.lang==='en-US')||ttsVoices.find(v=>v.lang.startsWith('en'))||null;
 }
 
-// Fix iOS silent mode: use AudioContext to unlock audio
+// Detect sentence emotion to vary speech dynamically
+function getSentenceParams(sentence){
+  const s=sentence.toLowerCase();
+  // Excited / positive
+  if(/!/.test(sentence)||/\b(great|amazing|excellent|fantastic|brilliant|perfect|wonderful|love|absolutely)\b/.test(s))
+    return {rate:1.08, pitch:0.65}; // slightly faster, slightly higher
+  // Question — rises naturally
+  if(/\?$/.test(sentence.trim()))
+    return {rate:0.95, pitch:0.7};
+  // Serious / warning
+  if(/\b(careful|warning|critical|danger|urgent|important|however|unfortunately|sorry|apolog)\b/.test(s))
+    return {rate:0.80, pitch:0.45};
+  // Joke / witty
+  if(/\b(actually|honestly|well|quite|rather|bit|funny|joke|laugh|ha)\b/.test(s))
+    return {rate:1.0, pitch:0.62};
+  // Default: authoritative but natural
+  return {rate:0.92, pitch:0.55};
+}
+
 function unlockAudio(){
-  try{
-    const ac = new (window.AudioContext||window.webkitAudioContext)();
-    const buf = ac.createBuffer(1,1,22050);
-    const src = ac.createBufferSource();
-    src.buffer=buf; src.connect(ac.destination); src.start(0);
-    setTimeout(()=>ac.close(),100);
-  }catch(e){}
+  try{const ac=new(window.AudioContext||window.webkitAudioContext)();const buf=ac.createBuffer(1,1,22050);const src=ac.createBufferSource();src.buffer=buf;src.connect(ac.destination);src.start(0);setTimeout(()=>ac.close(),100);}catch(e){}
 }
-
 let speechUnlocked=false;
 function unlockSpeech(){
-  if(speechUnlocked||!window.speechSynthesis) return;
+  if(speechUnlocked||!window.speechSynthesis)return;
   unlockAudio();
-  // Speak silent utterance to unlock speech on iOS
-  const u=new SpeechSynthesisUtterance(' ');
-  u.volume=0.01; u.rate=2;
-  window.speechSynthesis.speak(u);
-  speechUnlocked=true;
+  const u=new SpeechSynthesisUtterance(' ');u.volume=0.01;u.rate=2;
+  window.speechSynthesis.speak(u);speechUnlocked=true;
 }
-document.addEventListener('touchstart', unlockSpeech, {once:true, passive:true});
-document.addEventListener('click', unlockSpeech, {once:true});
+document.addEventListener('touchstart',unlockSpeech,{once:true,passive:true});
+document.addEventListener('click',unlockSpeech,{once:true});
 
-// Speak in sentences to prevent mobile truncation
-// Also: say "Jarvis" not "J A R V I S"
 function cleanForSpeech(text){
   return text
-    .replace(/J\.A\.R\.V\.I\.S/gi, 'Jarvis')
-    .replace(/jarvis/gi, 'Jarvis')
-    .replace(/[*_`#>~\[\]]/g, '')
-    .replace(/\s+/g,' ')
-    .trim();
+    .replace(/J\.A\.R\.V\.I\.S/gi,'Jarvis')
+    .replace(/\*\*(.+?)\*\*/g,'$1').replace(/\*(.+?)\*/g,'$1')
+    .replace(/#{1,6}\s/g,'').replace(/`(.+?)`/g,'$1')
+    .replace(/[-•]\s/g,'').replace(/\n+/g,' ').trim();
 }
 
-let speakQueue=[], speakBusy=false;
-function speakText(text, onDone){
-  speakQueue.push({text, onDone});
-  if(!speakBusy) drainQueue();
+let speakQueue=[],speakBusy=false;
+function speakText(text,onDone){
+  speakQueue.push({text,onDone});
+  if(!speakBusy)drainQueue();
 }
 function drainQueue(){
-  if(!speakQueue.length){ speakBusy=false; return; }
+  if(!speakQueue.length){speakBusy=false;return;}
   speakBusy=true;
-  const {text, onDone} = speakQueue.shift();
-  if(!window.speechSynthesis){ onDone&&onDone(); drainQueue(); return; }
+  const{text,onDone}=speakQueue.shift();
+  if(!window.speechSynthesis){onDone&&onDone();drainQueue();return;}
   window.speechSynthesis.cancel();
-  const clean = cleanForSpeech(text);
-  if(!clean){ onDone&&onDone(); drainQueue(); return; }
+  const clean=cleanForSpeech(text);
+  if(!clean){onDone&&onDone();drainQueue();return;}
 
-  // Split into sentences to avoid mobile 200-char cutoff
-  const sentences = clean.match(/[^.!?]+[.!?]*/g) || [clean];
+  // Split into sentences for human rhythm + mobile fix
+  const sentences=clean.match(/[^.!?]+[.!?]*/g)||[clean];
   let idx=0;
   isSpeaking=true;
   setUIState('speaking');
@@ -690,24 +579,19 @@ function drainQueue(){
       isSpeaking=false;
       document.getElementById('waveform').classList.add('hidden');
       setUIState('idle');
-      onDone&&onDone();
-      drainQueue();
-      return;
+      onDone&&onDone();drainQueue();return;
     }
-    const chunk = sentences[idx++].trim();
-    if(!chunk){ next(); return; }
-    const utt = new SpeechSynthesisUtterance(chunk);
-    utt.rate   = 0.82;   // authoritative pace
-    utt.pitch  = 0.5;    // very deep — same as desktop
-    utt.volume = 1.0;    // full volume
-    const v = getBestVoice(); if(v) utt.voice=v;
-    utt.onend  = next;
-    utt.onerror = ()=>next();
-    // iOS workaround: cancel before each speak
-    try{
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utt);
-    }catch(e){ next(); }
+    const chunk=sentences[idx++].trim();
+    if(!chunk){next();return;}
+    const params=getSentenceParams(chunk);
+    const utt=new SpeechSynthesisUtterance(chunk);
+    utt.rate  =params.rate;   // dynamic per sentence emotion
+    utt.pitch =params.pitch;  // dynamic per sentence
+    utt.volume=1.0;
+    const v=getBestVoice();if(v)utt.voice=v;
+    utt.onend=next;
+    utt.onerror=()=>next();
+    try{window.speechSynthesis.cancel();window.speechSynthesis.speak(utt);}catch(e){next();}
   }
   next();
 }
@@ -718,33 +602,22 @@ function drainQueue(){
 function setUIState(state){
   const btn=document.getElementById('mic-btn');
   btn.classList.remove('listening','speaking','processing');
-  const lbl=document.getElementById('mic-label');
-  const vm=document.getElementById('voice-mode');
-  const hs=document.getElementById('hud-status');
-  const ss=document.getElementById('sys-status');
+  const lbl=document.getElementById('mic-label'),vm=document.getElementById('voice-mode'),hs=document.getElementById('hud-status'),ss=document.getElementById('sys-status');
   if(state==='listening'){
-    btn.classList.add('listening'); btn.textContent='🔴';
-    if(lbl) lbl.textContent='LISTENING — SPEAK NOW';
-    if(vm) vm.textContent='LISTENING';
-    if(hs) hs.textContent='● VOICE INPUT';
-    if(ss) ss.textContent='LISTENING';
+    btn.classList.add('listening');btn.textContent='🔴';
+    if(lbl)lbl.textContent='LISTENING — SPEAK NOW';
+    if(vm)vm.textContent='LISTENING';if(hs)hs.textContent='● VOICE INPUT';if(ss)ss.textContent='LISTENING';
     document.getElementById('waveform').classList.remove('hidden');
-  } else if(state==='speaking'){
-    btn.classList.add('speaking'); btn.textContent='🔊';
-    if(lbl) lbl.textContent='SPEAKING — TAP TO STOP';
-    if(vm) vm.textContent='SPEAKING';
-    if(hs) hs.textContent='● VOICE OUTPUT';
-  } else if(state==='processing'){
-    btn.classList.add('processing'); btn.textContent='⚙️';
-    if(lbl) lbl.textContent='PROCESSING...';
-    if(vm) vm.textContent='THINKING';
-    if(hs) hs.textContent='● PROCESSING';
-  } else {
+  }else if(state==='speaking'){
+    btn.classList.add('speaking');btn.textContent='🔊';
+    if(lbl)lbl.textContent='SPEAKING — TAP TO STOP';
+    if(vm)vm.textContent='SPEAKING';if(hs)hs.textContent='● VOICE OUTPUT';
+  }else if(state==='processing'){
+    btn.classList.add('processing');btn.textContent='⚙️';
+    if(lbl)lbl.textContent='PROCESSING...';if(vm)vm.textContent='THINKING';if(hs)hs.textContent='● PROCESSING';
+  }else{
     btn.textContent='🎤';
-    if(lbl) lbl.textContent='TAP MIC TO SPEAK';
-    if(vm) vm.textContent='READY';
-    if(hs) hs.textContent='● SYSTEM READY';
-    if(ss) ss.textContent='ONLINE';
+    if(lbl)lbl.textContent='TAP MIC TO SPEAK';if(vm)vm.textContent='READY';if(hs)hs.textContent='● SYSTEM READY';if(ss)ss.textContent='ONLINE';
     document.getElementById('waveform').classList.add('hidden');
     const tb=document.getElementById('transcript-box');
     if(tb){tb.textContent='Tap mic and speak...';tb.classList.remove('active');}
@@ -754,83 +627,64 @@ function setUIState(state){
 // ════════════════════════════════════════════
 // SPEECH RECOGNITION
 // ════════════════════════════════════════════
-const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-let recognizer=null, recRunning=false, pendingText='';
-
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let recognizer=null,recRunning=false,pendingText='';
 function buildRec(){
-  if(!SR) return null;
-  const rec = new SR();
-  rec.continuous     = false;  // prevents duplicates
-  rec.interimResults = true;
-  rec.lang           = 'en-US';
-  rec.maxAlternatives= 1;
-
+  if(!SR)return null;
+  const rec=new SR();
+  rec.continuous=false;rec.interimResults=true;rec.lang='en-US';rec.maxAlternatives=1;
   rec.onstart=()=>{
-    recRunning=true; pendingText='';
-    setUIState('listening');
+    recRunning=true;pendingText='';setUIState('listening');
     const tb=document.getElementById('transcript-box');
     if(tb){tb.textContent='Listening...';tb.classList.add('active');}
     addLog('Mic: active');
   };
-
   rec.onresult=(e)=>{
-    let interim='', final='';
+    let interim='',final='';
     for(let i=0;i<e.results.length;i++){
-      if(e.results[i].isFinal) final+=e.results[i][0].transcript+' ';
+      if(e.results[i].isFinal)final+=e.results[i][0].transcript+' ';
       else interim+=e.results[i][0].transcript;
     }
     const live=(final+interim).trim();
     const tb=document.getElementById('transcript-box');
     if(tb){tb.textContent=live||'Listening...';tb.classList.add('active');}
-    const ti=document.getElementById('text-input');
-    if(ti) ti.value=live;
-    if(final.trim()) pendingText=final.trim();
+    // Only show in text box if text mode
+    if(inputMode==='text'){const ti=document.getElementById('text-input');if(ti)ti.value=live;}
+    if(final.trim())pendingText=final.trim();
   };
-
   rec.onend=()=>{
     recRunning=false;
     if(pendingText){
-      const cmd=pendingText; pendingText='';
-      const ti=document.getElementById('text-input');if(ti) ti.value='';
-      sendToJarvis(cmd);
-    } else if(isListening&&!isSpeaking){
+      const cmd=pendingText;pendingText='';
+      const ti=document.getElementById('text-input');if(ti)ti.value='';
+      sendToJarvis(cmd,'voice');
+    }else if(isListening&&!isSpeaking){
       setTimeout(startRec,300);
-    } else {
-      setUIState('idle');
-    }
+    }else{setUIState('idle');}
   };
-
   rec.onerror=(e)=>{
     recRunning=false;
     if(e.error==='not-allowed'||e.error==='service-not-allowed'){
-      isListening=false; setUIState('idle');
+      isListening=false;setUIState('idle');
       const tb=document.getElementById('transcript-box');
-      if(tb){tb.textContent='Mic denied. Allow in browser settings.';tb.classList.add('active');}
-      addLog('Mic permission denied');
-    } else if(e.error==='no-speech'){
-      if(isListening&&!isSpeaking) setTimeout(startRec,300);
-    } else {
+      if(tb){tb.textContent='Mic denied — allow in browser settings.';tb.classList.add('active');}
+    }else if(e.error==='no-speech'){
+      if(isListening&&!isSpeaking)setTimeout(startRec,300);
+    }else{
       addLog('Rec err: '+e.error);
-      if(isListening&&!isSpeaking) setTimeout(startRec,600);
+      if(isListening&&!isSpeaking)setTimeout(startRec,600);
     }
   };
   return rec;
 }
-
 function startRec(){
-  if(recRunning||isSpeaking) return;
-  recognizer=buildRec();
-  if(!recognizer) return;
-  try{ recognizer.start(); }
-  catch(e){
-    if(e.name==='InvalidStateError') setTimeout(startRec,400);
-    else addLog('Start err: '+e.message);
-  }
+  if(recRunning||isSpeaking)return;
+  recognizer=buildRec();if(!recognizer)return;
+  try{recognizer.start();}catch(e){if(e.name==='InvalidStateError')setTimeout(startRec,400);}
 }
-
 function stopRec(){
   recRunning=false;
-  try{ recognizer&&recognizer.abort(); }catch(e){}
+  try{recognizer&&recognizer.abort();}catch(e){}
   recognizer=null;
 }
 
@@ -838,86 +692,116 @@ function stopRec(){
 document.getElementById('mic-btn').addEventListener('click',()=>{
   unlockSpeech();
   if(isSpeaking){
-    window.speechSynthesis.cancel();
-    speakQueue=[]; isSpeaking=false; speakBusy=false;
-    setUIState(isListening?'listening':'idle');
-    return;
+    window.speechSynthesis.cancel();speakQueue=[];isSpeaking=false;speakBusy=false;
+    setUIState(isListening?'listening':'idle');return;
   }
-  if(isListening){ isListening=false; stopRec(); setUIState('idle'); }
-  else { isListening=true; startRec(); }
+  if(isListening){isListening=false;stopRec();setUIState('idle');}
+  else{isListening=true;startRec();}
 });
 
 // ════════════════════════════════════════════
 // SEND TO JARVIS
+// mode: 'voice' (spoke) | 'text' (typed)
 // ════════════════════════════════════════════
-async function sendToJarvis(userMsg){
-  userMsg=userMsg.trim(); if(!userMsg) return;
-  isListening=false; stopRec();
+async function sendToJarvis(userMsg, mode){
+  userMsg=userMsg.trim();if(!userMsg)return;
+  mode=mode||inputMode;
+  isListening=false;stopRec();
 
   const log=document.getElementById('conv-log');
-  const uDiv=document.createElement('div');
-  uDiv.className='msg user';
-  uDiv.innerHTML=`<div class="sender">YOU //</div>${userMsg}`;
-  log.appendChild(uDiv);
 
+  // Voice mode: don't show user message in chat
+  // Text mode: show user message
+  if(mode==='text'){
+    const uDiv=document.createElement('div');
+    uDiv.className='msg user';
+    uDiv.innerHTML=`<div class="sender">YOU //</div>${userMsg}`;
+    log.appendChild(uDiv);
+  }
+
+  // Always show Jarvis reply in chat for text mode
+  // For voice mode, only show a minimal indicator
   const jDiv=document.createElement('div');
   jDiv.className='msg jarvis';
-  jDiv.innerHTML=`<div class="sender">JARVIS //</div><span style="color:var(--blue2);font-style:italic">Processing...</span>`;
-  log.appendChild(jDiv);
-  log.scrollTop=log.scrollHeight;
+  if(mode==='voice'){
+    jDiv.innerHTML=`<div class="sender">JARVIS // 🔊</div><span style="color:var(--blue2);font-style:italic">Speaking...</span>`;
+  }else{
+    jDiv.innerHTML=`<div class="sender">JARVIS //</div><span style="color:var(--blue2);font-style:italic">Thinking...</span>`;
+  }
+  log.appendChild(jDiv);log.scrollTop=log.scrollHeight;
   setUIState('processing');
-  convCount++; document.getElementById('conv-count').textContent=convCount;
-  addLog(`CMD: ${userMsg.slice(0,36)}`);
+  convCount++;document.getElementById('conv-count').textContent=convCount;
+  addLog(`[${mode.toUpperCase()}] ${userMsg.slice(0,32)}`);
+
+  // Detect override keywords in message
+  const tl=userMsg.toLowerCase();
+  if(/\b(tell me out loud|say it out loud|speak it|read it out|say it)\b/.test(tl)) mode='voice';
+  if(/\b(write it|show me|type it|text only|don't speak|no sound)\b/.test(tl)) mode='text';
 
   // Smart commands first
-  const smart = handleSmartCommand(userMsg);
+  const smart=handleSmartCommand(userMsg);
   if(smart){
-    jDiv.innerHTML=`<div class="sender">JARVIS //</div>${smart}`;
+    if(mode==='text'){
+      jDiv.innerHTML=`<div class="sender">JARVIS //</div>${smart}`;
+    }else{
+      jDiv.innerHTML=`<div class="sender">JARVIS // 🔊</div><span style="color:var(--blue2);font-size:9px">[voice reply]</span>`;
+      speakText(smart,()=>setUIState('idle'));
+    }
     log.scrollTop=log.scrollHeight;
-    speakText(smart, ()=>setUIState('idle'));
+    if(mode==='text') setUIState('idle');
     return;
   }
 
-  // AI
+  // AI query
   chatHistory.push({role:'user',content:userMsg});
   const t0=Date.now();
   try{
     const res=await fetch(JARVIS_API,{method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({message:userMsg,history:chatHistory.slice(-14)})});
+      body:JSON.stringify({message:userMsg,history:chatHistory.slice(-14),mode})});
     const data=await res.json();
-    const reply=data.reply||'Command acknowledged, sir.';
+    const reply=data.reply||"I'm here, sir.";
     chatHistory.push({role:'assistant',content:reply});
-    jDiv.innerHTML=`<div class="sender">JARVIS //</div>${reply}`;
-    log.scrollTop=log.scrollHeight;
     const ms=Date.now()-t0;
     document.getElementById('resp-time').textContent=ms+'ms';
     addLog(`Reply in ${ms}ms`);
-    speakText(reply, ()=>setUIState('idle'));
+
+    if(mode==='text'){
+      // TEXT mode: show full reply in chat, don't speak
+      jDiv.innerHTML=`<div class="sender">JARVIS //</div>${reply}`;
+      log.scrollTop=log.scrollHeight;
+      setUIState('idle');
+    }else{
+      // VOICE mode: speak reply, show minimal in chat
+      jDiv.innerHTML=`<div class="sender">JARVIS // 🔊</div><span style="color:var(--blue2);font-size:9px">[voice reply — say "write it" to see text]</span>`;
+      log.scrollTop=log.scrollHeight;
+      speakText(reply,()=>setUIState('idle'));
+    }
   }catch(err){
-    const fb='Connectivity issue detected, sir.';
+    const fb="Something went wrong, sir. Check your connection.";
     jDiv.innerHTML=`<div class="sender">JARVIS //</div>${fb}`;
     addLog('API error');
-    speakText(fb, ()=>setUIState('idle'));
+    if(mode==='voice') speakText(fb,()=>setUIState('idle'));
+    else setUIState('idle');
   }
 }
 
-// TEXT INPUT
+// TEXT INPUT — always text mode
 document.getElementById('send-btn').onclick=()=>{
   const v=document.getElementById('text-input').value.trim();
-  if(v){document.getElementById('text-input').value=''; sendToJarvis(v);}
+  if(v){document.getElementById('text-input').value='';sendToJarvis(v,'text');}
 };
 document.getElementById('text-input').addEventListener('keydown',e=>{
-  if(e.key==='Enter'){const v=e.target.value.trim();if(v){e.target.value='';sendToJarvis(v);}}
+  if(e.key==='Enter'){const v=e.target.value.trim();if(v){e.target.value='';sendToJarvis(v,'text');}}
 });
-function quickCmd(cmd){ sendToJarvis(cmd); }
+function quickCmd(cmd){sendToJarvis(cmd,'text');}
 
 // BOOT
 setUIState('idle');
 initBattery();
 setTimeout(()=>addLog('All systems nominal'),600);
 setTimeout(()=>{
-  speakText('Good evening sir. Jarvis is fully operational. Tap the microphone to begin.',null);
+  speakText("Good evening sir. Jarvis is online and ready. I'm listening.",null);
 },1000);
 </script>
 </body>
