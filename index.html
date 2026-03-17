@@ -3,196 +3,180 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>JARVIS</title>
+<title>JARVIS + RUDRA</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  :root{--blue:#00d4ff;--blue2:#0088cc;--darker:#000510;--green:#00ff88;
-    --glow:0 0 10px #00d4ff,0 0 20px #00d4ff44;}
-  html,body{height:100%;width:100%;}
-  body{background:var(--darker);color:var(--blue);font-family:'Share Tech Mono',monospace;
-    position:relative;user-select:none;overflow:hidden;}
-  body::before{content:'';position:fixed;inset:0;
-    background-image:linear-gradient(rgba(0,212,255,0.04) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,212,255,0.04) 1px,transparent 1px);
-    background-size:40px 40px;pointer-events:none;z-index:0;}
-  body::after{content:'';position:fixed;inset:0;
-    background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.10) 2px,rgba(0,0,0,0.10) 4px);
-    pointer-events:none;z-index:998;}
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{--blue:#00d4ff;--blue2:#0088cc;--darker:#000510;--green:#00ff88;--orange:#ff8800;--purple:#aa44ff;
+  --glow:0 0 10px #00d4ff,0 0 20px #00d4ff44;}
+html,body{height:100%;width:100%;overflow:hidden;}
+body{background:var(--darker);color:var(--blue);font-family:'Share Tech Mono',monospace;position:relative;user-select:none;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.10) 2px,rgba(0,0,0,0.10) 4px);pointer-events:none;z-index:998;}
 
-  /* DESKTOP */
-  .container{position:relative;z-index:1;width:100vw;height:100vh;
-    display:grid;grid-template-columns:200px 1fr 200px;grid-template-rows:56px 1fr 110px;
-    gap:6px;padding:6px;}
-  .topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;
-    border-bottom:1px solid var(--blue2);padding:0 14px;
-    background:linear-gradient(90deg,transparent,rgba(0,136,204,0.08),transparent);}
-  .topbar-title{font-family:'Orbitron',monospace;font-size:20px;font-weight:900;
-    letter-spacing:6px;color:var(--blue);text-shadow:var(--glow);animation:flicker 4s infinite;}
-  @keyframes flicker{0%,96%,100%{opacity:1}97%{opacity:.7}98%{opacity:1}99%{opacity:.8}}
-  .topbar-info{display:flex;gap:14px;font-size:10px;color:var(--blue2);}
-  .topbar-info .val{color:var(--blue);font-weight:bold;}
+/* NAV TABS */
+.nav-tabs{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;height:44px;background:rgba(0,5,20,0.97);border-bottom:1px solid var(--blue2);}
+.nav-tab{flex:1;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;cursor:pointer;transition:all .2s;color:var(--blue2);border-right:1px solid rgba(0,212,255,0.15);}
+.nav-tab:last-child{border-right:none;}
+.nav-tab.active{color:var(--blue);background:rgba(0,212,255,0.1);border-bottom:2px solid var(--blue);text-shadow:var(--glow);}
+.nav-tab:hover{color:var(--blue);background:rgba(0,212,255,0.06);}
 
-  .panel{border:1px solid rgba(0,212,255,0.28);background:rgba(0,15,35,0.88);
-    padding:9px;position:relative;
-    clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));}
-  .panel-title{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:3px;
-    color:var(--blue2);text-transform:uppercase;
-    border-bottom:1px solid rgba(0,212,255,0.18);padding-bottom:5px;margin-bottom:7px;}
+/* PAGES */
+.page{position:fixed;inset:44px 0 0 0;display:none;overflow:hidden;}
+.page.active{display:flex;}
 
-  .left-panel{display:flex;flex-direction:column;gap:6px;}
-  .stat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:9px;}
-  .stat-bar{width:70px;height:3px;background:rgba(0,212,255,0.14);border-radius:2px;overflow:hidden;}
-  .stat-fill{height:100%;background:var(--blue);box-shadow:0 0 5px var(--blue);transition:width 1.2s;}
-  .weather-temp{font-family:'Orbitron',monospace;font-size:28px;font-weight:700;
-    color:var(--blue);text-shadow:var(--glow);text-align:center;margin:6px 0;}
+/* ═══ JARVIS PAGE ═══ */
+#jarvis-page{flex-direction:column;}
+.jcontainer{position:relative;z-index:1;width:100%;height:100%;display:grid;grid-template-columns:200px 1fr 200px;grid-template-rows:1fr 100px;gap:6px;padding:6px;}
+.topbar2{display:flex;align-items:center;justify-content:space-between;padding:0 10px;height:40px;border-bottom:1px solid rgba(0,212,255,0.2);margin-bottom:4px;}
+.topbar-title{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;letter-spacing:6px;color:var(--blue);text-shadow:var(--glow);animation:flicker 4s infinite;}
+@keyframes flicker{0%,96%,100%{opacity:1}97%{opacity:.7}98%{opacity:1}99%{opacity:.8}}
+.topbar-info{display:flex;gap:12px;font-size:9px;color:var(--blue2);}
+.topbar-info .val{color:var(--blue);font-weight:bold;}
+.panel{border:1px solid rgba(0,212,255,0.25);background:rgba(0,15,35,0.88);padding:8px;position:relative;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));}
+.panel-title{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:3px;color:var(--blue2);text-transform:uppercase;border-bottom:1px solid rgba(0,212,255,0.15);padding-bottom:4px;margin-bottom:6px;}
+.left-panel{display:flex;flex-direction:column;gap:6px;}
+.stat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;font-size:9px;}
+.stat-bar{width:65px;height:3px;background:rgba(0,212,255,0.12);border-radius:2px;overflow:hidden;}
+.stat-fill{height:100%;background:var(--blue);transition:width 1.2s;}
+.weather-temp{font-family:'Orbitron',monospace;font-size:26px;font-weight:700;color:var(--blue);text-shadow:var(--glow);text-align:center;margin:4px 0;}
+.center-panel{display:flex;flex-direction:column;align-items:center;gap:4px;overflow:hidden;}
+.hud-wrapper{position:relative;width:220px;height:220px;flex-shrink:0;}
+.hud-canvas{position:absolute;inset:0;}
+.hud-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;}
+.hud-clock{font-family:'Orbitron',monospace;font-size:22px;font-weight:700;color:var(--blue);text-shadow:var(--glow);letter-spacing:3px;}
+.hud-date{font-size:8px;color:var(--blue2);letter-spacing:2px;text-transform:uppercase;}
+.hud-status{font-size:7px;color:var(--blue);letter-spacing:2px;animation:blink 2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-  /* CENTER */
-  .center-panel{display:flex;flex-direction:column;align-items:center;gap:5px;overflow:hidden;}
-  .hud-wrapper{position:relative;width:240px;height:240px;flex-shrink:0;}
-  .hud-canvas{position:absolute;inset:0;}
-  .hud-center{position:absolute;inset:0;display:flex;flex-direction:column;
-    align-items:center;justify-content:center;gap:3px;}
-  .hud-clock{font-family:'Orbitron',monospace;font-size:24px;font-weight:700;
-    color:var(--blue);text-shadow:var(--glow);letter-spacing:3px;}
-  .hud-date{font-size:9px;color:var(--blue2);letter-spacing:2px;text-transform:uppercase;}
-  .hud-status{font-size:8px;color:var(--blue);letter-spacing:2px;animation:blink 2s ease-in-out infinite;}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+/* MIC */
+.mic-zone{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;flex-shrink:0;}
+.waveform{display:flex;gap:2px;align-items:center;height:18px;justify-content:center;}
+.wave-bar{width:3px;background:var(--blue);border-radius:2px;animation:wav .65s ease-in-out infinite;}
+.wave-bar:nth-child(1){height:4px;animation-delay:0s}.wave-bar:nth-child(2){height:10px;animation-delay:.07s}
+.wave-bar:nth-child(3){height:16px;animation-delay:.14s}.wave-bar:nth-child(4){height:11px;animation-delay:.21s}
+.wave-bar:nth-child(5){height:5px;animation-delay:.28s}.wave-bar:nth-child(6){height:14px;animation-delay:.35s}
+.wave-bar:nth-child(7){height:7px;animation-delay:.42s}.wave-bar:nth-child(8){height:12px;animation-delay:.49s}
+.wave-bar:nth-child(9){height:4px;animation-delay:.56s}
+@keyframes wav{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
+.waveform.hidden{display:none;}
+.mic-btn{width:60px;height:60px;border-radius:50%;border:2px solid var(--blue);background:rgba(0,212,255,0.08);font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;box-shadow:var(--glow);outline:none;touch-action:manipulation;}
+.mic-btn.listening{background:rgba(0,212,255,0.26);border-color:#fff;animation:micglow .7s ease-in-out infinite alternate;}
+@keyframes micglow{from{box-shadow:0 0 12px #00d4ff,0 0 30px #00d4ff44}to{box-shadow:0 0 28px #00d4ff,0 0 70px #00d4ff88}}
+.mic-btn.speaking{background:rgba(0,255,136,0.16);border-color:var(--green);animation:speakglow .45s ease-in-out infinite alternate;}
+@keyframes speakglow{from{transform:scale(1)}to{transform:scale(1.1)}}
+.mic-btn.processing{border-color:#ffaa00;animation:procglow .9s ease-in-out infinite alternate;}
+@keyframes procglow{from{box-shadow:0 0 8px #ffaa00}to{box-shadow:0 0 24px #ffaa00}}
+.mic-label{font-size:9px;letter-spacing:1px;color:var(--blue2);text-align:center;flex-shrink:0;}
+.transcript-box{width:100%;min-height:22px;padding:4px 10px;background:rgba(0,212,255,0.03);border:1px solid rgba(0,212,255,0.14);font-size:10px;color:rgba(0,212,255,0.4);text-align:center;font-style:italic;clip-path:polygon(0 0,calc(100% - 5px) 0,100% 5px,100% 100%,5px 100%,0 calc(100% - 5px));transition:all .2s;}
+.transcript-box.active{color:var(--blue);border-color:var(--blue);background:rgba(0,212,255,0.07);font-style:normal;}
+.conv-log{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:4px;padding:3px;scrollbar-width:thin;scrollbar-color:var(--blue2) transparent;width:100%;}
+.msg{padding:5px 8px;border-left:2px solid;font-size:10px;line-height:1.5;animation:msgIn .3s ease;}
+@keyframes msgIn{from{opacity:0;transform:translateX(-7px)}to{opacity:1;transform:none}}
+.msg.user{border-color:var(--blue);background:rgba(0,212,255,0.04);color:var(--blue);}
+.msg.jarvis{border-color:var(--green);background:rgba(0,255,136,0.04);color:var(--green);}
+.msg .sender{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:2px;opacity:.6;margin-bottom:2px;}
+.input-row{display:flex;gap:5px;width:100%;flex-shrink:0;}
+.text-input{flex:1;background:rgba(0,15,35,0.9);border:1px solid rgba(0,212,255,0.3);color:var(--blue);font-family:'Share Tech Mono',monospace;font-size:11px;padding:6px 10px;outline:none;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));}
+.text-input::placeholder{color:rgba(0,212,255,0.22);}
+.send-btn{background:rgba(0,212,255,0.1);border:1px solid var(--blue);color:var(--blue);font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1px;padding:6px 10px;cursor:pointer;touch-action:manipulation;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));transition:all .2s;}
+.send-btn:hover,.send-btn:active{background:rgba(0,212,255,0.24);}
+.right-panel{display:flex;flex-direction:column;gap:6px;}
+.log-item{font-size:8px;color:var(--blue2);padding:2px 0;border-bottom:1px solid rgba(0,212,255,0.07);display:flex;gap:5px;}
+.log-item .log-time{color:var(--blue);opacity:.5;white-space:nowrap;}
+.bottom-bar{grid-column:1/-1;display:flex;gap:5px;}
+.bm{flex:1;border:1px solid rgba(0,212,255,0.18);background:rgba(0,15,35,0.8);padding:6px 8px;display:flex;flex-direction:column;justify-content:center;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));}
+.bm-label{font-size:7px;letter-spacing:2px;color:var(--blue2);text-transform:uppercase;margin-bottom:2px;}
+.bm-val{font-family:'Orbitron',monospace;font-size:14px;color:var(--blue);text-shadow:var(--glow);}
+.corner{position:fixed;width:24px;height:24px;z-index:2;pointer-events:none;}
+.corner.tl{top:48px;left:4px;border-top:2px solid var(--blue);border-left:2px solid var(--blue);}
+.corner.tr{top:48px;right:4px;border-top:2px solid var(--blue);border-right:2px solid var(--blue);}
+.corner.bl{bottom:4px;left:4px;border-bottom:2px solid var(--blue);border-left:2px solid var(--blue);}
+.corner.br{bottom:4px;right:4px;border-bottom:2px solid var(--blue);border-right:2px solid var(--blue);}
 
-  /* MIC ZONE — no overlap fix */
-  .mic-zone{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;flex-shrink:0;}
-  .waveform{display:flex;gap:3px;align-items:center;height:20px;justify-content:center;}
-  .wave-bar{width:3px;background:var(--blue);border-radius:2px;animation:wav .65s ease-in-out infinite;}
-  .wave-bar:nth-child(1){height:4px;animation-delay:0s}
-  .wave-bar:nth-child(2){height:11px;animation-delay:.07s}
-  .wave-bar:nth-child(3){height:18px;animation-delay:.14s}
-  .wave-bar:nth-child(4){height:12px;animation-delay:.21s}
-  .wave-bar:nth-child(5){height:6px;animation-delay:.28s}
-  .wave-bar:nth-child(6){height:16px;animation-delay:.35s}
-  .wave-bar:nth-child(7){height:8px;animation-delay:.42s}
-  .wave-bar:nth-child(8){height:14px;animation-delay:.49s}
-  .wave-bar:nth-child(9){height:5px;animation-delay:.56s}
-  @keyframes wav{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
-  .waveform.hidden{display:none;}
+/* ═══ RUDRA PAGE ═══ */
+#rudra-page{flex-direction:column;background:rgba(0,2,10,0.98);}
+.rudra-header{padding:12px 16px;border-bottom:1px solid var(--purple);display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.rudra-title{font-family:'Orbitron',monospace;font-size:20px;font-weight:900;letter-spacing:6px;color:var(--purple);text-shadow:0 0 10px #aa44ff,0 0 20px #aa44ff44;}
+.rudra-sub{font-size:10px;color:rgba(170,68,255,0.6);letter-spacing:2px;}
+.rudra-tabs{display:flex;gap:0;padding:0 10px;flex-shrink:0;border-bottom:1px solid rgba(170,68,255,0.2);}
+.rtab{padding:8px 16px;font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:rgba(170,68,255,0.5);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;}
+.rtab.active{color:var(--purple);border-bottom-color:var(--purple);}
+.rtab:hover{color:var(--purple);}
+.rudra-body{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.rtab-content{display:none;flex:1;overflow-y:auto;padding:12px;flex-direction:column;gap:10px;}
+.rtab-content.active{display:flex;}
 
-  .mic-btn{width:62px;height:62px;border-radius:50%;border:2px solid var(--blue);
-    background:rgba(0,212,255,0.08);font-size:24px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;transition:all .25s;
-    box-shadow:var(--glow);outline:none;touch-action:manipulation;flex-shrink:0;}
-  .mic-btn.listening{background:rgba(0,212,255,0.26);border-color:#fff;
-    animation:micglow .7s ease-in-out infinite alternate;}
-  @keyframes micglow{from{box-shadow:0 0 12px #00d4ff,0 0 30px #00d4ff44}
-    to{box-shadow:0 0 28px #00d4ff,0 0 70px #00d4ff88}}
-  .mic-btn.speaking{background:rgba(0,255,136,0.16);border-color:var(--green);
-    animation:speakglow .45s ease-in-out infinite alternate;}
-  @keyframes speakglow{from{transform:scale(1)}to{transform:scale(1.1)}}
-  .mic-btn.processing{border-color:#ffaa00;animation:procglow .9s ease-in-out infinite alternate;}
-  @keyframes procglow{from{box-shadow:0 0 8px #ffaa00}to{box-shadow:0 0 24px #ffaa00}}
-  .mic-label{font-size:9px;letter-spacing:1px;color:var(--blue2);text-align:center;flex-shrink:0;}
+/* RUDRA CARDS */
+.rcard{border:1px solid rgba(170,68,255,0.25);background:rgba(10,0,30,0.9);padding:12px;border-radius:2px;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));animation:cardIn .3s ease;}
+@keyframes cardIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.rcard-title{font-family:'Orbitron',monospace;font-size:11px;color:var(--purple);margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;}
+.rcard-meta{font-size:9px;color:rgba(170,68,255,0.5);margin-bottom:6px;}
+.rcard-body{font-size:10px;color:rgba(200,200,255,0.8);line-height:1.6;}
+.rcard-actions{display:flex;gap:6px;margin-top:8px;}
+.raction{background:rgba(170,68,255,0.1);border:1px solid rgba(170,68,255,0.3);color:var(--purple);font-family:'Orbitron',monospace;font-size:7px;letter-spacing:1px;padding:4px 8px;cursor:pointer;transition:all .2s;}
+.raction:hover{background:rgba(170,68,255,0.25);}
+.raction.danger{border-color:rgba(255,60,60,0.4);color:#ff6060;}
+.raction.danger:hover{background:rgba(255,60,60,0.15);}
+.raction.success{border-color:rgba(0,255,136,0.4);color:var(--green);}
 
-  .transcript-box{width:100%;min-height:24px;padding:5px 10px;
-    background:rgba(0,212,255,0.03);border:1px solid rgba(0,212,255,0.16);
-    font-size:10px;color:rgba(0,212,255,0.4);text-align:center;font-style:italic;
-    clip-path:polygon(0 0,calc(100% - 5px) 0,100% 5px,100% 100%,5px 100%,0 calc(100% - 5px));
-    transition:all .2s;flex-shrink:0;}
-  .transcript-box.active{color:var(--blue);border-color:var(--blue);
-    background:rgba(0,212,255,0.08);font-style:normal;}
+/* ADD FORM */
+.radd-form{border:1px solid rgba(170,68,255,0.2);background:rgba(5,0,20,0.95);padding:12px;display:flex;flex-direction:column;gap:8px;flex-shrink:0;}
+.radd-form input,.radd-form textarea,.radd-form select{background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:rgba(200,180,255,0.9);font-family:'Share Tech Mono',monospace;font-size:11px;padding:7px 10px;outline:none;width:100%;resize:vertical;}
+.radd-form input::placeholder,.radd-form textarea::placeholder{color:rgba(170,68,255,0.3);}
+.radd-form textarea{min-height:60px;}
+.form-row{display:flex;gap:8px;}
+.form-row>*{flex:1;}
+.radd-btn{background:rgba(170,68,255,0.15);border:1px solid var(--purple);color:var(--purple);font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;padding:8px;cursor:pointer;transition:all .2s;align-self:flex-end;}
+.radd-btn:hover{background:rgba(170,68,255,0.3);}
+.section-title{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:rgba(170,68,255,0.7);padding:4px 0;border-bottom:1px solid rgba(170,68,255,0.15);margin-bottom:4px;}
+.empty-state{text-align:center;padding:30px;color:rgba(170,68,255,0.4);font-size:11px;letter-spacing:1px;}
+.progress-bar{height:4px;background:rgba(170,68,255,0.15);border-radius:2px;overflow:hidden;margin-top:6px;}
+.progress-fill{height:100%;background:var(--purple);transition:width .5s;}
+.tag{display:inline-block;padding:2px 6px;border:1px solid;font-size:8px;letter-spacing:1px;margin-right:4px;border-radius:1px;}
+.tag.work{border-color:#00aaff;color:#00aaff;}
+.tag.study{border-color:#ffaa00;color:#ffaa00;}
+.tag.personal{border-color:#00ff88;color:#00ff88;}
+.tag.health{border-color:#ff6688;color:#ff6688;}
+.tag.other{border-color:#aaaaaa;color:#aaaaaa;}
+.completed-item .rcard-title{text-decoration:line-through;opacity:.5;}
+.jarvis-generate{background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.3);padding:10px;display:flex;gap:8px;align-items:center;flex-shrink:0;}
+.jarvis-generate input{flex:1;background:transparent;border:none;color:var(--blue);font-family:'Share Tech Mono',monospace;font-size:11px;outline:none;}
+.jarvis-generate input::placeholder{color:rgba(0,212,255,0.3);}
+.jarvis-generate button{background:rgba(0,212,255,0.15);border:1px solid var(--blue);color:var(--blue);font-family:'Orbitron',monospace;font-size:8px;padding:6px 10px;cursor:pointer;white-space:nowrap;}
+.ai-badge{font-size:8px;color:var(--blue);background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);padding:2px 6px;margin-left:8px;}
 
-  .conv-log{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:5px;
-    padding:3px;scrollbar-width:thin;scrollbar-color:var(--blue2) transparent;width:100%;}
-  .msg{padding:6px 9px;border-left:2px solid;font-size:10px;line-height:1.5;animation:msgIn .3s ease;}
-  @keyframes msgIn{from{opacity:0;transform:translateX(-7px)}to{opacity:1;transform:none}}
-  .msg.user{border-color:var(--blue);background:rgba(0,212,255,0.05);color:var(--blue);}
-  .msg.jarvis{border-color:var(--green);background:rgba(0,255,136,0.04);color:var(--green);}
-  .msg .sender{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:2px;opacity:.6;margin-bottom:2px;}
-
-  .input-row{display:flex;gap:6px;width:100%;flex-shrink:0;}
-  .text-input{flex:1;background:rgba(0,15,35,0.9);border:1px solid rgba(0,212,255,0.3);
-    color:var(--blue);font-family:'Share Tech Mono',monospace;font-size:11px;
-    padding:7px 10px;outline:none;
-    clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));}
-  .text-input::placeholder{color:rgba(0,212,255,0.25);}
-  .send-btn{background:rgba(0,212,255,0.12);border:1px solid var(--blue);color:var(--blue);
-    font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;
-    padding:7px 12px;cursor:pointer;touch-action:manipulation;
-    clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));
-    transition:all .2s;}
-  .send-btn:hover,.send-btn:active{background:rgba(0,212,255,0.26);}
-  .qbtn{flex:1;font-size:7px;padding:5px;}
-
-  .right-panel{display:flex;flex-direction:column;gap:6px;}
-  .log-item{font-size:8px;color:var(--blue2);padding:2px 0;
-    border-bottom:1px solid rgba(0,212,255,0.07);display:flex;gap:5px;}
-  .log-item .log-time{color:var(--blue);opacity:.5;white-space:nowrap;}
-
-  .bottom-bar{grid-column:1/-1;display:flex;gap:6px;align-items:stretch;}
-  .bottom-metric{flex:1;border:1px solid rgba(0,212,255,0.2);background:rgba(0,15,35,0.8);
-    padding:7px 10px;display:flex;flex-direction:column;justify-content:center;
-    clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));}
-  .metric-label{font-size:7px;letter-spacing:2px;color:var(--blue2);text-transform:uppercase;margin-bottom:3px;}
-  .metric-val{font-family:'Orbitron',monospace;font-size:15px;color:var(--blue);text-shadow:var(--glow);}
-  .metric-sub{font-size:8px;color:rgba(0,212,255,0.4);margin-top:2px;}
-  .status-dot{display:inline-block;width:5px;height:5px;border-radius:50%;
-    background:var(--green);box-shadow:0 0 5px var(--green);margin-right:4px;}
-  .corner{position:fixed;width:28px;height:28px;z-index:2;pointer-events:none;}
-  .corner.tl{top:6px;left:6px;border-top:2px solid var(--blue);border-left:2px solid var(--blue);}
-  .corner.tr{top:6px;right:6px;border-top:2px solid var(--blue);border-right:2px solid var(--blue);}
-  .corner.bl{bottom:6px;left:6px;border-bottom:2px solid var(--blue);border-left:2px solid var(--blue);}
-  .corner.br{bottom:6px;right:6px;border-bottom:2px solid var(--blue);border-right:2px solid var(--blue);}
-
-  /* ═══ MOBILE LAYOUT ═══ */
-  @media(max-width:700px){
-    body{overflow:hidden;}
-    .container{
-      grid-template-columns:1fr;
-      grid-template-rows:48px 1fr auto;
-      padding:4px;gap:4px;
-      height:100dvh; /* dynamic viewport height — fixes keyboard/overlap */
-    }
-    .left-panel,.right-panel{display:none;}
-    /* center panel = full remaining height, flex column, no overflow */
-    .center-panel{
-      height:100%;
-      overflow:hidden;
-      justify-content:flex-start;
-      padding:4px 2px;
-      gap:6px;
-    }
-    /* HUD smaller on mobile */
-    .hud-wrapper{width:170px;height:170px;flex-shrink:0;}
-    .hud-clock{font-size:18px;}
-    .hud-date{font-size:8px;}
-    .hud-status{font-size:7px;}
-    /* mic button bigger for touch */
-    .mic-btn{width:64px;height:64px;font-size:26px;}
-    .mic-label{font-size:10px;}
-    .transcript-box{font-size:11px;}
-    /* chat takes remaining space */
-    .conv-panel-wrap{flex:1;min-height:0;display:flex;flex-direction:column;width:100%;}
-    .conv-log{height:100%;flex:1;}
-    .bottom-bar{flex-wrap:wrap;gap:4px;}
-    .bottom-metric{min-width:calc(50% - 2px);flex:none;}
-    .topbar-title{font-size:15px;letter-spacing:4px;}
-    .topbar-info{gap:8px;font-size:9px;}
-  }
+/* MOBILE */
+@media(max-width:700px){
+  .jcontainer{grid-template-columns:1fr;grid-template-rows:1fr auto;padding:4px;gap:4px;}
+  .left-panel,.right-panel{display:none;}
+  .center-panel{justify-content:flex-start;padding:4px 2px;}
+  .hud-wrapper{width:160px;height:160px;}
+  .hud-clock{font-size:16px;}
+  .bottom-bar{flex-wrap:wrap;}
+  .bm{min-width:calc(50% - 3px);}
+  .nav-tab{font-size:9px;letter-spacing:1px;}
+  .rudra-tabs{overflow-x:auto;}
+  .rtab{white-space:nowrap;font-size:8px;padding:7px 12px;}
+  .form-row{flex-direction:column;}
+}
 </style>
 </head>
 <body>
 <div class="corner tl"></div><div class="corner tr"></div>
 <div class="corner bl"></div><div class="corner br"></div>
 
-<div class="container">
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div style="font-size:9px;color:var(--blue2);letter-spacing:1px;">STARK INDUSTRIES</div>
-    <div class="topbar-title">J.A.R.V.I.S</div>
-    <div class="topbar-info">
-      <span>STATUS: <span class="val" id="sys-status">ONLINE</span></span>
-      <span>🔋<span class="val" id="battery-pct">--%</span></span>
-      <span id="top-time" class="val">--:--:--</span>
-    </div>
-  </div>
+<!-- NAV TABS -->
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="switchPage('jarvis')">⚡ JARVIS</div>
+  <div class="nav-tab" onclick="switchPage('rudra')" id="rudra-tab">🔮 RUDRA</div>
+</div>
 
+<!-- ══════════════════════════════════════ -->
+<!-- JARVIS PAGE -->
+<!-- ══════════════════════════════════════ -->
+<div class="page active" id="jarvis-page">
+<div class="jcontainer">
   <!-- LEFT -->
   <div class="left-panel">
     <div class="panel" style="flex:1">
@@ -200,10 +184,10 @@
       <div class="stat-row"><span>CPU</span><div class="stat-bar"><div class="stat-fill" id="cpu-bar" style="width:72%"></div></div><span id="cpu-val">72%</span></div>
       <div class="stat-row"><span>RAM</span><div class="stat-bar"><div class="stat-fill" id="ram-bar" style="width:58%"></div></div><span id="ram-val">58%</span></div>
       <div class="stat-row"><span>NET</span><div class="stat-bar"><div class="stat-fill" id="net-bar" style="width:88%"></div></div><span id="net-val">88%</span></div>
-      <div style="margin-top:8px;font-size:8px;color:var(--blue2);line-height:2">
+      <div style="margin-top:8px;font-size:8px;color:var(--blue2);line-height:2.2">
         <div>TEMP: <span style="color:var(--blue)" id="temp">38°C</span></div>
         <div>UPTIME: <span style="color:var(--blue)" id="uptime">00:00:00</span></div>
-        <div>BATTERY: <span style="color:var(--blue)" id="battery-left">--</span></div>
+        <div>BATTERY: <span style="color:var(--blue)" id="battery-left">--%</span></div>
         <div>CHARGING: <span style="color:var(--green)" id="charging-status">--</span></div>
       </div>
     </div>
@@ -211,7 +195,7 @@
       <div class="panel-title">// Weather</div>
       <div class="weather-temp" id="w-temp">--°</div>
       <div style="font-size:9px;color:var(--blue2);text-align:center" id="w-desc">LOADING...</div>
-      <div style="margin-top:7px;font-size:8px;color:var(--blue2);line-height:2">
+      <div style="margin-top:6px;font-size:8px;color:var(--blue2);line-height:2">
         <div>LOC: <span style="color:var(--blue)" id="w-loc">...</span></div>
         <div>HUM: <span style="color:var(--blue)" id="w-hum">--%</span></div>
         <div>WIND: <span style="color:var(--blue)" id="w-wind">--</span></div>
@@ -221,47 +205,49 @@
 
   <!-- CENTER -->
   <div class="center-panel">
-    <!-- HUD -->
-    <div class="hud-wrapper" style="flex-shrink:0">
-      <canvas id="hud-canvas" class="hud-canvas" width="240" height="240"></canvas>
+    <div style="width:100%;flex-shrink:0">
+      <div class="topbar2">
+        <div style="font-size:8px;color:var(--blue2);letter-spacing:1px;">STARK INDUSTRIES</div>
+        <div class="topbar-title">J.A.R.V.I.S</div>
+        <div class="topbar-info">
+          <span>🔋<span class="val" id="battery-pct">--%</span></span>
+          <span id="top-time" class="val">--:--:--</span>
+        </div>
+      </div>
+    </div>
+    <div class="hud-wrapper">
+      <canvas id="hud-canvas" class="hud-canvas" width="220" height="220"></canvas>
       <div class="hud-center">
         <div class="hud-clock" id="hud-clock">00:00</div>
         <div class="hud-date" id="hud-date">--- -- ----</div>
         <div class="hud-status" id="hud-status">● SYSTEM READY</div>
       </div>
     </div>
-
-    <!-- MIC ZONE — fixed height, no overlap -->
     <div class="mic-zone">
       <div class="waveform hidden" id="waveform">
         <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
         <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
         <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
       </div>
-      <button class="mic-btn" id="mic-btn" aria-label="Activate voice">🎤</button>
+      <button class="mic-btn" id="mic-btn">🎤</button>
       <div class="mic-label" id="mic-label">TAP MIC TO SPEAK</div>
       <div class="transcript-box" id="transcript-box">Tap mic and speak...</div>
     </div>
-
-    <!-- CHAT — flex:1 fills remaining space -->
-    <div class="conv-panel-wrap" style="flex:1;min-height:0;display:flex;flex-direction:column;width:100%;gap:5px;">
-      <div class="panel" style="flex:1;min-height:0;display:flex;flex-direction:column;">
-        <div class="panel-title">// Interface <span class="status-dot"></span><span style="font-size:7px;color:var(--green)">ACTIVE</span></div>
-        <div class="conv-log" id="conv-log">
-          <div class="msg jarvis"><div class="sender">JARVIS //</div>Good evening, sir. All systems operational. Tap the mic or type your command.</div>
-        </div>
+    <div class="panel" style="width:100%;flex:1;min-height:0;display:flex;flex-direction:column;">
+      <div class="panel-title">// Interface <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);margin:0 4px 1px;"></span><span style="font-size:7px;color:var(--green)">ACTIVE</span></div>
+      <div class="conv-log" id="conv-log">
+        <div class="msg jarvis"><div class="sender">JARVIS //</div>Good evening, sir. All systems operational. Tap mic to speak — I'll stop when you start talking.</div>
       </div>
-      <div class="input-row">
-        <input class="text-input" id="text-input" placeholder="Type command..." autocomplete="off">
-        <button class="send-btn" id="send-btn">SEND</button>
-      </div>
-      <!-- Quick buttons -->
-      <div style="display:flex;flex-wrap:wrap;gap:4px;width:100%;flex-shrink:0;">
-        <button class="send-btn qbtn" onclick="quickCmd('What time is it?')">TIME</button>
-        <button class="send-btn qbtn" onclick="quickCmd('What is my battery?')">BATTERY</button>
-        <button class="send-btn qbtn" onclick="quickCmd('Open YouTube')">YOUTUBE</button>
-        <button class="send-btn qbtn" onclick="quickCmd('Search Google for latest news')">SEARCH</button>
-      </div>
+    </div>
+    <div class="input-row">
+      <input class="text-input" id="text-input" placeholder="Type command..." autocomplete="off">
+      <button class="send-btn" id="send-btn">SEND</button>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px;width:100%;flex-shrink:0;">
+      <button class="send-btn" style="flex:1;font-size:7px;padding:4px" onclick="quickCmd('What time is it?')">TIME</button>
+      <button class="send-btn" style="flex:1;font-size:7px;padding:4px" onclick="quickCmd('What is my battery?')">BATT</button>
+      <button class="send-btn" style="flex:1;font-size:7px;padding:4px" onclick="switchPage('rudra')">RUDRA</button>
+      <button class="send-btn" style="flex:1;font-size:7px;padding:4px" onclick="quickCmd('Tell me a joke')">JOKE</button>
     </div>
   </div>
 
@@ -269,75 +255,195 @@
   <div class="right-panel">
     <div class="panel" style="flex:1">
       <div class="panel-title">// Activity Log</div>
-      <div id="activity-log" style="max-height:220px;overflow-y:auto;scrollbar-width:thin">
+      <div id="activity-log" style="max-height:220px;overflow-y:auto;scrollbar-width:thin;">
         <div class="log-item"><span class="log-time">INIT</span><span>Boot complete</span></div>
         <div class="log-item"><span class="log-time">INIT</span><span>AI: LLaMA 70B online</span></div>
         <div class="log-item"><span class="log-time">INIT</span><span>Voice engine ready</span></div>
       </div>
     </div>
-    <div class="panel">
-      <div class="panel-title">// Radar</div>
-      <div style="display:flex;justify-content:center;padding:4px"><canvas id="radar-canvas" width="155" height="155"></canvas></div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">// Quick</div>
+    <div class="panel"><div class="panel-title">// Radar</div><div style="display:flex;justify-content:center;padding:3px"><canvas id="radar-canvas" width="155" height="155"></canvas></div></div>
+    <div class="panel"><div class="panel-title">// Quick</div>
       <div style="display:flex;flex-wrap:wrap;gap:4px">
         <button class="send-btn" style="flex:1;font-size:7px;padding:4px" onclick="quickCmd('What time is it?')">TIME</button>
         <button class="send-btn" style="flex:1;font-size:7px;padding:4px" onclick="quickCmd('Tell me a joke')">JOKE</button>
+        <button class="send-btn" style="flex:1;font-size:7px;padding:4px" onclick="switchPage('rudra')">RUDRA</button>
         <button class="send-btn" style="flex:1;font-size:7px;padding:4px" onclick="quickCmd('Open YouTube')">YT</button>
-        <button class="send-btn" style="flex:1;font-size:7px;padding:4px" onclick="quickCmd('What is my battery percent?')">BATT</button>
       </div>
     </div>
   </div>
 
   <!-- BOTTOM -->
   <div class="bottom-bar">
-    <div class="bottom-metric"><div class="metric-label">Chats</div><div class="metric-val" id="conv-count">0</div></div>
-    <div class="bottom-metric"><div class="metric-label">Response</div><div class="metric-val" id="resp-time" style="font-size:11px">--ms</div></div>
-    <div class="bottom-metric"><div class="metric-label">Battery</div><div class="metric-val" id="batt-metric" style="font-size:13px">--%</div><div class="metric-sub" id="batt-sub">checking...</div></div>
-    <div class="bottom-metric"><div class="metric-label">Voice</div><div class="metric-val" id="voice-mode" style="font-size:11px">READY</div></div>
-    <div class="bottom-metric"><div class="metric-label">AI Engine</div><div class="metric-val" style="font-size:9px;color:var(--green)">LLAMA 70B</div></div>
+    <div class="bm"><div class="bm-label">Chats</div><div class="bm-val" id="conv-count">0</div></div>
+    <div class="bm"><div class="bm-label">Response</div><div class="bm-val" id="resp-time" style="font-size:11px">--ms</div></div>
+    <div class="bm"><div class="bm-label">Battery</div><div class="bm-val" id="batt-metric" style="font-size:13px">--%</div></div>
+    <div class="bm"><div class="bm-label">Voice</div><div class="bm-val" id="voice-mode" style="font-size:11px">READY</div></div>
+    <div class="bm"><div class="bm-label">AI</div><div class="bm-val" style="font-size:9px;color:var(--green)">LLAMA 70B</div></div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- RUDRA PAGE -->
+<!-- ══════════════════════════════════════ -->
+<div class="page" id="rudra-page">
+  <div class="rudra-header">
+    <div>
+      <div class="rudra-title">RUDRA</div>
+      <div class="rudra-sub">PERSONAL COMMAND CENTER</div>
+    </div>
+    <div style="margin-left:auto;font-size:9px;color:rgba(170,68,255,0.5)">Say "open Rudra" anytime</div>
+  </div>
+
+  <div class="rudra-tabs">
+    <div class="rtab active" onclick="switchRudra('schedule')">📅 SCHEDULE</div>
+    <div class="rtab" onclick="switchRudra('goals')">🎯 GOALS</div>
+    <div class="rtab" onclick="switchRudra('study')">📚 STUDY</div>
+  </div>
+
+  <!-- ── SCHEDULE TAB ── -->
+  <div class="rudra-body">
+    <div class="rtab-content active" id="rudra-schedule">
+      <!-- AI Generate -->
+      <div class="jarvis-generate">
+        <span style="font-size:10px;color:var(--blue);white-space:nowrap;">🤖 AI:</span>
+        <input id="sched-ai-input" placeholder='e.g. "Make me a weekly study schedule" or "Plan my Monday"'>
+        <button onclick="aiGenerateSchedule()">GENERATE</button>
+      </div>
+      <!-- Add Form -->
+      <div class="radd-form">
+        <div class="section-title">+ ADD EVENT</div>
+        <input id="s-title" placeholder="Event title *">
+        <div class="form-row">
+          <input id="s-date" type="date">
+          <input id="s-start" type="time" placeholder="Start">
+          <input id="s-end" type="time" placeholder="End">
+        </div>
+        <div class="form-row">
+          <select id="s-cat">
+            <option value="work">Work</option>
+            <option value="study">Study</option>
+            <option value="personal">Personal</option>
+            <option value="health">Health</option>
+            <option value="other">Other</option>
+          </select>
+          <input id="s-notes" placeholder="Notes (optional)">
+        </div>
+        <button class="radd-btn" onclick="addSchedule()">ADD EVENT</button>
+      </div>
+      <div class="section-title">TODAY & UPCOMING</div>
+      <div id="schedule-list"><div class="empty-state">No events yet. Add one above or ask Jarvis to generate.</div></div>
+    </div>
+
+    <!-- ── GOALS TAB ── -->
+    <div class="rtab-content" id="rudra-goals">
+      <div class="jarvis-generate">
+        <span style="font-size:10px;color:var(--blue);white-space:nowrap;">🤖 AI:</span>
+        <input id="goal-ai-input" placeholder='e.g. "I want to become a web developer in 6 months"'>
+        <button onclick="aiGenerateGoals()">GENERATE</button>
+      </div>
+      <div class="radd-form">
+        <div class="section-title">+ ADD GOAL</div>
+        <input id="g-title" placeholder="Goal title *">
+        <input id="g-desc" placeholder="Description">
+        <div class="form-row">
+          <input id="g-deadline" type="date" placeholder="Deadline">
+          <input id="g-cat" placeholder="Category (fitness, career...)">
+        </div>
+        <button class="radd-btn" onclick="addGoal()">ADD GOAL</button>
+      </div>
+      <div class="section-title">YOUR GOALS</div>
+      <div id="goals-list"><div class="empty-state">No goals yet. Add one or let Jarvis help you plan.</div></div>
+    </div>
+
+    <!-- ── STUDY TAB ── -->
+    <div class="rtab-content" id="rudra-study">
+      <div class="jarvis-generate">
+        <span style="font-size:10px;color:var(--blue);white-space:nowrap;">🤖 AI:</span>
+        <input id="study-ai-input" placeholder='e.g. "I want to learn Python from scratch" or "Make a timetable for React"'>
+        <button onclick="aiGenerateStudy()">GENERATE PLAN</button>
+      </div>
+      <div class="radd-form">
+        <div class="section-title">+ ADD TOPIC</div>
+        <div class="form-row">
+          <input id="st-subject" placeholder="Subject (e.g. Python)">
+          <input id="st-topic" placeholder="Topic (e.g. Functions)">
+        </div>
+        <div class="form-row">
+          <select id="st-level"><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select>
+          <select id="st-status"><option value="not started">Not Started</option><option value="in progress">In Progress</option><option value="completed">Completed</option></select>
+        </div>
+        <textarea id="st-notes" placeholder="Notes..."></textarea>
+        <button class="radd-btn" onclick="addStudyTopic()">ADD TOPIC</button>
+      </div>
+      <div class="section-title">STUDY PLAN</div>
+      <div id="study-list"><div class="empty-state">No topics yet. Add one or ask Jarvis to build your study plan.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="edit-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:rgba(5,0,20,0.98);border:1px solid var(--purple);padding:20px;width:90%;max-width:480px;max-height:80vh;overflow-y:auto;">
+    <div style="font-family:'Orbitron',monospace;font-size:12px;color:var(--purple);margin-bottom:12px;letter-spacing:2px;">EDIT ITEM</div>
+    <div id="edit-form-body"></div>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <button class="radd-btn" onclick="saveEdit()" style="flex:1;">SAVE</button>
+      <button class="radd-btn" onclick="closeEdit()" style="flex:1;border-color:rgba(170,68,255,0.3);color:rgba(170,68,255,0.5);">CANCEL</button>
+    </div>
   </div>
 </div>
 
 <script>
 'use strict';
 // ════════════════════════════════════════════
-// CONFIG
+// APIS
 // ════════════════════════════════════════════
-const JARVIS_API = 'https://rudra-72e3e6a9.base44.app/functions/jarvisChat';
-const chatHistory = [];
-let convCount = 0;
-let isSpeaking = false;
-let isListening = false;
+const JARVIS_API  = 'https://rudra-72e3e6a9.base44.app/functions/jarvisChat';
+const RUDRA_API   = 'https://rudra-72e3e6a9.base44.app/functions/rudraData';
 
-// INPUT MODE: 'voice' = user spoke (reply out loud only, no text shown)
-//             'text'  = user typed (reply in text only, no speaking)
-// Override: say "tell me out loud" or "say it" to force voice
-//           say "write it" or "show me" to force text
-let inputMode = 'text'; // default until mic used
+async function rudraReq(action, entity, data, id){
+  const r = await fetch(RUDRA_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,entity,data,id})});
+  return r.json();
+}
+
+// ════════════════════════════════════════════
+// PAGE SWITCHING
+// ════════════════════════════════════════════
+function switchPage(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(page+'-page').classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t=>{ if(t.textContent.toLowerCase().includes(page)) t.classList.add('active'); });
+  if(page==='rudra') loadAllRudra();
+}
+function switchRudra(tab){
+  document.querySelectorAll('.rtab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.rtab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('rudra-'+tab).classList.add('active');
+  event.target.classList.add('active');
+}
 
 // ════════════════════════════════════════════
 // BATTERY
 // ════════════════════════════════════════════
-let batteryLevel=null, batteryCharging=false;
+let batteryLevel=null,batteryCharging=false;
 async function initBattery(){
   try{
     const b=await navigator.getBattery();
     function upd(){
-      batteryLevel=Math.round(b.level*100); batteryCharging=b.charging;
-      const pct=batteryLevel+'%', cs=batteryCharging?'CHARGING ⚡':'ON BATTERY';
+      batteryLevel=Math.round(b.level*100);batteryCharging=b.charging;
+      const pct=batteryLevel+'%',cs=batteryCharging?'CHARGING ⚡':'ON BATTERY';
       ['battery-pct','battery-left'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=pct;});
       const ci=document.getElementById('charging-status');if(ci)ci.textContent=cs;
       const bm=document.getElementById('batt-metric');if(bm)bm.textContent=pct;
-      const bs=document.getElementById('batt-sub');if(bs)bs.textContent=cs.toLowerCase();
     }
-    upd(); b.addEventListener('levelchange',upd); b.addEventListener('chargingchange',upd);
-  }catch(e){ ['battery-pct','batt-metric'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='N/A';}); }
+    upd();b.addEventListener('levelchange',upd);b.addEventListener('chargingchange',upd);
+  }catch(e){}
 }
 
 // ════════════════════════════════════════════
-// CLOCK & STATS
+// CLOCK
 // ════════════════════════════════════════════
 function pad(n){return String(n).padStart(2,'0');}
 const MON=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
@@ -349,9 +455,9 @@ function tick(){
   document.getElementById('hud-date').textContent=`${DAY[n.getDay()]} ${pad(n.getDate())} ${MON[n.getMonth()]} ${n.getFullYear()}`;
 }
 setInterval(tick,1000);tick();
-let startTime=Date.now();
+let st=Date.now();
 setInterval(()=>{
-  const e=Math.floor((Date.now()-startTime)/1000);
+  const e=Math.floor((Date.now()-st)/1000);
   const el=document.getElementById('uptime');
   if(el)el.textContent=`${pad(Math.floor(e/3600))}:${pad(Math.floor(e%3600/60))}:${pad(e%60)}`;
 },1000);
@@ -363,9 +469,7 @@ setInterval(()=>{
   const t=document.getElementById('temp');if(t)t.textContent=(34+Math.random()*9).toFixed(1)+'°C';
 },2500);
 
-// ════════════════════════════════════════════
 // WEATHER
-// ════════════════════════════════════════════
 (async()=>{
   try{
     const g=await(await fetch('https://ipapi.co/json/')).json();
@@ -380,54 +484,38 @@ setInterval(()=>{
   }catch(e){}
 })();
 
-// ════════════════════════════════════════════
-// HUD CANVAS
-// ════════════════════════════════════════════
+// HUD
 const hc=document.getElementById('hud-canvas');
 if(hc){
   const hctx=hc.getContext('2d');let hA=0,hA2=0;
-  (function drawHUD(){
-    const cx=120,cy=120;hctx.clearRect(0,0,240,240);
-    [[116,[4,8],1,.4],[104,[2,12],1,.3],[90,[8,4],1.4,.5],[76,[],1,.3],[60,[],1,.5],[42,[4,4],1,.4],[26,[],1.4,.65]].forEach(([r,d,w,a])=>{
-      hctx.beginPath();hctx.arc(cx,cy,r,0,Math.PI*2);
-      hctx.strokeStyle=`rgba(0,212,255,${a})`;hctx.lineWidth=w;hctx.setLineDash(d);hctx.stroke();hctx.setLineDash([]);
+  (function dh(){
+    const cx=110,cy=110;hctx.clearRect(0,0,220,220);
+    [[106,[4,8],1,.4],[95,[2,12],1,.3],[82,[8,4],1.3,.5],[68,[],1,.3],[54,[],1,.5],[38,[4,4],1,.4],[23,[],1.3,.65]].forEach(([r,d,w,a])=>{
+      hctx.beginPath();hctx.arc(cx,cy,r,0,Math.PI*2);hctx.strokeStyle=`rgba(0,212,255,${a})`;hctx.lineWidth=w;hctx.setLineDash(d);hctx.stroke();hctx.setLineDash([]);
     });
-    hctx.beginPath();hctx.arc(cx,cy,104,hA,hA+Math.PI*1.3);hctx.strokeStyle='rgba(0,212,255,.9)';hctx.lineWidth=2;hctx.stroke();
-    hctx.beginPath();hctx.arc(cx,cy,90,-hA2,-hA2+Math.PI*.9);hctx.strokeStyle='rgba(0,136,204,.7)';hctx.lineWidth=1.3;hctx.stroke();
-    for(let i=0;i<60;i++){
-      const a=(i/60)*Math.PI*2-Math.PI/2,inn=i%5===0?108:112;
-      hctx.beginPath();hctx.moveTo(cx+Math.cos(a)*inn,cy+Math.sin(a)*inn);hctx.lineTo(cx+Math.cos(a)*116,cy+Math.sin(a)*116);
-      hctx.strokeStyle=i%5===0?'rgba(0,212,255,.9)':'rgba(0,212,255,.18)';hctx.lineWidth=i%5===0?1.5:.4;hctx.stroke();
-    }
-    const grad=hctx.createRadialGradient(cx,cy,0,cx,cy,16);
-    grad.addColorStop(0,'rgba(0,212,255,.7)');grad.addColorStop(1,'rgba(0,212,255,0)');
-    hctx.beginPath();hctx.arc(cx,cy,16,0,Math.PI*2);hctx.fillStyle=grad;hctx.fill();
-    hA+=.009;hA2+=.013;requestAnimationFrame(drawHUD);
+    hctx.beginPath();hctx.arc(cx,cy,95,hA,hA+Math.PI*1.3);hctx.strokeStyle='rgba(0,212,255,.9)';hctx.lineWidth=2;hctx.stroke();
+    hctx.beginPath();hctx.arc(cx,cy,82,-hA2,-hA2+Math.PI*.9);hctx.strokeStyle='rgba(0,136,204,.7)';hctx.lineWidth=1.2;hctx.stroke();
+    for(let i=0;i<60;i++){const a=(i/60)*Math.PI*2-Math.PI/2,inn=i%5===0?99:103;hctx.beginPath();hctx.moveTo(cx+Math.cos(a)*inn,cy+Math.sin(a)*inn);hctx.lineTo(cx+Math.cos(a)*106,cy+Math.sin(a)*106);hctx.strokeStyle=i%5===0?'rgba(0,212,255,.9)':'rgba(0,212,255,.18)';hctx.lineWidth=i%5===0?1.4:.4;hctx.stroke();}
+    const grad=hctx.createRadialGradient(cx,cy,0,cx,cy,14);grad.addColorStop(0,'rgba(0,212,255,.7)');grad.addColorStop(1,'rgba(0,212,255,0)');
+    hctx.beginPath();hctx.arc(cx,cy,14,0,Math.PI*2);hctx.fillStyle=grad;hctx.fill();
+    hA+=.009;hA2+=.013;requestAnimationFrame(dh);
   })();
 }
 const rc=document.getElementById('radar-canvas');
 if(rc){
   const rctx=rc.getContext('2d');let rA=0;const blips=[];
   setInterval(()=>{if(blips.length<8)blips.push({x:Math.random()*110-55,y:Math.random()*110-55,age:0,max:100+Math.random()*80});},2200);
-  (function drawRadar(){
+  (function dr(){
     const cx=77,cy=77,R=65;rctx.clearRect(0,0,155,155);
     [17,34,51,65].forEach(r=>{rctx.beginPath();rctx.arc(cx,cy,r,0,Math.PI*2);rctx.strokeStyle='rgba(0,212,255,.18)';rctx.lineWidth=.5;rctx.stroke();});
-    rctx.beginPath();rctx.moveTo(cx,cy);rctx.arc(cx,cy,R,rA-.9,rA);rctx.closePath();
-    rctx.fillStyle='rgba(0,212,255,.07)';rctx.fill();
-    rctx.beginPath();rctx.moveTo(cx,cy);rctx.lineTo(cx+Math.cos(rA)*R,cy+Math.sin(rA)*R);
-    rctx.strokeStyle='rgba(0,212,255,.8)';rctx.lineWidth=1.4;rctx.stroke();
-    blips.forEach(b=>{
-      if(Math.hypot(b.x,b.y)<=R){const al=1-b.age/b.max;rctx.beginPath();rctx.arc(cx+b.x,cy+b.y,3,0,Math.PI*2);rctx.fillStyle=`rgba(0,255,136,${al})`;rctx.fill();}
-      b.age++;
-    });
+    rctx.beginPath();rctx.moveTo(cx,cy);rctx.arc(cx,cy,R,rA-.9,rA);rctx.closePath();rctx.fillStyle='rgba(0,212,255,.07)';rctx.fill();
+    rctx.beginPath();rctx.moveTo(cx,cy);rctx.lineTo(cx+Math.cos(rA)*R,cy+Math.sin(rA)*R);rctx.strokeStyle='rgba(0,212,255,.8)';rctx.lineWidth=1.4;rctx.stroke();
+    blips.forEach(b=>{if(Math.hypot(b.x,b.y)<=R){const al=1-b.age/b.max;rctx.beginPath();rctx.arc(cx+b.x,cy+b.y,3,0,Math.PI*2);rctx.fillStyle=`rgba(0,255,136,${al})`;rctx.fill();}b.age++;});
     for(let i=blips.length-1;i>=0;i--)if(blips[i].age>blips[i].max)blips.splice(i,1);
-    rA+=.03;requestAnimationFrame(drawRadar);
+    rA+=.03;requestAnimationFrame(dr);
   })();
 }
 
-// ════════════════════════════════════════════
-// LOG
-// ════════════════════════════════════════════
 function addLog(msg){
   const n=new Date(),t=`${pad(n.getHours())}:${pad(n.getMinutes())}`;
   const log=document.getElementById('activity-log');if(!log)return;
@@ -437,70 +525,44 @@ function addLog(msg){
 }
 
 // ════════════════════════════════════════════
-// SMART COMMANDS
+// SMART COMMANDS — including "open rudra"
 // ════════════════════════════════════════════
+const chatHistory=[];let convCount=0;
 function handleSmartCommand(raw){
   const t=raw.toLowerCase().trim();
-  if(t.includes('battery')){
-    if(batteryLevel!==null){
-      const ch=batteryCharging?'and it\'s charging right now':'not plugged in';
-      return `You're at ${batteryLevel}% battery, sir — ${ch}.`;
-    }
-    return 'Battery info isn\'t available on this browser, sir.';
-  }
-  if(/^(what('?s| is) the time|what time is it|time)$/.test(t)){
-    const n=new Date();
-    const h=n.getHours()>12?n.getHours()-12:n.getHours()||12;
-    const ampm=n.getHours()>=12?'PM':'AM';
-    return `It's ${h}:${pad(n.getMinutes())} ${ampm}, sir.`;
-  }
-  if(t.match(/^(what('?s| is) today|today'?s date|date)$/)){
-    const n=new Date();return `Today's ${DAY[n.getDay()]}, ${pad(n.getDate())} ${MON[n.getMonth()]} ${n.getFullYear()}, sir.`;
-  }
-  const callM=t.match(/^call\s+(.+)/);
-  if(callM){window.location.href=`tel:${encodeURIComponent(callM[1].trim())}`;return `Calling ${callM[1].trim()} now, sir.`;}
+  // RUDRA
+  if(t.includes('open rudra')||t==='rudra'){ switchPage('rudra'); return 'Opening your Rudra command center, sir.'; }
+  if(t.includes('open schedule')||t.includes('my schedule')){ switchPage('rudra');switchRudraByName('schedule'); return 'Opening your schedule, sir.'; }
+  if(t.includes('open goals')||t.includes('my goals')){ switchPage('rudra');switchRudraByName('goals'); return 'Opening your goals panel, sir.'; }
+  if(t.includes('open study')||t.includes('study plan')){ switchPage('rudra');switchRudraByName('study'); return 'Opening your study plan, sir.'; }
+  if(t.includes('open jarvis')||t.includes('back to jarvis')){ switchPage('jarvis'); return 'Back to Jarvis, sir.'; }
+  // BATTERY
+  if(t.includes('battery')){ return batteryLevel!==null?`You're at ${batteryLevel}% battery, sir — ${batteryCharging?'and it\'s charging':'not plugged in'}.`:'Battery info not available on this browser, sir.'; }
+  if(/^(what('?s| is) the time|what time is it|time)$/.test(t)){ const n=new Date(),h=n.getHours()>12?n.getHours()-12:n.getHours()||12,ap=n.getHours()>=12?'PM':'AM'; return `It's ${h}:${pad(n.getMinutes())} ${ap}, sir.`; }
+  if(/date|today/.test(t)&&!/\w+\s+date/.test(t)){ const n=new Date(); return `Today's ${DAY[n.getDay()]}, ${pad(n.getDate())} ${MON[n.getMonth()]} ${n.getFullYear()}, sir.`; }
+  const callM=t.match(/^call\s+(.+)/);if(callM){window.location.href=`tel:${encodeURIComponent(callM[1])}`;return `Calling ${callM[1]}, sir.`;}
   if(t.includes('whatsapp')){window.open('https://web.whatsapp.com','_blank');return 'Opening WhatsApp, sir.';}
-  const ytPlay=t.match(/(?:play|song|music)\s+(.+?)(?:\s+on youtube|\s+song|\s+music)?$/);
-  if(ytPlay){
-    const song=ytPlay[1].replace(/\b(on youtube|youtube|song|music|video)\b/gi,'').trim();
-    window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(song)}&sp=EgIQAQ%3D%3D`,'_blank');
-    return `Opening YouTube for "${song}" — first result should be right at the top, sir.`;
-  }
+  const ytPlay=t.match(/(?:play|song|music)\s+(.+?)(?:\s+on youtube)?$/);
+  if(ytPlay){const s=ytPlay[1].replace(/\b(on youtube|youtube|song|music|video)\b/gi,'').trim();window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(s)}&sp=EgIQAQ%3D%3D`,'_blank');return `Opening YouTube for "${s}", sir.`;}
   if(t==='open youtube'||t==='youtube'){window.open('https://www.youtube.com','_blank');return 'YouTube is open, sir.';}
-  const siteSearchM=t.match(/search\s+(\w+)\s+for\s+(.+)/);
-  if(siteSearchM){
-    const site=siteSearchM[1].trim(),query=siteSearchM[2].trim();
-    const siteUrls={youtube:`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`,amazon:`https://www.amazon.in/s?k=${encodeURIComponent(query)}`,reddit:`https://www.reddit.com/search/?q=${encodeURIComponent(query)}`,twitter:`https://twitter.com/search?q=${encodeURIComponent(query)}`,flipkart:`https://www.flipkart.com/search?q=${encodeURIComponent(query)}`,wikipedia:`https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(query)}`,github:`https://github.com/search?q=${encodeURIComponent(query)}`,google:`https://www.google.com/search?q=${encodeURIComponent(query)}`};
-    window.open(siteUrls[site]||`https://www.google.com/search?q=${encodeURIComponent(query+' site:'+site+'.com')}`,'_blank');
-    return `Searching ${site} for "${query}", sir.`;
-  }
-  const gSearch=t.match(/^(?:search|google|look up|find|search for|google for)\s+(.+)/);
-  if(gSearch){const q=gSearch[1].replace(/^(for|about)\s+/,'').trim();window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`,'_blank');return `Searching for "${q}" on Google, sir.`;}
-  const openM=t.match(/^open\s+(.+?)(?:\s+browser|\s+website|\s+site|\s+app)?$/);
-  if(openM){
-    const what=openM[1].trim().toLowerCase();
-    const browserMap={chrome:'https://www.google.com','google chrome':'https://www.google.com',firefox:'https://www.google.com',safari:'https://www.google.com',brave:'https://search.brave.com',edge:'https://www.bing.com',opera:'https://www.google.com'};
-    if(browserMap[what]){window.open(browserMap[what],'_blank');return `Opening a new tab for you, sir. I can't switch your system browser from here, but here's a fresh tab.`;}
-    const siteMap={youtube:'https://www.youtube.com',instagram:'https://www.instagram.com',twitter:'https://www.twitter.com',x:'https://www.x.com',facebook:'https://www.facebook.com',whatsapp:'https://web.whatsapp.com',gmail:'https://mail.google.com',maps:'https://maps.google.com','google maps':'https://maps.google.com',netflix:'https://www.netflix.com',spotify:'https://open.spotify.com',amazon:'https://www.amazon.in',flipkart:'https://www.flipkart.com',github:'https://www.github.com',reddit:'https://www.reddit.com',linkedin:'https://www.linkedin.com',wikipedia:'https://www.wikipedia.org'};
-    if(siteMap[what]){window.open(siteMap[what],'_blank');return `Opening ${what.charAt(0).toUpperCase()+what.slice(1)} for you, sir.`;}
-    const domain=what.replace(/\s+/g,'');
-    window.open(domain.includes('.')?`https://${domain}`:`https://www.${domain}.com`,'_blank');
-    return `Opening ${domain} now, sir.`;
-  }
-  const mapsM=t.match(/(?:directions to|navigate to|take me to|map of)\s+(.+)/);
-  if(mapsM){const dest=mapsM[1].trim();window.open(`https://maps.google.com/?q=${encodeURIComponent(dest)}`,'_blank');return `Pulling up directions to ${dest}, sir.`;}
-  if(t.includes('weather')){
-    const loc=document.getElementById('w-loc')?.textContent||'your area';
-    const temp=document.getElementById('w-temp')?.textContent||'--';
-    const desc=document.getElementById('w-desc')?.textContent||'--';
-    return `Right now in ${loc} it's ${temp} — ${desc.toLowerCase()}. Not bad, sir.`;
-  }
+  const ssM=t.match(/search\s+(\w+)\s+for\s+(.+)/);
+  if(ssM){const site=ssM[1],q=ssM[2];const m={youtube:`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`,amazon:`https://www.amazon.in/s?k=${encodeURIComponent(q)}`,google:`https://www.google.com/search?q=${encodeURIComponent(q)}`,reddit:`https://www.reddit.com/search/?q=${encodeURIComponent(q)}`,wikipedia:`https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(q)}`};window.open(m[site]||`https://www.google.com/search?q=${encodeURIComponent(q+' site:'+site+'.com')}`,'_blank');return `Searching ${site} for "${q}", sir.`;}
+  const gS=t.match(/^(?:search|google|look up|find|search for)\s+(.+)/);if(gS){const q=gS[1].replace(/^(for|about)\s+/,'');window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`,'_blank');return `Searching for "${q}", sir.`;}
+  const openM=t.match(/^open\s+(.+?)(?:\s+browser|\s+website|\s+site)?$/);
+  if(openM){const w=openM[1].trim().toLowerCase();const bm={chrome:'https://www.google.com',brave:'https://search.brave.com',firefox:'https://www.google.com',edge:'https://www.bing.com'};if(bm[w]){window.open(bm[w],'_blank');return `Opening a new tab for you, sir.`;}const sm={youtube:'https://www.youtube.com',instagram:'https://www.instagram.com',twitter:'https://www.twitter.com',gmail:'https://mail.google.com',netflix:'https://www.netflix.com',spotify:'https://open.spotify.com',amazon:'https://www.amazon.in',github:'https://www.github.com',maps:'https://maps.google.com'};if(sm[w]){window.open(sm[w],'_blank');return `Opening ${w}, sir.`;}const d=w.replace(/\s+/g,'');window.open(d.includes('.')?`https://${d}`:`https://www.${d}.com`,'_blank');return `Opening ${d}, sir.`;}
+  const mm=t.match(/(?:directions to|navigate to|maps)\s+(.+)/);if(mm){window.open(`https://maps.google.com/?q=${encodeURIComponent(mm[1])}`,'_blank');return `Opening maps for ${mm[1]}, sir.`;}
+  if(t.includes('weather')){const loc=document.getElementById('w-loc')?.textContent||'your area';const temp=document.getElementById('w-temp')?.textContent||'--';const desc=document.getElementById('w-desc')?.textContent||'--';return `In ${loc} it's ${temp}, ${desc.toLowerCase()}, sir.`;}
   return null;
+}
+function switchRudraByName(name){
+  document.querySelectorAll('.rtab').forEach((t,i)=>{t.classList.remove('active');});
+  document.querySelectorAll('.rtab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('rudra-'+name).classList.add('active');
+  document.querySelectorAll('.rtab')[{schedule:0,goals:1,study:2}[name]].classList.add('active');
 }
 
 // ════════════════════════════════════════════
-// HUMAN-LIKE SPEECH ENGINE
-// Key insight: vary rate/pitch per sentence type
+// VOICE — HUMAN-LIKE WITH EMOTION + STOP ON SPEECH
 // ════════════════════════════════════════════
 let ttsVoices=[];
 function loadVoices(){ttsVoices=window.speechSynthesis?window.speechSynthesis.getVoices():[];}
@@ -508,89 +570,81 @@ if(window.speechSynthesis){loadVoices();window.speechSynthesis.onvoiceschanged=l
 
 function getBestVoice(){
   ttsVoices=window.speechSynthesis.getVoices();
-  const want=['Google UK English Male','Daniel','Arthur','Gordon','Thomas','Microsoft David Desktop','Microsoft Mark Desktop','Alex','Google US English'];
-  for(const n of want){const v=ttsVoices.find(x=>x.name===n);if(v)return v;}
-  return ttsVoices.find(v=>v.lang==='en-GB')||ttsVoices.find(v=>v.lang==='en-US')||ttsVoices.find(v=>v.lang.startsWith('en'))||null;
+  // Strictly male voices only
+  const malePref=['Google UK English Male','Daniel','Gordon','Arthur','Thomas',
+    'Microsoft David Desktop','Microsoft Mark Desktop','Alex','Google US English'];
+  for(const n of malePref){const v=ttsVoices.find(x=>x.name===n);if(v)return v;}
+  // Avoid female voices (Samantha, Victoria, Karen, Moira, etc.)
+  const female=['samantha','victoria','karen','moira','tessa','fiona','allison','ava','susan','zira','cortana'];
+  const safe=ttsVoices.find(v=>v.lang.startsWith('en')&&!female.some(f=>v.name.toLowerCase().includes(f)));
+  return safe||ttsVoices.find(v=>v.lang.startsWith('en'))||null;
 }
 
-// Detect sentence emotion to vary speech dynamically
-function getSentenceParams(sentence){
+// Emotion-based speech params — Copilot-style dynamic tone
+function getVoiceParams(sentence){
   const s=sentence.toLowerCase();
-  // Excited / positive
-  if(/!/.test(sentence)||/\b(great|amazing|excellent|fantastic|brilliant|perfect|wonderful|love|absolutely)\b/.test(s))
-    return {rate:1.08, pitch:0.65}; // slightly faster, slightly higher
-  // Question — rises naturally
+  if(/[!]/.test(sentence)||/\b(great|amazing|excellent|fantastic|brilliant|perfect|wonderful|love|absolutely|incredible)\b/.test(s))
+    return {rate:1.1,pitch:0.7};   // excited
   if(/\?$/.test(sentence.trim()))
-    return {rate:0.95, pitch:0.7};
-  // Serious / warning
-  if(/\b(careful|warning|critical|danger|urgent|important|however|unfortunately|sorry|apolog)\b/.test(s))
-    return {rate:0.80, pitch:0.45};
-  // Joke / witty
-  if(/\b(actually|honestly|well|quite|rather|bit|funny|joke|laugh|ha)\b/.test(s))
-    return {rate:1.0, pitch:0.62};
-  // Default: authoritative but natural
-  return {rate:0.92, pitch:0.55};
+    return {rate:1.0,pitch:0.72};  // question — slight rise
+  if(/\b(careful|warning|critical|danger|urgent|important|sorry|apolog|unfortunately|however)\b/.test(s))
+    return {rate:0.78,pitch:0.42}; // serious / grave
+  if(/\b(actually|honestly|well|quite|rather|funny|interesting|by the way|speaking of)\b/.test(s))
+    return {rate:1.0,pitch:0.60};  // conversational, warm
+  if(/\b(ha|haha|joke|laugh|amusing|ironic|wit)\b/.test(s))
+    return {rate:1.05,pitch:0.65}; // light/witty
+  // Natural default — confident British male
+  return {rate:0.95,pitch:0.52};
 }
 
-function unlockAudio(){
-  try{const ac=new(window.AudioContext||window.webkitAudioContext)();const buf=ac.createBuffer(1,1,22050);const src=ac.createBufferSource();src.buffer=buf;src.connect(ac.destination);src.start(0);setTimeout(()=>ac.close(),100);}catch(e){}
-}
+let isSpeaking=false,isListening=false;
+let speakQ=[],speakBusy=false;
+
+function unlockAudio(){try{const ac=new(window.AudioContext||window.webkitAudioContext)();const b=ac.createBuffer(1,1,22050);const s=ac.createBufferSource();s.buffer=b;s.connect(ac.destination);s.start(0);setTimeout(()=>ac.close(),100);}catch(e){}}
 let speechUnlocked=false;
-function unlockSpeech(){
-  if(speechUnlocked||!window.speechSynthesis)return;
-  unlockAudio();
-  const u=new SpeechSynthesisUtterance(' ');u.volume=0.01;u.rate=2;
-  window.speechSynthesis.speak(u);speechUnlocked=true;
-}
+function unlockSpeech(){if(speechUnlocked||!window.speechSynthesis)return;unlockAudio();const u=new SpeechSynthesisUtterance(' ');u.volume=0.01;u.rate=2;window.speechSynthesis.speak(u);speechUnlocked=true;}
 document.addEventListener('touchstart',unlockSpeech,{once:true,passive:true});
 document.addEventListener('click',unlockSpeech,{once:true});
 
-function cleanForSpeech(text){
-  return text
-    .replace(/J\.A\.R\.V\.I\.S/gi,'Jarvis')
+function cleanText(t){
+  return t.replace(/J\.A\.R\.V\.I\.S/gi,'Jarvis')
     .replace(/\*\*(.+?)\*\*/g,'$1').replace(/\*(.+?)\*/g,'$1')
     .replace(/#{1,6}\s/g,'').replace(/`(.+?)`/g,'$1')
     .replace(/[-•]\s/g,'').replace(/\n+/g,' ').trim();
 }
 
-let speakQueue=[],speakBusy=false;
 function speakText(text,onDone){
-  speakQueue.push({text,onDone});
-  if(!speakBusy)drainQueue();
+  speakQ.push({text,onDone});
+  if(!speakBusy)drainQ();
 }
-function drainQueue(){
-  if(!speakQueue.length){speakBusy=false;return;}
+function stopSpeaking(){
+  window.speechSynthesis&&window.speechSynthesis.cancel();
+  speakQ=[];isSpeaking=false;speakBusy=false;
+  document.getElementById('waveform').classList.add('hidden');
+}
+function drainQ(){
+  if(!speakQ.length){speakBusy=false;return;}
   speakBusy=true;
-  const{text,onDone}=speakQueue.shift();
-  if(!window.speechSynthesis){onDone&&onDone();drainQueue();return;}
+  const{text,onDone}=speakQ.shift();
+  if(!window.speechSynthesis){onDone&&onDone();drainQ();return;}
   window.speechSynthesis.cancel();
-  const clean=cleanForSpeech(text);
-  if(!clean){onDone&&onDone();drainQueue();return;}
-
-  // Split into sentences for human rhythm + mobile fix
+  const clean=cleanText(text);
+  if(!clean){onDone&&onDone();drainQ();return;}
   const sentences=clean.match(/[^.!?]+[.!?]*/g)||[clean];
   let idx=0;
-  isSpeaking=true;
-  setUIState('speaking');
+  isSpeaking=true;setUIState('speaking');
   document.getElementById('waveform').classList.remove('hidden');
-
   function next(){
-    if(idx>=sentences.length){
-      isSpeaking=false;
-      document.getElementById('waveform').classList.add('hidden');
-      setUIState('idle');
-      onDone&&onDone();drainQueue();return;
+    if(idx>=sentences.length||!isSpeaking){
+      isSpeaking=false;document.getElementById('waveform').classList.add('hidden');
+      setUIState('idle');onDone&&onDone();drainQ();return;
     }
-    const chunk=sentences[idx++].trim();
-    if(!chunk){next();return;}
-    const params=getSentenceParams(chunk);
+    const chunk=sentences[idx++].trim();if(!chunk){next();return;}
+    const p=getVoiceParams(chunk);
     const utt=new SpeechSynthesisUtterance(chunk);
-    utt.rate  =params.rate;   // dynamic per sentence emotion
-    utt.pitch =params.pitch;  // dynamic per sentence
-    utt.volume=1.0;
+    utt.rate=p.rate;utt.pitch=p.pitch;utt.volume=1.0;
     const v=getBestVoice();if(v)utt.voice=v;
-    utt.onend=next;
-    utt.onerror=()=>next();
+    utt.onend=next;utt.onerror=()=>next();
     try{window.speechSynthesis.cancel();window.speechSynthesis.speak(utt);}catch(e){next();}
   }
   next();
@@ -602,56 +656,62 @@ function drainQueue(){
 function setUIState(state){
   const btn=document.getElementById('mic-btn');
   btn.classList.remove('listening','speaking','processing');
-  const lbl=document.getElementById('mic-label'),vm=document.getElementById('voice-mode'),hs=document.getElementById('hud-status'),ss=document.getElementById('sys-status');
+  const lbl=document.getElementById('mic-label'),vm=document.getElementById('voice-mode'),hs=document.getElementById('hud-status');
   if(state==='listening'){
     btn.classList.add('listening');btn.textContent='🔴';
-    if(lbl)lbl.textContent='LISTENING — SPEAK NOW';
-    if(vm)vm.textContent='LISTENING';if(hs)hs.textContent='● VOICE INPUT';if(ss)ss.textContent='LISTENING';
+    if(lbl)lbl.textContent='LISTENING...';if(vm)vm.textContent='LISTENING';if(hs)hs.textContent='● VOICE INPUT';
     document.getElementById('waveform').classList.remove('hidden');
   }else if(state==='speaking'){
     btn.classList.add('speaking');btn.textContent='🔊';
-    if(lbl)lbl.textContent='SPEAKING — TAP TO STOP';
-    if(vm)vm.textContent='SPEAKING';if(hs)hs.textContent='● VOICE OUTPUT';
+    if(lbl)lbl.textContent='TAP TO STOP';if(vm)vm.textContent='SPEAKING';if(hs)hs.textContent='● SPEAKING';
   }else if(state==='processing'){
     btn.classList.add('processing');btn.textContent='⚙️';
-    if(lbl)lbl.textContent='PROCESSING...';if(vm)vm.textContent='THINKING';if(hs)hs.textContent='● PROCESSING';
+    if(lbl)lbl.textContent='THINKING...';if(vm)vm.textContent='THINKING';if(hs)hs.textContent='● PROCESSING';
   }else{
-    btn.textContent='🎤';
-    if(lbl)lbl.textContent='TAP MIC TO SPEAK';if(vm)vm.textContent='READY';if(hs)hs.textContent='● SYSTEM READY';if(ss)ss.textContent='ONLINE';
+    btn.textContent='🎤';if(lbl)lbl.textContent='TAP MIC TO SPEAK';if(vm)vm.textContent='READY';if(hs)hs.textContent='● SYSTEM READY';
     document.getElementById('waveform').classList.add('hidden');
-    const tb=document.getElementById('transcript-box');
-    if(tb){tb.textContent='Tap mic and speak...';tb.classList.remove('active');}
+    const tb=document.getElementById('transcript-box');if(tb){tb.textContent='Tap mic and speak...';tb.classList.remove('active');}
   }
 }
 
 // ════════════════════════════════════════════
-// SPEECH RECOGNITION
+// SPEECH RECOGNITION — stops Jarvis when you speak
 // ════════════════════════════════════════════
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 let recognizer=null,recRunning=false,pendingText='';
+
 function buildRec(){
   if(!SR)return null;
   const rec=new SR();
   rec.continuous=false;rec.interimResults=true;rec.lang='en-US';rec.maxAlternatives=1;
+
   rec.onstart=()=>{
-    recRunning=true;pendingText='';setUIState('listening');
-    const tb=document.getElementById('transcript-box');
-    if(tb){tb.textContent='Listening...';tb.classList.add('active');}
+    recRunning=true;pendingText='';
+    // *** STOP JARVIS IMMEDIATELY WHEN USER STARTS SPEAKING ***
+    if(isSpeaking) stopSpeaking();
+    setUIState('listening');
+    const tb=document.getElementById('transcript-box');if(tb){tb.textContent='Listening...';tb.classList.add('active');}
     addLog('Mic: active');
   };
+
+  rec.onspeechstart=()=>{
+    // User actually started talking — kill Jarvis voice immediately
+    if(isSpeaking) stopSpeaking();
+  };
+
   rec.onresult=(e)=>{
+    // Stop speaking the moment we detect voice
+    if(isSpeaking) stopSpeaking();
     let interim='',final='';
     for(let i=0;i<e.results.length;i++){
       if(e.results[i].isFinal)final+=e.results[i][0].transcript+' ';
       else interim+=e.results[i][0].transcript;
     }
     const live=(final+interim).trim();
-    const tb=document.getElementById('transcript-box');
-    if(tb){tb.textContent=live||'Listening...';tb.classList.add('active');}
-    // Only show in text box if text mode
-    if(inputMode==='text'){const ti=document.getElementById('text-input');if(ti)ti.value=live;}
+    const tb=document.getElementById('transcript-box');if(tb){tb.textContent=live||'Listening...';tb.classList.add('active');}
     if(final.trim())pendingText=final.trim();
   };
+
   rec.onend=()=>{
     recRunning=false;
     if(pendingText){
@@ -659,105 +719,69 @@ function buildRec(){
       const ti=document.getElementById('text-input');if(ti)ti.value='';
       sendToJarvis(cmd,'voice');
     }else if(isListening&&!isSpeaking){
-      setTimeout(startRec,300);
+      setTimeout(startRec,250);
     }else{setUIState('idle');}
   };
+
   rec.onerror=(e)=>{
     recRunning=false;
-    if(e.error==='not-allowed'||e.error==='service-not-allowed'){
-      isListening=false;setUIState('idle');
-      const tb=document.getElementById('transcript-box');
-      if(tb){tb.textContent='Mic denied — allow in browser settings.';tb.classList.add('active');}
-    }else if(e.error==='no-speech'){
-      if(isListening&&!isSpeaking)setTimeout(startRec,300);
-    }else{
-      addLog('Rec err: '+e.error);
-      if(isListening&&!isSpeaking)setTimeout(startRec,600);
-    }
+    if(e.error==='not-allowed'){isListening=false;setUIState('idle');const tb=document.getElementById('transcript-box');if(tb)tb.textContent='Mic denied — allow in settings.';}
+    else if(e.error==='no-speech'){if(isListening&&!isSpeaking)setTimeout(startRec,300);}
+    else{addLog('Rec err:'+e.error);if(isListening&&!isSpeaking)setTimeout(startRec,600);}
   };
   return rec;
 }
+
 function startRec(){
   if(recRunning||isSpeaking)return;
   recognizer=buildRec();if(!recognizer)return;
   try{recognizer.start();}catch(e){if(e.name==='InvalidStateError')setTimeout(startRec,400);}
 }
-function stopRec(){
-  recRunning=false;
-  try{recognizer&&recognizer.abort();}catch(e){}
-  recognizer=null;
-}
+function stopRec(){recRunning=false;try{recognizer&&recognizer.abort();}catch(e){}recognizer=null;}
 
-// MIC BUTTON
 document.getElementById('mic-btn').addEventListener('click',()=>{
   unlockSpeech();
-  if(isSpeaking){
-    window.speechSynthesis.cancel();speakQueue=[];isSpeaking=false;speakBusy=false;
-    setUIState(isListening?'listening':'idle');return;
-  }
+  if(isSpeaking){stopSpeaking();if(isListening)setTimeout(startRec,300);else setUIState('idle');return;}
   if(isListening){isListening=false;stopRec();setUIState('idle');}
   else{isListening=true;startRec();}
 });
 
 // ════════════════════════════════════════════
 // SEND TO JARVIS
-// mode: 'voice' (spoke) | 'text' (typed)
 // ════════════════════════════════════════════
-async function sendToJarvis(userMsg, mode){
+async function sendToJarvis(userMsg,mode){
   userMsg=userMsg.trim();if(!userMsg)return;
-  mode=mode||inputMode;
+  mode=mode||'text';
   isListening=false;stopRec();
-
   const log=document.getElementById('conv-log');
-
-  // Voice mode: don't show user message in chat
-  // Text mode: show user message
   if(mode==='text'){
-    const uDiv=document.createElement('div');
-    uDiv.className='msg user';
-    uDiv.innerHTML=`<div class="sender">YOU //</div>${userMsg}`;
-    log.appendChild(uDiv);
+    const uDiv=document.createElement('div');uDiv.className='msg user';
+    uDiv.innerHTML=`<div class="sender">YOU //</div>${userMsg}`;log.appendChild(uDiv);
   }
-
-  // Always show Jarvis reply in chat for text mode
-  // For voice mode, only show a minimal indicator
-  const jDiv=document.createElement('div');
-  jDiv.className='msg jarvis';
-  if(mode==='voice'){
-    jDiv.innerHTML=`<div class="sender">JARVIS // 🔊</div><span style="color:var(--blue2);font-style:italic">Speaking...</span>`;
-  }else{
-    jDiv.innerHTML=`<div class="sender">JARVIS //</div><span style="color:var(--blue2);font-style:italic">Thinking...</span>`;
-  }
+  const jDiv=document.createElement('div');jDiv.className='msg jarvis';
+  jDiv.innerHTML=`<div class="sender">JARVIS //</div><span style="color:var(--blue2);font-style:italic">Thinking...</span>`;
   log.appendChild(jDiv);log.scrollTop=log.scrollHeight;
   setUIState('processing');
   convCount++;document.getElementById('conv-count').textContent=convCount;
   addLog(`[${mode.toUpperCase()}] ${userMsg.slice(0,32)}`);
 
-  // Detect override keywords in message
   const tl=userMsg.toLowerCase();
-  if(/\b(tell me out loud|say it out loud|speak it|read it out|say it)\b/.test(tl)) mode='voice';
-  if(/\b(write it|show me|type it|text only|don't speak|no sound)\b/.test(tl)) mode='text';
+  if(/\b(tell me out loud|say it|read it out|speak)\b/.test(tl))mode='voice';
+  if(/\b(write it|show me|text only|don't speak)\b/.test(tl))mode='text';
 
-  // Smart commands first
   const smart=handleSmartCommand(userMsg);
   if(smart){
-    if(mode==='text'){
-      jDiv.innerHTML=`<div class="sender">JARVIS //</div>${smart}`;
-    }else{
-      jDiv.innerHTML=`<div class="sender">JARVIS // 🔊</div><span style="color:var(--blue2);font-size:9px">[voice reply]</span>`;
-      speakText(smart,()=>setUIState('idle'));
-    }
+    jDiv.innerHTML=`<div class="sender">JARVIS //</div>${smart}`;
     log.scrollTop=log.scrollHeight;
-    if(mode==='text') setUIState('idle');
+    if(mode==='voice')speakText(smart,()=>setUIState('idle'));
+    else setUIState('idle');
     return;
   }
 
-  // AI query
   chatHistory.push({role:'user',content:userMsg});
   const t0=Date.now();
   try{
-    const res=await fetch(JARVIS_API,{method:'POST',
-      headers:{'Content-Type':'application/json'},
+    const res=await fetch(JARVIS_API,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({message:userMsg,history:chatHistory.slice(-14),mode})});
     const data=await res.json();
     const reply=data.reply||"I'm here, sir.";
@@ -765,44 +789,261 @@ async function sendToJarvis(userMsg, mode){
     const ms=Date.now()-t0;
     document.getElementById('resp-time').textContent=ms+'ms';
     addLog(`Reply in ${ms}ms`);
-
     if(mode==='text'){
-      // TEXT mode: show full reply in chat, don't speak
       jDiv.innerHTML=`<div class="sender">JARVIS //</div>${reply}`;
-      log.scrollTop=log.scrollHeight;
-      setUIState('idle');
+      log.scrollTop=log.scrollHeight;setUIState('idle');
     }else{
-      // VOICE mode: speak reply, show minimal in chat
-      jDiv.innerHTML=`<div class="sender">JARVIS // 🔊</div><span style="color:var(--blue2);font-size:9px">[voice reply — say "write it" to see text]</span>`;
+      jDiv.innerHTML=`<div class="sender">JARVIS // 🔊</div><span style="color:var(--blue2);font-size:9px;font-style:italic">[voice reply]</span>`;
       log.scrollTop=log.scrollHeight;
       speakText(reply,()=>setUIState('idle'));
     }
   }catch(err){
-    const fb="Something went wrong, sir. Check your connection.";
+    const fb="Connection issue, sir.";
     jDiv.innerHTML=`<div class="sender">JARVIS //</div>${fb}`;
-    addLog('API error');
-    if(mode==='voice') speakText(fb,()=>setUIState('idle'));
-    else setUIState('idle');
+    if(mode==='voice')speakText(fb,()=>setUIState('idle'));else setUIState('idle');
   }
 }
 
-// TEXT INPUT — always text mode
-document.getElementById('send-btn').onclick=()=>{
-  const v=document.getElementById('text-input').value.trim();
-  if(v){document.getElementById('text-input').value='';sendToJarvis(v,'text');}
-};
-document.getElementById('text-input').addEventListener('keydown',e=>{
-  if(e.key==='Enter'){const v=e.target.value.trim();if(v){e.target.value='';sendToJarvis(v,'text');}}
-});
+document.getElementById('send-btn').onclick=()=>{const v=document.getElementById('text-input').value.trim();if(v){document.getElementById('text-input').value='';sendToJarvis(v,'text');}};
+document.getElementById('text-input').addEventListener('keydown',e=>{if(e.key==='Enter'){const v=e.target.value.trim();if(v){e.target.value='';sendToJarvis(v,'text');}}});
 function quickCmd(cmd){sendToJarvis(cmd,'text');}
 
+// ════════════════════════════════════════════
+// RUDRA DATA FUNCTIONS
+// ════════════════════════════════════════════
+async function loadAllRudra(){
+  loadSchedule();loadGoals();loadStudy();
+}
+
+// ── SCHEDULE ──
+async function loadSchedule(){
+  const res=await rudraReq('list','Schedule');
+  const items=res.data||[];
+  const el=document.getElementById('schedule-list');if(!el)return;
+  if(!items.length){el.innerHTML='<div class="empty-state">No events yet. Add one above or ask Jarvis to generate.</div>';return;}
+  // Sort by date
+  items.sort((a,b)=>new Date(a.date+' '+a.start_time)-new Date(b.date+' '+b.start_time));
+  el.innerHTML=items.map(it=>`
+    <div class="rcard ${it.completed?'completed-item':''}" id="sc-${it.id}">
+      <div class="rcard-title">
+        ${it.title}
+        <span class="tag ${it.category||'other'}">${(it.category||'other').toUpperCase()}</span>
+      </div>
+      <div class="rcard-meta">📅 ${it.date||'--'} &nbsp; ⏰ ${it.start_time||'--'} – ${it.end_time||'--'}</div>
+      ${it.notes?`<div class="rcard-body">${it.notes}</div>`:''}
+      <div class="rcard-actions">
+        <button class="raction success" onclick="toggleSchedule('${it.id}',${!it.completed})">${it.completed?'↩ UNDO':'✓ DONE'}</button>
+        <button class="raction" onclick="editSchedule('${it.id}')">✏ EDIT</button>
+        <button class="raction danger" onclick="deleteItem('Schedule','${it.id}','sc-${it.id}')">✕ DEL</button>
+      </div>
+    </div>`).join('');
+}
+async function addSchedule(){
+  const title=document.getElementById('s-title').value.trim();if(!title)return alert('Title required');
+  await rudraReq('create','Schedule',{title,date:document.getElementById('s-date').value,start_time:document.getElementById('s-start').value,end_time:document.getElementById('s-end').value,category:document.getElementById('s-cat').value,notes:document.getElementById('s-notes').value,completed:false});
+  ['s-title','s-date','s-start','s-end','s-notes'].forEach(id=>document.getElementById(id).value='');
+  loadSchedule();
+}
+async function toggleSchedule(id,val){await rudraReq('update','Schedule',{completed:val},id);loadSchedule();}
+
+// ── GOALS ──
+async function loadGoals(){
+  const res=await rudraReq('list','Goal');
+  const items=res.data||[];
+  const el=document.getElementById('goals-list');if(!el)return;
+  if(!items.length){el.innerHTML='<div class="empty-state">No goals yet. Add one or let Jarvis help you plan.</div>';return;}
+  el.innerHTML=items.map(it=>`
+    <div class="rcard" id="go-${it.id}">
+      <div class="rcard-title">${it.title}<span style="font-size:9px;color:rgba(170,68,255,0.5)">${it.status||'active'}</span></div>
+      <div class="rcard-meta">${it.category?`[${it.category}]`:''} ${it.deadline?'🗓 '+it.deadline:''}</div>
+      ${it.description?`<div class="rcard-body">${it.description}</div>`:''}
+      <div class="progress-bar"><div class="progress-fill" style="width:${it.progress||0}%"></div></div>
+      <div style="font-size:8px;color:rgba(170,68,255,0.5);margin-top:3px">${it.progress||0}% complete</div>
+      <div class="rcard-actions">
+        <button class="raction" onclick="updateProgress('${it.id}',${Math.min(100,(it.progress||0)+10)})">+10%</button>
+        <button class="raction success" onclick="rudraReq('update','Goal',{status:'completed'},'${it.id}').then(loadGoals)">DONE</button>
+        <button class="raction" onclick="editGoal('${it.id}')">✏ EDIT</button>
+        <button class="raction danger" onclick="deleteItem('Goal','${it.id}','go-${it.id}')">✕ DEL</button>
+      </div>
+    </div>`).join('');
+}
+async function addGoal(){
+  const title=document.getElementById('g-title').value.trim();if(!title)return alert('Title required');
+  await rudraReq('create','Goal',{title,description:document.getElementById('g-desc').value,deadline:document.getElementById('g-deadline').value,category:document.getElementById('g-cat').value,progress:0,status:'active'});
+  ['g-title','g-desc','g-deadline','g-cat'].forEach(id=>document.getElementById(id).value='');
+  loadGoals();
+}
+async function updateProgress(id,val){await rudraReq('update','Goal',{progress:val},id);loadGoals();}
+
+// ── STUDY ──
+async function loadStudy(){
+  const res=await rudraReq('list','StudyTopic');
+  const items=res.data||[];
+  const el=document.getElementById('study-list');if(!el)return;
+  if(!items.length){el.innerHTML='<div class="empty-state">No topics yet. Add one or ask Jarvis to build your study plan.</div>';return;}
+  const statusColor={'not started':'#aaa','in progress':'#ffaa00','completed':'#00ff88'};
+  el.innerHTML=items.map(it=>`
+    <div class="rcard" id="st-${it.id}">
+      <div class="rcard-title">${it.subject}: ${it.topic}<span style="font-size:8px;color:${statusColor[it.status||'not started']}">${(it.status||'not started').toUpperCase()}</span></div>
+      <div class="rcard-meta">Level: ${it.level||'beginner'}</div>
+      ${it.notes?`<div class="rcard-body" style="margin-bottom:4px">${it.notes}</div>`:''}
+      ${it.study_plan?`<div class="rcard-body" style="border-top:1px solid rgba(170,68,255,0.15);padding-top:6px;margin-top:4px;font-size:9px;white-space:pre-wrap">${it.study_plan}</div>`:''}
+      ${it.timetable?`<div class="rcard-body" style="border-top:1px solid rgba(170,68,255,0.15);padding-top:6px;margin-top:4px;font-size:9px;white-space:pre-wrap;color:#ffaa00">${it.timetable}</div>`:''}
+      <div class="rcard-actions">
+        <select onchange="rudraReq('update','StudyTopic',{status:this.value},'${it.id}').then(loadStudy)" style="background:rgba(170,68,255,0.1);border:1px solid rgba(170,68,255,0.3);color:var(--purple);font-family:'Share Tech Mono',monospace;font-size:8px;padding:3px">
+          <option ${it.status==='not started'?'selected':''}>not started</option>
+          <option ${it.status==='in progress'?'selected':''}>in progress</option>
+          <option ${it.status==='completed'?'selected':''}>completed</option>
+        </select>
+        <button class="raction" onclick="editStudy('${it.id}')">✏ EDIT</button>
+        <button class="raction danger" onclick="deleteItem('StudyTopic','${it.id}','st-${it.id}')">✕ DEL</button>
+      </div>
+    </div>`).join('');
+}
+async function addStudyTopic(){
+  const subject=document.getElementById('st-subject').value.trim(),topic=document.getElementById('st-topic').value.trim();
+  if(!subject||!topic)return alert('Subject and topic required');
+  await rudraReq('create','StudyTopic',{subject,topic,level:document.getElementById('st-level').value,status:document.getElementById('st-status').value,notes:document.getElementById('st-notes').value});
+  ['st-subject','st-topic','st-notes'].forEach(id=>document.getElementById(id).value='');
+  loadStudy();
+}
+
+// ── DELETE ──
+async function deleteItem(entity,id,elId){
+  if(!confirm('Delete this item?'))return;
+  await rudraReq('delete',entity,null,id);
+  const el=document.getElementById(elId);if(el)el.remove();
+}
+
+// ── EDIT MODAL ──
+let editCtx={};
+function openEdit(html,onSave){
+  editCtx.onSave=onSave;
+  document.getElementById('edit-form-body').innerHTML=html;
+  document.getElementById('edit-modal').style.display='flex';
+}
+function saveEdit(){editCtx.onSave&&editCtx.onSave();closeEdit();}
+function closeEdit(){document.getElementById('edit-modal').style.display='none';editCtx={};}
+
+function editSchedule(id){
+  rudraReq('list','Schedule').then(res=>{
+    const it=res.data.find(x=>x.id===id);if(!it)return;
+    openEdit(`
+      <input id="e-title" value="${it.title||''}" placeholder="Title" style="width:100%;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px;margin-bottom:8px">
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <input id="e-date" type="date" value="${it.date||''}" style="flex:1;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px">
+        <input id="e-start" type="time" value="${it.start_time||''}" style="flex:1;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px">
+        <input id="e-end" type="time" value="${it.end_time||''}" style="flex:1;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px">
+      </div>
+      <input id="e-notes" value="${it.notes||''}" placeholder="Notes" style="width:100%;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px">
+    `,()=>{
+      rudraReq('update','Schedule',{title:document.getElementById('e-title').value,date:document.getElementById('e-date').value,start_time:document.getElementById('e-start').value,end_time:document.getElementById('e-end').value,notes:document.getElementById('e-notes').value},id).then(loadSchedule);
+    });
+  });
+}
+
+function editGoal(id){
+  rudraReq('list','Goal').then(res=>{
+    const it=res.data.find(x=>x.id===id);if(!it)return;
+    openEdit(`
+      <input id="e-gtitle" value="${it.title||''}" placeholder="Goal" style="width:100%;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px;margin-bottom:8px">
+      <textarea id="e-gdesc" placeholder="Description" style="width:100%;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px;margin-bottom:8px;min-height:60px">${it.description||''}</textarea>
+      <div style="display:flex;gap:8px">
+        <input id="e-gdeadline" type="date" value="${it.deadline||''}" style="flex:1;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px">
+        <input id="e-gprog" type="number" min="0" max="100" value="${it.progress||0}" placeholder="%" style="flex:1;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px">
+      </div>
+    `,()=>{
+      rudraReq('update','Goal',{title:document.getElementById('e-gtitle').value,description:document.getElementById('e-gdesc').value,deadline:document.getElementById('e-gdeadline').value,progress:parseInt(document.getElementById('e-gprog').value)||0},id).then(loadGoals);
+    });
+  });
+}
+
+function editStudy(id){
+  rudraReq('list','StudyTopic').then(res=>{
+    const it=res.data.find(x=>x.id===id);if(!it)return;
+    openEdit(`
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <input id="e-ssubj" value="${it.subject||''}" placeholder="Subject" style="flex:1;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px">
+        <input id="e-stopic" value="${it.topic||''}" placeholder="Topic" style="flex:1;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px">
+      </div>
+      <textarea id="e-snotes" placeholder="Notes" style="width:100%;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px;margin-bottom:8px;min-height:60px">${it.notes||''}</textarea>
+      <textarea id="e-splan" placeholder="Study Plan" style="width:100%;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px;margin-bottom:8px;min-height:80px">${it.study_plan||''}</textarea>
+      <textarea id="e-stt" placeholder="Timetable" style="width:100%;background:rgba(170,68,255,0.06);border:1px solid rgba(170,68,255,0.25);color:#fff;font-family:'Share Tech Mono',monospace;padding:7px;min-height:80px">${it.timetable||''}</textarea>
+    `,()=>{
+      rudraReq('update','StudyTopic',{subject:document.getElementById('e-ssubj').value,topic:document.getElementById('e-stopic').value,notes:document.getElementById('e-snotes').value,study_plan:document.getElementById('e-splan').value,timetable:document.getElementById('e-stt').value},id).then(loadStudy);
+    });
+  });
+}
+
+// ════════════════════════════════════════════
+// AI GENERATORS FOR RUDRA
+// ════════════════════════════════════════════
+async function aiCall(prompt){
+  const res=await fetch(JARVIS_API,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({message:prompt,history:[],mode:'text'})});
+  const d=await res.json();return d.reply||'';
+}
+
+async function aiGenerateSchedule(){
+  const input=document.getElementById('sched-ai-input').value.trim();
+  if(!input)return alert('Tell Jarvis what schedule to create');
+  const btn=event.target;btn.textContent='GENERATING...';btn.disabled=true;
+  try{
+    const prompt=`The user wants: "${input}". Generate a schedule as a JSON array. Each item: {title, date (YYYY-MM-DD, use dates from today ${new Date().toISOString().slice(0,10)} onwards), start_time (HH:MM), end_time (HH:MM), category (work/study/personal/health/other), notes}. Return ONLY the JSON array, no explanation.`;
+    const reply=await aiCall(prompt);
+    const jsonMatch=reply.match(/\[[\s\S]*\]/);
+    if(!jsonMatch)throw new Error('No JSON');
+    const items=JSON.parse(jsonMatch[0]);
+    for(const item of items){await rudraReq('create','Schedule',{...item,completed:false});}
+    loadSchedule();btn.textContent='GENERATE';btn.disabled=false;
+    document.getElementById('sched-ai-input').value='';
+    alert(`✅ Created ${items.length} schedule events!`);
+  }catch(e){btn.textContent='GENERATE';btn.disabled=false;alert('Could not parse schedule. Try again.');}
+}
+
+async function aiGenerateGoals(){
+  const input=document.getElementById('goal-ai-input').value.trim();
+  if(!input)return alert('Tell Jarvis your goal');
+  const btn=event.target;btn.textContent='GENERATING...';btn.disabled=true;
+  try{
+    const prompt=`User wants to achieve: "${input}". Break this into 3-5 actionable goals as JSON array. Each: {title, description, deadline (YYYY-MM-DD), category, progress: 0, status: "active"}. Return ONLY JSON array.`;
+    const reply=await aiCall(prompt);
+    const jsonMatch=reply.match(/\[[\s\S]*\]/);
+    if(!jsonMatch)throw new Error('No JSON');
+    const items=JSON.parse(jsonMatch[0]);
+    for(const item of items){await rudraReq('create','Goal',item);}
+    loadGoals();btn.textContent='GENERATE';btn.disabled=false;
+    document.getElementById('goal-ai-input').value='';
+    alert(`✅ Created ${items.length} goals!`);
+  }catch(e){btn.textContent='GENERATE';btn.disabled=false;alert('Could not generate goals. Try again.');}
+}
+
+async function aiGenerateStudy(){
+  const input=document.getElementById('study-ai-input').value.trim();
+  if(!input)return alert('Tell Jarvis what to study');
+  const btn=event.target;btn.textContent='GENERATING...';btn.disabled=true;
+  try{
+    const prompt=`User wants to learn: "${input}". Create a structured study plan as JSON array of topics. Each: {subject, topic, level (beginner/intermediate/advanced), status: "not started", notes: "brief description", study_plan: "step by step what to study for this topic", timetable: "suggested time allocation e.g. Week 1: Mon/Wed/Fri 1hr"}. Return ONLY JSON array with 4-8 topics ordered from basics to advanced.`;
+    const reply=await aiCall(prompt);
+    const jsonMatch=reply.match(/\[[\s\S]*\]/);
+    if(!jsonMatch)throw new Error('No JSON');
+    const items=JSON.parse(jsonMatch[0]);
+    for(const item of items){await rudraReq('create','StudyTopic',item);}
+    loadStudy();btn.textContent='GENERATE PLAN';btn.disabled=false;
+    document.getElementById('study-ai-input').value='';
+    alert(`✅ Created ${items.length} study topics!`);
+  }catch(e){btn.textContent='GENERATE PLAN';btn.disabled=false;alert('Could not generate plan. Try again.');}
+}
+
+// ════════════════════════════════════════════
 // BOOT
+// ════════════════════════════════════════════
 setUIState('idle');
 initBattery();
 setTimeout(()=>addLog('All systems nominal'),600);
 setTimeout(()=>{
-  speakText("Good evening sir. Jarvis is online and ready. I'm listening.",null);
-},1000);
+  speakText("Good evening sir. Jarvis and Rudra are both online. I'll stop talking the moment you speak.",null);
+},900);
 </script>
 </body>
 </html>
